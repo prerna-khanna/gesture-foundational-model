@@ -53,6 +53,18 @@
         "size": 1439
     },
 
+    "blind_access_wear_20_120": {
+        "sr": 20,
+        "seq_len": 120,
+        "dimension": 6,
+        "activity_label_index": 0,
+        "activity_label_size": 5,
+        "activity_label": ["1", "2", "3", "4", "5"],
+        "user_label_index": 1,
+        "user_label_size": 10,
+        "size": 1439
+    },
+
     "blind_fine_tune_20_120": {
         "sr": 20,
         "seq_len": 120,
