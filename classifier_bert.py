@@ -67,7 +67,7 @@ def bert_classify(args, label_index, training_rate, label_rate, frozen_bert=Fals
 
 if __name__ == "__main__":
     train_rate = 0.8
-    label_rate = 0.01
+    label_rate = 0.1
     balance = True
     frozen_bert = False
     method = "base_gru"

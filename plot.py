@@ -70,14 +70,14 @@ def plot_matrix(matrix, labels_name=None):
     for i in range(row_sum.size):
         if row_sum[i] != 0:
             matrix_per[i] = matrix_per[i] / row_sum[i]
-    # plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(15, 10))
     if labels_name is None:
         labels_name = "auto"
     sn.heatmap(matrix_per, annot=True, fmt='.2f', xticklabels=labels_name, yticklabels=labels_name)
     plt.ylabel('Actual')
     plt.xlabel('Predicted')
     plt.show()
-    # plt.savefig()
+    plt.savefig('confusion_matrix.png')
     return matrix
 
 

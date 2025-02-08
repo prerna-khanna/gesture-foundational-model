@@ -263,7 +263,7 @@ def prepare_classifier_dataset(data, labels, label_index=0, training_rate=0.8, l
 
 
 def partition_and_reshape(data, labels, label_index=0, training_rate=0.8, vali_rate=0.1, change_shape=True
-                          , merge=0, merge_mode='all', shuffle=False):
+                          , merge=0, merge_mode='all', shuffle=True):
     arr = np.arange(data.shape[0])
     if shuffle:
         np.random.shuffle(arr)
@@ -295,7 +295,7 @@ def partition_and_reshape(data, labels, label_index=0, training_rate=0.8, vali_r
 
 def prepare_simple_dataset(data, labels, training_rate=0.2):
     arr = np.arange(data.shape[0])
-    #np.random.shuffle(arr)
+    np.random.shuffle(arr)
     data = data[arr]
     labels = labels[arr]
     train_num = int(data.shape[0] * training_rate)
@@ -325,7 +325,7 @@ def prepare_simple_dataset_balance(data, labels, training_rate=0.8):
     for i in range(labels_unique.size):
         class_index = np.argwhere(labels == labels_unique[i])
         class_index = class_index.reshape(class_index.size)
-        # np.random.shuffle(class_index)
+        np.random.shuffle(class_index)
         temp = class_index[:train_num]
         index[temp] = True
     t = np.min(labels)
