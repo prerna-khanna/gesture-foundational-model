@@ -101,7 +101,8 @@ class Trainer(object):
             return torch.cat(results, 0).cpu().numpy()
 
     """def train(self, func_loss, func_forward, func_evaluate, data_loader_train, data_loader_test, data_loader_vali
-              , model_file=None, data_parallel=False, load_self=False):
+              , model_file=None, data_parallel=False, load_self=False): # to be used with triplet loss func
+
         ### Train Loop
         self.load(model_file, load_self)
         model = self.model.to(self.device)
@@ -146,9 +147,9 @@ class Trainer(object):
                 self.save(0)
         self.model.load_state_dict(model_best)
         print('The Total Epoch have been reached.')
-        print('Best Accuracy: %0.3f/%0.3f/%0.3f, F1: %0.3f/%0.3f/%0.3f' % best_stat)"""
+        print('Best Accuracy: %0.3f/%0.3f/%0.3f, F1: %0.3f/%0.3f/%0.3f' % best_stat)
     
-    def train(self, func_loss, func_forward, func_evaluate, data_loader_train, data_loader_test, data_loader_vali):
+    def train(self, func_loss, func_forward, func_evaluate, data_loader_train, data_loader_test, data_loader_vali):  # use with semantic loss func
         global_step = 0
         vali_acc_best = 0.0
         best_stat = None
@@ -205,9 +206,68 @@ class Trainer(object):
         self.model.load_state_dict(model_best)
         print('\nTraining completed.')
         print(f'Best Accuracy: Train={best_stat[0]:.3f}, Val={best_stat[1]:.3f}, Test={best_stat[2]:.3f}')
-        print(f'Best F1 Score: Train={best_stat[3]:.3f}, Val={best_stat[4]:.3f}, Test={best_stat[5]:.3f}')
+        print(f'Best F1 Score: Train={best_stat[3]:.3f}, Val={best_stat[4]:.3f}, Test={best_stat[5]:.3f}')"""
     
-    
+    def train(self, func_loss, func_forward, func_evaluate, data_loader_train, data_loader_test, data_loader_vali): # use with contrastive loss func
+        global_step = 0
+        vali_acc_best = 0.0
+        best_stat = None
+        model_best = self.model.state_dict()
+
+        for e in range(self.cfg.n_epochs):
+            # Track all loss components separately
+            epoch_losses = {
+                'classification_loss': 0.0,
+                'semantic_loss': 0.0,
+                'contrastive_loss': 0.0,  # New loss component
+                'total_loss': 0.0
+            }
+            
+            self.model.train()
+            for i, batch in enumerate(data_loader_train):
+                batch = [t.to(self.device) for t in batch]
+                self.optimizer.zero_grad()
+                
+                # Get loss and all its components
+                total_loss, batch_losses = func_loss(self.model, batch, current_epoch=e)
+                
+                # Update running averages for all loss components
+                for key in epoch_losses:
+                    epoch_losses[key] += batch_losses[key]
+                
+                total_loss.backward()
+                self.optimizer.step()
+                global_step += 1
+
+            # Calculate and log average losses
+            num_batches = len(data_loader_train)
+            avg_losses = {k: v/num_batches for k, v in epoch_losses.items()}
+            
+            # Evaluate model performance
+            train_acc, train_f1 = self.run(func_forward, func_evaluate, data_loader_train)
+            test_acc, test_f1 = self.run(func_forward, func_evaluate, data_loader_test)
+            vali_acc, vali_f1 = self.run(func_forward, func_evaluate, data_loader_vali)
+
+            # Print detailed epoch results
+            print(f'\nEpoch {e+1}/{self.cfg.n_epochs}:')
+            print('Loss Components:')
+            for loss_name, loss_val in avg_losses.items():
+                print(f'  {loss_name}: {loss_val:.4f}')
+            print(f'Accuracies: Train={train_acc:.3f}, Val={vali_acc:.3f}, Test={test_acc:.3f}')
+            print(f'F1 Scores: Train={train_f1:.3f}, Val={vali_f1:.3f}, Test={test_f1:.3f}')
+
+            # Save best model based on validation accuracy
+            if vali_acc > vali_acc_best:
+                vali_acc_best = vali_acc
+                best_stat = (train_acc, vali_acc, test_acc, train_f1, vali_f1, test_f1)
+                model_best = copy.deepcopy(self.model.state_dict())
+                self.save(0)
+
+        self.model.load_state_dict(model_best)
+        print('\nTraining completed.')
+        print(f'Best Performance:')
+        print(f'Accuracy: Train={best_stat[0]:.3f}, Val={best_stat[1]:.3f}, Test={best_stat[2]:.3f}')
+        print(f'F1 Score: Train={best_stat[3]:.3f}, Val={best_stat[4]:.3f}, Test={best_stat[5]:.3f}')
 
     def load(self, model_file, load_self=False):
         """ load saved model or pretrained transformer (a part of model) """
