@@ -7,13 +7,16 @@
 # @Description :
 import copy
 import os
-import time
+import datetime
 
 import numpy as np
+import os   
+import time
 import torch
 import torch.nn as nn
 
 from utils import count_model_parameters
+
 
 
 class Trainer(object):
@@ -24,6 +27,9 @@ class Trainer(object):
         self.optimizer = optimizer
         self.save_path = save_path
         self.device = device # device name
+        run_id = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        log_filename = f'loss_acc_{run_id}.txt'  # Example: loss_acc_2025-02-11_14-30-00.txt
+        self.log_path = os.path.join(self.save_path, log_filename)
 
     def pretrain(self, func_loss, func_forward, func_evaluate
               , data_loader_train, data_loader_test, model_file=None, data_parallel=False):
@@ -255,6 +261,21 @@ class Trainer(object):
                 print(f'  {loss_name}: {loss_val:.4f}')
             print(f'Accuracies: Train={train_acc:.3f}, Val={vali_acc:.3f}, Test={test_acc:.3f}')
             print(f'F1 Scores: Train={train_f1:.3f}, Val={vali_f1:.3f}, Test={test_f1:.3f}')
+
+            # save the loss and accuracy on validation set and the test set as text file as a new file
+            """run_id = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            log_filename = f'loss_acc_{run_id}.txt'  # Example: loss_acc_2025-02-11_14-30-00.txt
+            self.log_path = os.path.join(self.save_path, log_filename)"""
+
+            # Save log for the run (only one file per run)
+            with open(self.log_path, 'a') as f:
+                f.write(f'Epoch {e+1}/{self.cfg.n_epochs}:\n')
+                f.write('Loss Components:\n')
+                for loss_name, loss_val in avg_losses.items():
+                    f.write(f'  {loss_name}: {loss_val:.4f}\n')
+                f.write(f'Accuracies: Train={train_acc:.3f}, Val={vali_acc:.3f}, Test={test_acc:.3f}\n')
+                f.write(f'F1 Scores: Train={train_f1:.3f}, Val={vali_f1:.3f}, Test={test_f1:.3f}\n\n')
+
 
             # Save best model based on validation accuracy
             if vali_acc > vali_acc_best:

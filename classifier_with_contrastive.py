@@ -85,7 +85,7 @@ class SemanticLoss(nn.Module):
             for name in label_names
         ]
         
-        with torch.no_grad():
+        """with torch.no_grad():
             inputs = self.tokenizer(descriptions, padding=True, return_tensors="pt").to(self.device)
             outputs = self.bert(**inputs)
             embeddings = outputs.last_hidden_state[:, 0, :]
@@ -95,10 +95,9 @@ class SemanticLoss(nn.Module):
         sim_matrix = torch.matmul(embeddings, embeddings.t())
         sim_matrix = torch.pow(sim_matrix, 3)  # Enhance contrast
         
-        return sim_matrix
+        return sim_matrix"""
     
-        """ 
-        use for better sem enhancment
+        #  use for better sem enhancment
         with torch.no_grad():
             inputs = self.tokenizer(descriptions, padding=True, return_tensors="pt").to(self.device)
             outputs = self.bert(**inputs)
@@ -124,7 +123,8 @@ class SemanticLoss(nn.Module):
                     somewhat_similar * sim_matrix * 0.8 +
                     different * sim_matrix * 0.5)
         
-        return sim_matrix"""
+        return sim_matrix
+    
     
     def semantic_loss(self, embeddings, labels, base_margin=1.0):
         """
@@ -207,7 +207,8 @@ class SemanticLoss(nn.Module):
         }
     
 
-"""def classify_embeddings(args, data, labels, label_index, training_rate, label_rate, balance=False, method=None):
+def classify_embeddings(args, data, labels, label_index, training_rate, label_rate, balance=False, method=None):
+    # contrastive + semantic learning
     try:
         train_cfg, model_cfg, dataset_cfg = load_classifier_config(args)
         label_names, label_num = load_dataset_label_names(dataset_cfg, label_index)
@@ -255,6 +256,7 @@ class SemanticLoss(nn.Module):
         
         # Setup optimizer and trainer
         optimizer = torch.optim.Adam(params=model.parameters(), lr=train_cfg.lr)
+        print(f"Optimizer initialized with args: {train_cfg}")
         trainer = train.Trainer(train_cfg, model, optimizer, args.save_path, device)
 
         def func_loss(model, batch, current_epoch=0):
@@ -304,26 +306,24 @@ class SemanticLoss(nn.Module):
         print(f"Error type: {type(e)}")
         import traceback
         traceback.print_exc()
-        raise e"""
+        raise e
 
 
+"""def classify_embeddings(args, data, labels, label_index, training_rate, label_rate, balance=False, method=None):
 
-def classify_embeddings(args, data, labels, label_index, training_rate, label_rate, balance=False, method=None):
-    """
-     contrastive + semantic learning + grid search
-    """
+     #contrastive + semantic learning + grid search
     try:
         # Define parameter grid
         param_grid = {
-            'batch_size': [32, 64, 128, 256],
-            'lr': [1e-4, 1e-3, 5e-3],
-            'n_epochs': [200, 500, 1000],
-            'warmup': [0.1, 0.2],
-            'lambda2': [0.001, 0.005, 0.01],
+            'batch_size': [32],
+            'lr': [0.0001],
+            'n_epochs': [1000],
+            'warmup': [0.2],
+            'lambda2': [0.001],
             # Add contrastive-specific parameters
-            'temperature': [0.05, 0.07, 0.1],
-            'semantic_weight': [0.2, 0.3, 0.4],
-            'contrastive_weight': [0.3, 0.4, 0.5]
+            'temperature': [0.07],
+            'semantic_weight': [0.2],
+            'contrastive_weight': [0.3]
         }
         
         # Create all combinations of parameters
@@ -447,7 +447,7 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         import traceback
         traceback.print_exc()
         raise e
-    
+  """  
 if __name__ == "__main__":
     try:
         training_rate = 0.8
@@ -462,7 +462,12 @@ if __name__ == "__main__":
         print("Data dimensions:", embedding.shape, "Label dimensions:", labels.shape)
 
         # Now receives additional return values
-        label_test, label_estimate_test, best_params, best_f1 = classify_embeddings(
+        """label_test, label_estimate_test, best_params, best_f1 = classify_embeddings(
+            args, embedding, labels, args.label_index,
+            training_rate, label_rate, balance=balance, method=method
+        )"""
+
+        label_test, label_estimate_test = classify_embeddings(
             args, embedding, labels, args.label_index,
             training_rate, label_rate, balance=balance, method=method
         )
@@ -470,11 +475,13 @@ if __name__ == "__main__":
         if label_test is not None:
             label_names, label_num = load_dataset_label_names(args.dataset_cfg, args.label_index)
             acc, matrix, f1 = stat_results(label_test, label_estimate_test)
+            print("calculated acc, matrix, f1")
             matrix_norm = plot_matrix(matrix, label_names)
+
             
-            print("\nFinal Results:")
+            """print("\nFinal Results:")
             print(f"Best Parameters: {best_params}")
-            print(f"Best F1 Score: {best_f1:.4f}")
+            print(f"Best F1 Score: {best_f1:.4f}")"""
         else:
             print("Error: Grid search failed to find valid parameters")
             

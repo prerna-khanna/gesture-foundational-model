@@ -77,7 +77,7 @@ def plot_matrix(matrix, labels_name=None):
     plt.ylabel('Actual')
     plt.xlabel('Predicted')
     plt.show()
-    plt.savefig('confusion_matrix.png')
+    plt.savefig('confusion_matrix_new.png')
     return matrix
 
 
