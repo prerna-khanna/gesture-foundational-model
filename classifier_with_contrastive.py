@@ -78,9 +78,16 @@ class SemanticLoss(nn.Module):
         Compute semantic similarity matrix between gesture labels using BERT
         """
         descriptions = [
-            f"{name} gesture "
+            f"{name} gesture"
             for name in label_names
         ]
+        """descriptions = [
+            f"a {name} gesture ith properties: " + 
+            f"primary type: {'directional' if name in ['up', 'down', 'left', 'right'] else 'rotational' if 'rotate' in name or name in ['circle'] else 'shape' if name in ['square', 'triangle', 'infinity'] else 'complex'}, " +
+            f"direction: {name.split()[0]}, " +w
+            f"complexity: {'simple' if name in ['up', 'down', 'left', 'right'] else 'complex'}"
+            for name in label_names
+        ]"""
         
         """with torch.no_grad():
             inputs = self.tokenizer(descriptions, padding=True, return_tensors="pt").to(self.device)
