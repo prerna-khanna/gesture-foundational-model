@@ -39,7 +39,8 @@ def create_config_with_params(original_cfg, params):
         'save_steps': original_cfg.save_steps,
         'total_steps': original_cfg.total_steps,
         'lambda1': original_cfg.lambda1,
-        'lambda2': params.get('lambda2', original_cfg.lambda2)
+        'lambda2': params.get('lambda2', original_cfg.lambda2),
+        'pooling': original_cfg.pooling
     }
     return argparse.Namespace(**config_dict)
 
@@ -77,11 +78,32 @@ class SemanticLoss(nn.Module):
         """
         Compute semantic similarity matrix between gesture labels using BERT
         """
+        
+        descriptions = [
+        "Vertical upward motion starting from rest position, controlled ascent", 
+        "Vertical downward motion with steady arm trajectory, controlled descent", 
+        "Horizontal lateral movement to the left side, smooth arm translation", 
+        "Horizontal lateral movement to the right side, smooth arm translation",
+        "Circular wrist rotation moving clockwise, maintaining consistent radius",
+        "Circular wrist rotation moving anticlockwise, maintaining consistent radius",
+        "Rapid, sharp upward jerking motion with quick acceleration and immediate stop",
+        "Rapid, sharp downward jerking motion with quick acceleration and immediate stop",
+        "Abrupt lateral movement to the left with sudden acceleration and quick cessation",
+        "Abrupt lateral movement to the right with sudden acceleration and quick cessation",
+        "Angular path tracing four equal sides with crisp, precise 90-degree corner turns",
+        "Smooth, continuous curved motion forming a perfect closed loop without corner breaks",
+        "Geometric path creating three connected straight lines with distinct angular transitions",
+        "Curved motion starting with an upward arc, then sharply hooking downward",
+        "Continuous figure-eight path with smooth, symmetrical mid-point crossing"
+    ]
+        
+        """
         descriptions = [
             f"{name} gesture"
             for name in label_names
         ]
-        """descriptions = [
+        
+        descriptions = [
             f"a {name} gesture ith properties: " + 
             f"primary type: {'directional' if name in ['up', 'down', 'left', 'right'] else 'rotational' if 'rotate' in name or name in ['circle'] else 'shape' if name in ['square', 'triangle', 'infinity'] else 'complex'}, " +
             f"direction: {name.split()[0]}, " +w
@@ -105,7 +127,41 @@ class SemanticLoss(nn.Module):
         with torch.no_grad():
             inputs = self.tokenizer(descriptions, padding=True, return_tensors="pt").to(self.device)
             outputs = self.bert(**inputs)
-            embeddings = outputs.last_hidden_state[:, 0, :]
+
+            outputs = self.model(**inputs)
+            hidden_states = outputs.last_hidden_state
+            
+            # Create attention mask to ignore padding
+            attention_mask = inputs['attention_mask']
+
+            #print("pooling startegy", self.pooling)
+
+            ## cls
+            if self.pooling == "cls":
+                embeddings = hidden_states[:, 0, :] 
+
+            elif self.pooling == "mean":
+                ## Mean pooling, ignoring padding
+                embeddings = []
+                for h, mask in zip(hidden_states, attention_mask):
+                    # Select only non-padding tokens
+                    token_embeds = h[mask == 1]
+                    embedding = token_embeds.mean(dim=0)
+                    embeddings.append(embedding)
+                embeddings = torch.stack(embeddings)
+
+            ## Max pooling, ignoring padding
+            elif self.pooling == "max":
+                embeddings = []
+                for h, mask in zip(hidden_states, attention_mask):
+                    # Select only non-padding tokens
+                    token_embeds = h[mask == 1]
+                    embedding = token_embeds.max(dim=0)[0]
+                    embeddings.append(embedding)
+                embeddings = torch.stack(embeddings)
+            
+
+            ## normalinze embeddings
             embeddings = F.normalize(embeddings, p=2, dim=1)
             
         # Compute initial similarity matrix

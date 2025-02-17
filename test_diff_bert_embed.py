@@ -43,7 +43,7 @@ class SemanticEmbedder:
             
             if self.pooling_strategy == 'cls':
                 # Just CLS token
-                embeddings = hidden_states[:, 0, :]
+                embeddings = hidden_states[:, 0, :] #cls
             
             elif self.pooling_strategy == 'mean':
                 # Mean pooling, ignoring padding
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     # Example descriptions
 
     descriptions = [
-        "Vertical upward motion starting from rest position, smooth and controlled arm movement", 
+        "Vertical upward motion starting from rest position, controlled ascent", 
         "Vertical downward motion with steady arm trajectory, controlled descent", 
         "Horizontal lateral movement to the left side, smooth arm translation", 
         "Horizontal lateral movement to the right side, smooth arm translation",
@@ -117,6 +117,11 @@ if __name__ == "__main__":
         "Curved motion starting with an upward arc, then sharply hooking downward",
         "Continuous figure-eight path with smooth, symmetrical mid-point crossing"
     ]
+
+    """descriptions = ["move forearm upwards", "move forearm down", "move forearm left", "move forearm right", "rotate wrist and then move forearm right", "rotate wrist and then move forearm left", "flick wrist and then move forearm up", "flick wrist and then move forearm down", "flick wrist andthen move forearm  left", "flick wrist and then move forearm right", "draw square in the air", "draw circle in the air", "draw triangle in the air", "draw question mark in the air", "draw infinity in the air"]
+    """
+
+
     
     # Create embedder with different strategies
     strategies = ['cls', 'mean', 'max']

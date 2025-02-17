@@ -71,6 +71,7 @@ class TrainConfig(NamedTuple):
     total_steps: int = 0  # total number of steps to train
     lambda1: float = 0
     lambda2: float = 0
+    pooling: str = "cls"
 
 
     @classmethod
