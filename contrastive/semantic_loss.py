@@ -6,46 +6,69 @@ from transformers import AutoTokenizer, AutoModel
 
 
 class SemanticLoss(nn.Module):
-    def __init__(self, label_names, device, temperature=0.07, hidden_dim=128):
+    def __init__(self, label_names, descriptions, pooling, device, temperature=0.07, hidden_dim=128):
         super().__init__()
+        self.pooling = pooling
         self.device = device
         self.temperature = temperature
+        self.pooling = pooling
         
         # Initialize BERT for semantic understanding
         self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-        self.bert = AutoModel.from_pretrained('bert-base-uncased')
-        self.bert.to(device)
+        self.model = AutoModel.from_pretrained('bert-base-uncased')
+        self.model.to(device)
         
         # Single projection layer with correct dimensions
         self.semantic_projection = nn.Linear(hidden_dim, 32).to(device)
         
         # Compute semantic similarities between gesture labels
-        self.semantic_sims = self.compute_semantic_similarities(label_names)
+        self.semantic_sims = self.compute_semantic_similarities(label_names, descriptions)
     
-    def compute_semantic_similarities(self, label_names):
-        """
-        Compute semantic similarity matrix between gesture labels using BERT
-        """
-        descriptions = [
-            f"a {name} gesture with properties: " + 
-            f"primary type: {'directional' if name in ['up', 'down', 'left', 'right'] else 'rotational' if 'rotate' in name or name in ['circle'] else 'shape' if name in ['square', 'triangle', 'infinity'] else 'complex'}, " +
-            f"direction: {name.split()[0]}, " +
-            f"complexity: {'simple' if name in ['up', 'down', 'left', 'right'] else 'complex'}"
-            for name in label_names
-        ]
-        
+    def compute_semantic_similarities(self, label_names, descriptions):
+        print("description is ", descriptions)
         with torch.no_grad():
             inputs = self.tokenizer(descriptions, padding=True, return_tensors="pt").to(self.device)
-            outputs = self.bert(**inputs)
-            embeddings = outputs.last_hidden_state[:, 0, :]
+            outputs = self.model(**inputs)
+            hidden_states = outputs.last_hidden_state
+            
+            # Create attention mask to ignore padding
+            attention_mask = inputs['attention_mask']
+
+            print("Pooling criterion used: " + self.pooling)
+
+            ## cls
+            if self.pooling == "cls":
+                embeddings = hidden_states[:, 0, :] 
+                
+            ## Mean pooling, ignoring padding
+            elif self.pooling == "mean":
+                embeddings = []
+                for h, mask in zip(hidden_states, attention_mask):
+                    # Select only non-padding tokens
+                    token_embeds = h[mask == 1]
+                    embedding = token_embeds.mean(dim=0)
+                    embeddings.append(embedding)
+                embeddings = torch.stack(embeddings)
+
+            ## Max pooling, ignoring padding
+            elif self.pooling == "max":
+                embeddings = []
+                for h, mask in zip(hidden_states, attention_mask):
+                    # Select only non-padding tokens
+                    token_embeds = h[mask == 1]
+                    embedding = token_embeds.max(dim=0)[0]
+                    embeddings.append(embedding)
+                embeddings = torch.stack(embeddings)
+
+            
             embeddings = F.normalize(embeddings, p=2, dim=1)
             
             # Compute similarity matrix with increased contrast
             sim_matrix = torch.matmul(embeddings, embeddings.t())
             sim_matrix = torch.pow(sim_matrix, 3)  # Enhance contrast
 
-            print("Semantic similarity matrix:")
-            print(sim_matrix)
+            #print("Semantic similarity matrix:")
+            #print(sim_matrix)
             
             return sim_matrix
 

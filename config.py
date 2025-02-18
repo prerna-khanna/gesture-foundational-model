@@ -103,6 +103,7 @@ class DatasetConfig(NamedTuple):
     activity_label_index: int = -1  # index of activity label
     activity_label_size: int = 0  # number of activity label
     activity_label: list = []  # names of activity label.
+    descriptions: list = []  # descriptions of activity label.
 
     user_label_index: int = -1  # index of user label
     user_label_size: int = 0  # number of user label
@@ -188,13 +189,35 @@ def load_dataset_stats(dataset, version):
 
 
 def load_dataset_label_names(dataset_config, label_index):
+    """
+    Load label names, number of labels, and descriptions from dataset config
+    
+    Args:
+        dataset_config: Dataset configuration object
+        label_index: Index identifying which type of label to load
+        
+    Returns:
+        tuple: (label_names, label_num, descriptions)
+            - label_names: List of label names or None
+            - label_num: Number of labels
+            - descriptions: List of descriptions or None
+    """
     for p in dir(dataset_config):
         if getattr(dataset_config, p) == label_index and "label_index" in p:
             temp = p.split("_")
             label_num = getattr(dataset_config, temp[0] + "_" + temp[1] + "_size")
+            
+            # Get label names if they exist
+            label_names = None
             if hasattr(dataset_config, temp[0] + "_" + temp[1]):
-                return getattr(dataset_config, temp[0] + "_" + temp[1]), label_num
-            else:
-                return None, label_num
-    return None, -1
+                label_names = getattr(dataset_config, temp[0] + "_" + temp[1])
+            
+            # Get descriptions if they exist
+            descriptions = None
+            if hasattr(dataset_config, 'descriptions'):
+                descriptions = dataset_config.descriptions
+                
+            return label_names, label_num, descriptions
+            
+    return None, -1, None
 

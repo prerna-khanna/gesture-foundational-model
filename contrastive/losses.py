@@ -7,11 +7,12 @@ from contrastive.semantic_loss import SemanticLoss
 
 
 class ContrastiveCombinedLoss(nn.Module):
-    def __init__(self, label_names, device, temperature=0.07, hidden_dim=128):
+    def __init__(self, label_names, descriptions, pooling, device, temperature=0.07, hidden_dim=128):
         super().__init__()
+        self.pooling = pooling
         self.device = device
         self.temperature = temperature
-        self.semantic_criterion = SemanticLoss(label_names, device, hidden_dim=hidden_dim)
+        self.semantic_criterion = SemanticLoss(label_names, descriptions, pooling, device, hidden_dim=hidden_dim)
         self.classification_criterion = nn.CrossEntropyLoss()
 
     def forward(self, logits, features, projected, labels, epoch=0):
@@ -68,56 +69,3 @@ class ContrastiveCombinedLoss(nn.Module):
         mean_log_prob_pos = (mask * log_prob).sum(1) / mask.sum(1).clamp(min=1)
         return -mean_log_prob_pos.mean()
     
-
-
-"""
-
-use this for controlled ratio of positive to negative pairs
-
-def compute_contrastive_loss(self, features, labels):
-    # Normalize features as before
-    features = F.normalize(features, dim=1)
-    batch_size = features.shape[0]
-    
-    # Compute similarity matrix as before
-    similarity_matrix = torch.matmul(features, features.T) / self.temperature
-    
-    # Create positive pair mask
-    labels = labels.view(-1, 1)
-    positive_mask = torch.eq(labels, labels.T).float().to(self.device)
-    
-    # Remove self-comparisons
-    diagonal_mask = torch.eye(batch_size).bool().to(self.device)
-    positive_mask[diagonal_mask] = 0
-    
-    # Create negative pair mask
-    negative_mask = 1 - positive_mask - torch.eye(batch_size).to(self.device)
-    
-    # NEW: Control ratio by sampling negatives
-    num_positives = positive_mask.sum(dim=1)
-    desired_negatives = (num_positives / self.pos_to_neg_ratio).int()
-    
-    # NEW: Sample negative pairs based on desired ratio
-    for i in range(batch_size):
-        negative_indices = torch.where(negative_mask[i] > 0)[0]
-        if len(negative_indices) > desired_negatives[i]:
-            # Randomly select subset of negative pairs
-            perm = torch.randperm(len(negative_indices))
-            indices_to_zero = negative_indices[perm[desired_negatives[i]:]]
-            negative_mask[i, indices_to_zero] = 0
-    
-    # Compute loss with controlled ratio
-    exp_similarities = torch.exp(similarity_matrix)
-    pos_loss = torch.sum(positive_mask * similarity_matrix, dim=1)
-    neg_loss = torch.log(
-        torch.sum(negative_mask * exp_similarities, dim=1) + 1e-8
-    )
-    
-    loss = -(pos_loss - neg_loss)
-    non_zero_elements = (positive_mask.sum(dim=1) > 0).float()
-    loss = (loss * non_zero_elements).sum() / (non_zero_elements.sum() + 1e-8)
-    
-    return loss
-
-
-"""

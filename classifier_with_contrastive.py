@@ -44,224 +44,20 @@ def create_config_with_params(original_cfg, params):
     }
     return argparse.Namespace(**config_dict)
 
-class SemanticLoss(nn.Module):
-    def __init__(self, label_names, device, temperature=0.07):
-        """
-        Initialize SemanticLoss with both semantic and contrastive learning capabilities
-        
-        Args:
-            label_names: List of gesture label names
-            device: Device to run computations on
-            temperature: Temperature parameter for contrastive loss scaling
-        """
-        super().__init__()
-        self.device = device
-        self.temperature = temperature
-        
-        # Initialize BERT for semantic understanding
-        self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-        self.bert = AutoModel.from_pretrained('bert-base-uncased')
-        self.bert.to(device)
-        
-        # Projection networks for different spaces
-        self.semantic_projection = nn.Linear(20, 32).to(device)  # For semantic space
-        self.contrastive_projection = nn.Sequential(  # For contrastive learning
-            nn.Linear(20, 64),
-            nn.ReLU(),
-            nn.Linear(64, 128)
-        ).to(device)
-        
-        # Compute semantic similarities between gesture labels
-        self.semantic_sims = self._compute_semantic_sims(label_names)
-        
-    def _compute_semantic_sims(self, label_names):
-        """
-        Compute semantic similarity matrix between gesture labels using BERT
-        """
-        
-        descriptions = [
-        "Vertical upward motion starting from rest position, controlled ascent", 
-        "Vertical downward motion with steady arm trajectory, controlled descent", 
-        "Horizontal lateral movement to the left side, smooth arm translation", 
-        "Horizontal lateral movement to the right side, smooth arm translation",
-        "Circular wrist rotation moving clockwise, maintaining consistent radius",
-        "Circular wrist rotation moving anticlockwise, maintaining consistent radius",
-        "Rapid, sharp upward jerking motion with quick acceleration and immediate stop",
-        "Rapid, sharp downward jerking motion with quick acceleration and immediate stop",
-        "Abrupt lateral movement to the left with sudden acceleration and quick cessation",
-        "Abrupt lateral movement to the right with sudden acceleration and quick cessation",
-        "Angular path tracing four equal sides with crisp, precise 90-degree corner turns",
-        "Smooth, continuous curved motion forming a perfect closed loop without corner breaks",
-        "Geometric path creating three connected straight lines with distinct angular transitions",
-        "Curved motion starting with an upward arc, then sharply hooking downward",
-        "Continuous figure-eight path with smooth, symmetrical mid-point crossing"
-    ]
-        
-        """
-        descriptions = [
-            f"{name} gesture"
-            for name in label_names
-        ]
-        
-        descriptions = [
-            f"a {name} gesture ith properties: " + 
-            f"primary type: {'directional' if name in ['up', 'down', 'left', 'right'] else 'rotational' if 'rotate' in name or name in ['circle'] else 'shape' if name in ['square', 'triangle', 'infinity'] else 'complex'}, " +
-            f"direction: {name.split()[0]}, " +w
-            f"complexity: {'simple' if name in ['up', 'down', 'left', 'right'] else 'complex'}"
-            for name in label_names
-        ]"""
-    
-        #  use for better sem enhancment
-        with torch.no_grad():
-            inputs = self.tokenizer(descriptions, padding=True, return_tensors="pt").to(self.device)
-            outputs = self.bert(**inputs)
-
-            outputs = self.model(**inputs)
-            hidden_states = outputs.last_hidden_state
-            
-            # Create attention mask to ignore padding
-            attention_mask = inputs['attention_mask']
-
-            ## cls
-            if self.pooling == "cls":
-                embeddings = hidden_states[:, 0, :] 
-                
-            ## Mean pooling, ignoring padding
-            elif self.pooling == "mean":
-                embeddings = []
-                for h, mask in zip(hidden_states, attention_mask):
-                    # Select only non-padding tokens
-                    token_embeds = h[mask == 1]
-                    embedding = token_embeds.mean(dim=0)
-                    embeddings.append(embedding)
-                embeddings = torch.stack(embeddings)
-
-            ## Max pooling, ignoring padding
-            elif self.pooling == "max":
-                embeddings = []
-                for h, mask in zip(hidden_states, attention_mask):
-                    # Select only non-padding tokens
-                    token_embeds = h[mask == 1]
-                    embedding = token_embeds.max(dim=0)[0]
-                    embeddings.append(embedding)
-                embeddings = torch.stack(embeddings)
-            
-
-            ## normalinze embeddings
-            embeddings = F.normalize(embeddings, p=2, dim=1)
-            
-        # Compute initial similarity matrix
-        sim_matrix = torch.matmul(embeddings, embeddings.t())
-        
-        # Apply series of transformations
-        # First normalize the range
-        sim_matrix = (sim_matrix - sim_matrix.min()) / (1 - sim_matrix.min())
-        
-        # Then apply non-linear transformation to enhance differences
-        sim_matrix = torch.pow(sim_matrix, 3)
-        
-        # Finally apply threshold-based enhancement
-        very_similar = (sim_matrix > 0.95).float()
-        somewhat_similar = ((sim_matrix > 0.85) & (sim_matrix <= 0.95)).float()
-        different = (sim_matrix <= 0.85).float()
-        
-        sim_matrix = (very_similar * sim_matrix * 1.2 +
-                    somewhat_similar * sim_matrix * 0.8 +
-                    different * sim_matrix * 0.5)
-        
-        return sim_matrix
-    
-    
-    def semantic_loss(self, embeddings, labels, base_margin=1.0):
-        """
-        Compute semantic loss with dynamic margins based on gesture similarity
-        """
-        embeddings = self.semantic_projection(embeddings)
-        embeddings = F.normalize(embeddings, p=2, dim=1)
-        
-        dists = torch.cdist(embeddings, embeddings, p=2)
-        loss = 0
-        batch_size = embeddings.size(0)
-        
-        for i in range(batch_size):
-            for j in range(i + 1, batch_size):
-                sem_sim = self.semantic_sims[labels[i], labels[j]]
-                
-                # Dynamic margin based on semantic similarity
-                margin = base_margin * (2.0 if sem_sim > 0.8 else 
-                                      1.5 if sem_sim > 0.5 else 1.0)
-                
-                # Weight loss based on similarity
-                weight = torch.pow(sem_sim, 2) + 0.1
-                loss += weight * torch.max(torch.tensor(0.0).to(self.device),
-                                         margin - dists[i, j])
-                    
-        return loss / (batch_size * (batch_size - 1))
-    
-    def contrastive_loss(self, embeddings, labels):
-        """
-        Compute NT-Xent contrastive loss
-        """
-        # Project and normalize features
-        features = self.contrastive_projection(embeddings)
-        features = F.normalize(features, dim=1)
-        
-        # Compute similarity matrix
-        similarity_matrix = torch.matmul(features, features.T) / self.temperature
-        
-        # Create mask for positive pairs (same label)
-        labels = labels.view(-1, 1)
-        mask = torch.eq(labels, labels.T).float()
-        
-        # Remove self-contrast cases
-        logits_mask = torch.scatter(
-            torch.ones_like(mask),
-            1,
-            torch.arange(mask.shape[0]).view(-1, 1).to(self.device),
-            0
-        )
-        
-        mask = mask * logits_mask
-        
-        # Compute log_prob
-        exp_logits = torch.exp(similarity_matrix) * logits_mask
-        log_prob = similarity_matrix - torch.log(exp_logits.sum(1, keepdim=True))
-        
-        # Compute mean of log-likelihood over positive pairs
-        mean_log_prob_pos = (mask * log_prob).sum(1) / mask.sum(1).clamp(min=1)
-        
-        return -mean_log_prob_pos.mean()
-    
-    def forward(self, embeddings, labels, epoch=0):
-        """
-        Combine semantic and contrastive losses with dynamic weighting
-        """
-        sem_loss = self.semantic_loss(embeddings, labels)
-        cont_loss = self.contrastive_loss(embeddings, labels)
-        
-        # Dynamic weighting based on training epoch
-        semantic_weight = min(0.3, (epoch / 10) * 0.3)  # Gradually increase to 0.3
-        contrastive_weight = min(0.5, (epoch / 20) * 0.5)  # Gradually increase to 0.5
-        
-        total_loss = sem_loss * semantic_weight + cont_loss * contrastive_weight
-        
-        # Return both total loss and components for logging
-        return total_loss, {
-            'semantic_loss': sem_loss.item(),
-            'contrastive_loss': cont_loss.item(),
-            'total_loss': total_loss.item()
-        }
-    
 
 def classify_embeddings(args, data, labels, label_index, training_rate, label_rate, balance=False, method=None):
     # contrastive + semantic learning
     try:
         train_cfg, model_cfg, dataset_cfg = load_classifier_config(args)
-        label_names, label_num = load_dataset_label_names(dataset_cfg, label_index)
+        label_names, label_num, descriptions = load_dataset_label_names(dataset_cfg, label_index)
         device = get_device(args.gpu)
         
         print(f"Number of classes: {label_num}")
         print(f"Label names: {label_names}")
+        print(f"Descriptions available: {descriptions is not None}")
+        if descriptions is None:
+            print("Warning: No descriptions found in dataset config, using labels as descriptions")
+            descriptions = [f"{name} gesture" for name in label_names]
         
         # Calculate hidden dimension if not in config
         # Using 128 as default hidden dim - this is a common choice for gesture recognition
@@ -296,6 +92,8 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         # Initialize combined loss (classification + semantic + contrastive)
         criterion = ContrastiveCombinedLoss(
             label_names=label_names, 
+            descriptions=descriptions,
+            pooling=train_cfg.pooling,
             device=device,
             hidden_dim=hidden_dim  # Pass the hidden dimension
         )
@@ -367,29 +165,21 @@ if __name__ == "__main__":
         embedding, labels = load_embedding_label(args.model_file, args.dataset, args.dataset_version)
         print("Data dimensions:", embedding.shape, "Label dimensions:", labels.shape)
 
-        # Now receives additional return values
-        """label_test, label_estimate_test, best_params, best_f1 = classify_embeddings(
-            args, embedding, labels, args.label_index,
-            training_rate, label_rate, balance=balance, method=method
-        )"""
-
         label_test, label_estimate_test = classify_embeddings(
             args, embedding, labels, args.label_index,
             training_rate, label_rate, balance=balance, method=method
         )
 
         if label_test is not None:
-            label_names, label_num = load_dataset_label_names(args.dataset_cfg, args.label_index)
+            label_names, label_num, descriptions = load_dataset_label_names(args.dataset_cfg, args.label_index)
+            
+            if descriptions is None:
+                print("Warning: No descriptions found in dataset config")
+                descriptions = [f"{name} gesture" for name in label_names]
+
             acc, matrix, f1 = stat_results(label_test, label_estimate_test)
             print("calculated acc, matrix, f1")
             matrix_norm = plot_matrix(matrix, label_names)
-
-            
-            """print("\nFinal Results:")
-            print(f"Best Parameters: {best_params}")
-            print(f"Best F1 Score: {best_f1:.4f}")"""
-        else:
-            print("Error: Grid search failed to find valid parameters")
             
     except Exception as e:
         print(f"Error in main: {str(e)}")

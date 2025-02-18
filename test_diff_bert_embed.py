@@ -100,7 +100,7 @@ class SemanticEmbedder:
 if __name__ == "__main__":
     # Example descriptions
 
-    descriptions = [
+    """descriptions = [
         "Vertical upward motion starting from rest position, controlled ascent", 
         "Vertical downward motion with steady arm trajectory, controlled descent", 
         "Horizontal lateral movement to the left side, smooth arm translation", 
@@ -116,6 +116,19 @@ if __name__ == "__main__":
         "Geometric path creating three connected straight lines with distinct angular transitions",
         "Curved motion starting with an upward arc, then sharply hooking downward",
         "Continuous figure-eight path with smooth, symmetrical mid-point crossing"
+    ]"""
+    descriptions = [
+        "Quick single touch and release on earbud surface with consistent moderate pressure",
+        "Two rapid successive taps with brief interval, maintaining uniform pressure and timing",
+        "Smooth vertical sliding motion from bottom to top of earbud surface with steady contact",
+        "Continuous downward sliding gesture from top to bottom with maintained finger contact",
+        "Sustained finger contact on earbud surface with steady pressure for extended duration",
+        "Circular finger movement on earbud surface maintaining continuous contact and even pressure",
+        "Precise tap action on bottom portion of earbud with focused point of contact",
+        "Targeted tap gesture on upper section of earbud with controlled impact force",
+        "Gentle tapping motion on ear's upper cartilage area while wearing earbud",
+        "Light tapping contact on soft earlobe tissue near earbud position",
+        "Firm tap on jawline below ear, utilizing bone conduction properties"
     ]
 
     """descriptions = ["move forearm upwards", "move forearm down", "move forearm left", "move forearm right", "rotate wrist and then move forearm right", "rotate wrist and then move forearm left", "flick wrist and then move forearm up", "flick wrist and then move forearm down", "flick wrist andthen move forearm  left", "flick wrist and then move forearm right", "draw square in the air", "draw circle in the air", "draw triangle in the air", "draw question mark in the air", "draw infinity in the air"]
