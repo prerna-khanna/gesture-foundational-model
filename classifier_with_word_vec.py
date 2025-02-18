@@ -1,17 +1,12 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from transformers import AutoTokenizer, AutoModel
-import random
-import math
+import numpy as np
+from gensim.models import KeyedVectors
+from gensim.models import Word2Vec
+from gensim.models.phrases import Phrases, Phraser
 import argparse
-import copy
-import json
-from sklearn.model_selection import ParameterGrid
 
 from contrastive.augmenter import GestureAugmenter
 from contrastive.losses import ContrastiveCombinedLoss
@@ -24,7 +19,6 @@ from models import fetch_classifier
 from plot import plot_matrix
 from statistic import stat_acc_f1, stat_results
 from utils import get_device, handle_argv, IMUDataset, load_classifier_config, prepare_classifier_dataset
-
 
 def create_config_with_params(original_cfg, params):
     """
@@ -58,14 +52,12 @@ class SemanticLoss(nn.Module):
         self.device = device
         self.temperature = temperature
         
-        # Initialize BERT for semantic understanding
-        self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-        self.bert = AutoModel.from_pretrained('bert-base-uncased')
-        self.bert.to(device)
+        # Initialize Word2Vec and embeddings
+        self.word2vec = Word2Vec(vector_size=768, window=5, min_count=1, workers=4)
         
-        # Projection networks for different spaces
-        self.semantic_projection = nn.Linear(20, 32).to(device)  # For semantic space
-        self.contrastive_projection = nn.Sequential(  # For contrastive learning
+        # Projection networks for different spaces (keeping same dimensions as original)
+        self.semantic_projection = nn.Linear(20, 32).to(device)  
+        self.contrastive_projection = nn.Sequential(
             nn.Linear(20, 64),
             nn.ReLU(),
             nn.Linear(64, 128)
@@ -76,91 +68,60 @@ class SemanticLoss(nn.Module):
         
     def _compute_semantic_sims(self, label_names):
         """
-        Compute semantic similarity matrix between gesture labels using BERT
-        """
-        
-        descriptions = [
-        "Vertical upward motion starting from rest position, controlled ascent", 
-        "Vertical downward motion with steady arm trajectory, controlled descent", 
-        "Horizontal lateral movement to the left side, smooth arm translation", 
-        "Horizontal lateral movement to the right side, smooth arm translation",
-        "Circular wrist rotation moving clockwise, maintaining consistent radius",
-        "Circular wrist rotation moving anticlockwise, maintaining consistent radius",
-        "Rapid, sharp upward jerking motion with quick acceleration and immediate stop",
-        "Rapid, sharp downward jerking motion with quick acceleration and immediate stop",
-        "Abrupt lateral movement to the left with sudden acceleration and quick cessation",
-        "Abrupt lateral movement to the right with sudden acceleration and quick cessation",
-        "Angular path tracing four equal sides with crisp, precise 90-degree corner turns",
-        "Smooth, continuous curved motion forming a perfect closed loop without corner breaks",
-        "Geometric path creating three connected straight lines with distinct angular transitions",
-        "Curved motion starting with an upward arc, then sharply hooking downward",
-        "Continuous figure-eight path with smooth, symmetrical mid-point crossing"
-    ]
-        
+        Compute semantic similarity matrix between gesture labels using Word2Vec
         """
         descriptions = [
-            f"{name} gesture"
-            for name in label_names
+            "Vertical upward motion starting from rest position, controlled ascent", 
+            "Vertical downward motion with steady arm trajectory, controlled descent", 
+            "Horizontal lateral movement to the left side, smooth arm translation", 
+            "Horizontal lateral movement to the right side, smooth arm translation",
+            "Circular wrist rotation moving clockwise, maintaining consistent radius",
+            "Circular wrist rotation moving anticlockwise, maintaining consistent radius",
+            "Rapid, sharp upward jerking motion with quick acceleration and immediate stop",
+            "Rapid, sharp downward jerking motion with quick acceleration and immediate stop",
+            "Abrupt lateral movement to the left with sudden acceleration and quick cessation",
+            "Abrupt lateral movement to the right with sudden acceleration and quick cessation",
+            "Angular path tracing four equal sides with crisp, precise 90-degree corner turns",
+            "Smooth, continuous curved motion forming a perfect closed loop without corner breaks",
+            "Geometric path creating three connected straight lines with distinct angular transitions",
+            "Curved motion starting with an upward arc, then sharply hooking downward",
+            "Continuous figure-eight path with smooth, symmetrical mid-point crossing"
         ]
-        
-        descriptions = [
-            f"a {name} gesture ith properties: " + 
-            f"primary type: {'directional' if name in ['up', 'down', 'left', 'right'] else 'rotational' if 'rotate' in name or name in ['circle'] else 'shape' if name in ['square', 'triangle', 'infinity'] else 'complex'}, " +
-            f"direction: {name.split()[0]}, " +w
-            f"complexity: {'simple' if name in ['up', 'down', 'left', 'right'] else 'complex'}"
-            for name in label_names
-        ]"""
-    
-        #  use for better sem enhancment
-        with torch.no_grad():
-            inputs = self.tokenizer(descriptions, padding=True, return_tensors="pt").to(self.device)
-            outputs = self.bert(**inputs)
 
-            outputs = self.model(**inputs)
-            hidden_states = outputs.last_hidden_state
-            
-            # Create attention mask to ignore padding
-            attention_mask = inputs['attention_mask']
+        # Train Word2Vec on descriptions
+        tokenized_descriptions = [desc.lower().split() for desc in descriptions]
+        self.word2vec.build_vocab(tokenized_descriptions)
+        self.word2vec.train(tokenized_descriptions, total_examples=len(tokenized_descriptions), epochs=100)
 
-            ## cls
+        # Get embeddings using different pooling strategies
+        embeddings = []
+        for desc in descriptions:
+            tokens = desc.lower().split()
+            token_embeddings = [torch.tensor(self.word2vec.wv[token]) for token in tokens]
+            token_embeddings = torch.stack(token_embeddings)
+
             if self.pooling == "cls":
-                embeddings = hidden_states[:, 0, :] 
-                
-            ## Mean pooling, ignoring padding
+                # Simulate CLS token by using first token
+                embedding = token_embeddings[0]
             elif self.pooling == "mean":
-                embeddings = []
-                for h, mask in zip(hidden_states, attention_mask):
-                    # Select only non-padding tokens
-                    token_embeds = h[mask == 1]
-                    embedding = token_embeds.mean(dim=0)
-                    embeddings.append(embedding)
-                embeddings = torch.stack(embeddings)
-
-            ## Max pooling, ignoring padding
+                # Mean pooling
+                embedding = torch.mean(token_embeddings, dim=0)
             elif self.pooling == "max":
-                embeddings = []
-                for h, mask in zip(hidden_states, attention_mask):
-                    # Select only non-padding tokens
-                    token_embeds = h[mask == 1]
-                    embedding = token_embeds.max(dim=0)[0]
-                    embeddings.append(embedding)
-                embeddings = torch.stack(embeddings)
-            
+                # Max pooling
+                embedding = torch.max(token_embeddings, dim=0)[0]
 
-            ## normalinze embeddings
-            embeddings = F.normalize(embeddings, p=2, dim=1)
+            embeddings.append(embedding)
+
+        embeddings = torch.stack(embeddings).to(self.device)
+        embeddings = F.normalize(embeddings, p=2, dim=1)
             
-        # Compute initial similarity matrix
+        # Compute similarity matrix
         sim_matrix = torch.matmul(embeddings, embeddings.t())
         
-        # Apply series of transformations
-        # First normalize the range
+        # Apply transformations (keeping same as original)
         sim_matrix = (sim_matrix - sim_matrix.min()) / (1 - sim_matrix.min())
-        
-        # Then apply non-linear transformation to enhance differences
         sim_matrix = torch.pow(sim_matrix, 3)
         
-        # Finally apply threshold-based enhancement
         very_similar = (sim_matrix > 0.95).float()
         somewhat_similar = ((sim_matrix > 0.85) & (sim_matrix <= 0.95)).float()
         different = (sim_matrix <= 0.85).float()
@@ -171,6 +132,178 @@ class SemanticLoss(nn.Module):
         
         return sim_matrix
     
+    def semantic_loss(self, embeddings, labels, base_margin=1.0):
+        """
+        Compute semantic loss with dynamic margins based on gesture similarity
+        """
+        embeddings = self.semantic_projection(embeddings)
+        embeddings = F.normalize(embeddings, p=2, dim=1)
+        
+        dists = torch.cdist(embeddings, embeddings, p=2)
+        loss = 0
+        batch_size = embeddings.size(0)
+        
+        for i in range(batch_size):
+            for j in range(i + 1, batch_size):
+                sem_sim = self.semantic_sims[labels[i], labels[j]]
+                
+                margin = base_margin * (2.0 if sem_sim > 0.8 else 
+                                      1.5 if sem_sim > 0.5 else 1.0)
+                
+                weight = torch.pow(sem_sim, 2) + 0.1
+                loss += weight * torch.max(torch.tensor(0.0).to(self.device),
+                                         margin - dists[i, j])
+                    
+        return loss / (batch_size * (batch_size - 1))
+    
+    def contrastive_loss(self, embeddings, labels):
+        """
+        Compute NT-Xent contrastive loss (keeping exactly same as original)
+        """
+        features = self.contrastive_projection(embeddings)
+        features = F.normalize(features, dim=1)
+        
+        similarity_matrix = torch.matmul(features, features.T) / self.temperature
+        
+        labels = labels.view(-1, 1)
+        mask = torch.eq(labels, labels.T).float()
+        
+        logits_mask = torch.scatter(
+            torch.ones_like(mask),
+            1,
+            torch.arange(mask.shape[0]).view(-1, 1).to(self.device),
+            0
+        )
+        
+        mask = mask * logits_mask
+        exp_logits = torch.exp(similarity_matrix) * logits_mask
+        log_prob = similarity_matrix - torch.log(exp_logits.sum(1, keepdim=True))
+        mean_log_prob_pos = (mask * log_prob).sum(1) / mask.sum(1).clamp(min=1)
+        
+        return -mean_log_prob_pos.mean()
+    
+    def forward(self, embeddings, labels, epoch=0):
+        """
+        Combine semantic and contrastive losses with dynamic weighting (keeping same weights)
+        """
+        sem_loss = self.semantic_loss(embeddings, labels)
+        cont_loss = self.contrastive_loss(embeddings, labels)
+        
+        semantic_weight = min(0.3, (epoch / 10) * 0.3)
+        contrastive_weight = min(0.5, (epoch / 20) * 0.5)
+        
+        total_loss = sem_loss * semantic_weight + cont_loss * contrastive_weight
+        
+        return total_loss, {
+            'semantic_loss': sem_loss.item(),
+            'contrastive_loss': cont_loss.item(),
+            'total_loss': total_loss.item()
+        }
+    
+    def __init__(self, label_names, device, temperature=0.07):
+        """
+        Initialize SemanticLoss with Word2Vec-based semantic embeddings
+        
+        Args:
+            label_names: List of gesture label names
+            device: Device to run computations on
+            temperature: Temperature parameter for contrastive loss scaling
+        """
+        super().__init__()
+        self.device = device
+        self.temperature = temperature
+        
+        # Projection networks for different spaces
+        self.semantic_projection = nn.Linear(20, 32).to(device)
+        self.contrastive_projection = nn.Sequential(
+            nn.Linear(20, 64),
+            nn.ReLU(),
+            nn.Linear(64, 128)
+        ).to(device)
+        
+        # Create rich descriptions for gestures
+        self.descriptions = self._create_gesture_descriptions(label_names)
+        
+        # Train Word2Vec model on gesture descriptions
+        self.word2vec_model = self._train_word2vec(self.descriptions)
+        
+        # Compute semantic similarities between gesture labels
+        self.semantic_sims = self._compute_semantic_sims()
+        
+    def _create_gesture_descriptions(self, label_names):
+        """
+        Create detailed descriptions for each gesture to capture semantic meaning
+        """
+        descriptions = {
+            'up': "vertical upward motion starting from rest position controlled ascent",
+            'down': "vertical downward motion steady arm trajectory controlled descent",
+            'left': "horizontal lateral movement left side smooth arm translation",
+            'right': "horizontal lateral movement right side smooth arm translation", 
+            'rotate_cw': "circular wrist rotation clockwise maintaining consistent radius",
+            'rotate_ccw': "circular wrist rotation counterclockwise maintaining consistent radius",
+            'jerk_up': "rapid sharp upward jerking motion quick acceleration immediate stop",
+            'jerk_down': "rapid sharp downward jerking motion quick acceleration immediate stop",
+            'jerk_left': "abrupt lateral movement left sudden acceleration quick cessation",
+            'jerk_right': "abrupt lateral movement right sudden acceleration quick cessation",
+            'square': "angular path tracing four equal sides crisp precise corner turns",
+            'circle': "smooth continuous curved motion perfect closed loop without breaks",
+            'triangle': "geometric path three connected straight lines angular transitions",
+            'hook': "curved motion starting upward arc sharply hooking downward",
+            'infinity': "continuous figure eight path smooth symmetrical crossing"
+        }
+        
+        return [descriptions.get(name.lower(), f"{name} gesture") for name in label_names]
+
+    def _train_word2vec(self, descriptions):
+        """
+        Train a Word2Vec model on gesture descriptions
+        """
+        # Tokenize descriptions
+        sentences = [desc.lower().split() for desc in descriptions]
+        
+        # Train Word2Vec model
+        model = Word2Vec(sentences, vector_size=100, window=5, min_count=1, workers=4)
+        
+        return model
+
+    def _compute_semantic_sims(self):
+        """
+        Compute semantic similarity matrix between gesture descriptions using Word2Vec
+        """
+        num_gestures = len(self.descriptions)
+        sim_matrix = torch.zeros((num_gestures, num_gestures)).to(self.device)
+        
+        # Get document embeddings by averaging word vectors
+        doc_vectors = []
+        for desc in self.descriptions:
+            words = desc.lower().split()
+            word_vectors = [self.word2vec_model.wv[word] for word in words if word in self.word2vec_model.wv]
+            doc_vector = np.mean(word_vectors, axis=0)
+            doc_vectors.append(doc_vector)
+        
+        doc_vectors = np.array(doc_vectors)
+        
+        # Compute cosine similarities
+        for i in range(num_gestures):
+            for j in range(num_gestures):
+                cos_sim = np.dot(doc_vectors[i], doc_vectors[j]) / (
+                    np.linalg.norm(doc_vectors[i]) * np.linalg.norm(doc_vectors[j]))
+                sim_matrix[i, j] = cos_sim
+        
+        # Apply transformations to enhance similarity structure
+        sim_matrix = (sim_matrix - sim_matrix.min()) / (1 - sim_matrix.min())
+        sim_matrix = torch.pow(sim_matrix, 3)
+        
+        # Threshold-based enhancement
+        very_similar = (sim_matrix > 0.95).float()
+        somewhat_similar = ((sim_matrix > 0.85) & (sim_matrix <= 0.95)).float()
+        different = (sim_matrix <= 0.85).float()
+        
+        sim_matrix = (very_similar * sim_matrix * 1.2 +
+                     somewhat_similar * sim_matrix * 0.8 +
+                     different * sim_matrix * 0.5)
+        
+        return sim_matrix
     
     def semantic_loss(self, embeddings, labels, base_margin=1.0):
         """
@@ -202,18 +335,14 @@ class SemanticLoss(nn.Module):
         """
         Compute NT-Xent contrastive loss
         """
-        # Project and normalize features
         features = self.contrastive_projection(embeddings)
         features = F.normalize(features, dim=1)
         
-        # Compute similarity matrix
         similarity_matrix = torch.matmul(features, features.T) / self.temperature
         
-        # Create mask for positive pairs (same label)
         labels = labels.view(-1, 1)
         mask = torch.eq(labels, labels.T).float()
         
-        # Remove self-contrast cases
         logits_mask = torch.scatter(
             torch.ones_like(mask),
             1,
@@ -223,11 +352,9 @@ class SemanticLoss(nn.Module):
         
         mask = mask * logits_mask
         
-        # Compute log_prob
         exp_logits = torch.exp(similarity_matrix) * logits_mask
         log_prob = similarity_matrix - torch.log(exp_logits.sum(1, keepdim=True))
         
-        # Compute mean of log-likelihood over positive pairs
         mean_log_prob_pos = (mask * log_prob).sum(1) / mask.sum(1).clamp(min=1)
         
         return -mean_log_prob_pos.mean()
@@ -239,20 +366,17 @@ class SemanticLoss(nn.Module):
         sem_loss = self.semantic_loss(embeddings, labels)
         cont_loss = self.contrastive_loss(embeddings, labels)
         
-        # Dynamic weighting based on training epoch
-        semantic_weight = min(0.3, (epoch / 10) * 0.3)  # Gradually increase to 0.3
-        contrastive_weight = min(0.5, (epoch / 20) * 0.5)  # Gradually increase to 0.5
+        semantic_weight = min(0.3, (epoch / 10) * 0.3)
+        contrastive_weight = min(0.5, (epoch / 20) * 0.5)
         
         total_loss = sem_loss * semantic_weight + cont_loss * contrastive_weight
         
-        # Return both total loss and components for logging
         return total_loss, {
             'semantic_loss': sem_loss.item(),
             'contrastive_loss': cont_loss.item(),
             'total_loss': total_loss.item()
         }
     
-
 def classify_embeddings(args, data, labels, label_index, training_rate, label_rate, balance=False, method=None):
     # contrastive + semantic learning
     try:
