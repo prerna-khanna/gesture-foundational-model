@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModel
 
 
-
 class SemanticLoss(nn.Module):
     def __init__(self, label_names, descriptions, pooling, device, temperature=0.07, hidden_dim=128):
         super().__init__()
