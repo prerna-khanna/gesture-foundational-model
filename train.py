@@ -22,14 +22,30 @@ from utils import count_model_parameters
 class Trainer(object):
     """Training Helper Class"""
     def __init__(self, cfg, model, optimizer, save_path, device):
-        self.cfg = cfg # config for training : see class Config
+        self.cfg = cfg  # config for training : see class Config
         self.model = model
         self.optimizer = optimizer
         self.save_path = save_path
-        self.device = device # device name
+        self.device = device  # device name
+        
+        # Create save directory if it doesn't exist
+        save_dir = os.path.dirname(self.save_path)
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir, exist_ok=True)
+            
+        # Create log file path
         run_id = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        log_filename = f'loss_acc_{run_id}.txt'  # Example: loss_acc_2025-02-11_14-30-00.txt
-        self.log_path = os.path.join(self.save_path, log_filename)
+        log_filename = f'loss_acc_{run_id}.txt'
+        
+        # Ensure directory exists for log file
+        log_dir = os.path.dirname(self.save_path)
+        self.log_path = os.path.join(log_dir, log_filename)
+        
+        # Create log directory if it doesn't exist
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir, exist_ok=True)
+            
+        print(f"Log file will be saved to: {self.log_path}")
 
     def pretrain(self, func_loss, func_forward, func_evaluate
               , data_loader_train, data_loader_test, model_file=None, data_parallel=False):

@@ -101,35 +101,51 @@ if __name__ == "__main__":
     # Example descriptions
 
     """descriptions = [
-        "Vertical upward motion starting from rest position, controlled ascent", 
-        "Vertical downward motion with steady arm trajectory, controlled descent", 
-        "Horizontal lateral movement to the left side, smooth arm translation", 
-        "Horizontal lateral movement to the right side, smooth arm translation",
-        "Circular wrist rotation moving clockwise, maintaining consistent radius",
-        "Circular wrist rotation moving anticlockwise, maintaining consistent radius",
-        "Rapid, sharp upward jerking motion with quick acceleration and immediate stop",
-        "Rapid, sharp downward jerking motion with quick acceleration and immediate stop",
-        "Abrupt lateral movement to the left with sudden acceleration and quick cessation",
-        "Abrupt lateral movement to the right with sudden acceleration and quick cessation",
-        "Angular path tracing four equal sides with crisp, precise 90-degree corner turns",
-        "Smooth, continuous curved motion forming a perfect closed loop without corner breaks",
-        "Geometric path creating three connected straight lines with distinct angular transitions",
-        "Curved motion starting with an upward arc, then sharply hooking downward",
-        "Continuous figure-eight path with smooth, symmetrical mid-point crossing"
-    ]"""
+            
+            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+            "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
+            "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
+            
+            "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
+            "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
+            
+            
+            "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
+            "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
+            "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
+            "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
+            
+           
+            "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+            "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+            "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
+            "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
+        ]"""
+    
     descriptions = [
-        "Quick single touch and release on earbud surface with consistent moderate pressure",
-        "Two rapid successive taps with brief interval, maintaining uniform pressure and timing",
-        "Smooth vertical sliding motion from bottom to top of earbud surface with steady contact",
-        "Continuous downward sliding gesture from top to bottom with maintained finger contact",
-        "Sustained finger contact on earbud surface with steady pressure for extended duration",
-        "Circular finger movement on earbud surface maintaining continuous contact and even pressure",
-        "Precise tap action on bottom portion of earbud with focused point of contact",
-        "Targeted tap gesture on upper section of earbud with controlled impact force",
-        "Gentle tapping motion on ear's upper cartilage area while wearing earbud",
-        "Light tapping contact on soft earlobe tissue near earbud position",
-        "Firm tap on jawline below ear, utilizing bone conduction properties"
-    ]
+    # Basic tap gestures
+    f"a Single tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
+    f"a Double tap gesture with properties: primary type: tap, direction: direct, complexity: complex",
+    
+    # Swipe gestures
+    f"a Upward swipe gesture with properties: primary type: directional, direction: up, complexity: simple",
+    f"a Downward swipe gesture with properties: primary type: directional, direction: down, complexity: simple",
+    
+    # Press gesture
+    f"a Long press gesture with properties: primary type: stationary, direction: direct, complexity: simple",
+    
+    # Rotational gesture
+    f"a Finger rotation gesture with properties: primary type: rotational, direction: circular, complexity: complex",
+    
+    # Location-specific taps
+    f"a Lower earbud tap gesture with properties: primary type: tap, direction: bottom, complexity: simple",
+    f"a Upper earbud tap gesture with properties: primary type: tap, direction: top, complexity: simple",
+    f"a Ear top tap gesture with properties: primary type: tap, direction: cartilage, complexity: simple",
+    f"a Earlobe tap gesture with properties: primary type: tap, direction: lobe, complexity: simple",
+    f"a Jaw tap gesture with properties: primary type: tap, direction: jaw, complexity: simple"
+]
 
     """descriptions = ["move forearm upwards", "move forearm down", "move forearm left", "move forearm right", "rotate wrist and then move forearm right", "rotate wrist and then move forearm left", "flick wrist and then move forearm up", "flick wrist and then move forearm down", "flick wrist andthen move forearm  left", "flick wrist and then move forearm right", "draw square in the air", "draw circle in the air", "draw triangle in the air", "draw question mark in the air", "draw infinity in the air"]
     """

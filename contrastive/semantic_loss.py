@@ -27,6 +27,7 @@ class SemanticLoss(nn.Module):
     def compute_semantic_similarities(self, label_names, descriptions):
         print("description is ", descriptions)
         with torch.no_grad():
+            
             inputs = self.tokenizer(descriptions, padding=True, return_tensors="pt").to(self.device)
             outputs = self.model(**inputs)
             hidden_states = outputs.last_hidden_state
