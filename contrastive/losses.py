@@ -15,6 +15,18 @@ class ContrastiveCombinedLoss(nn.Module):
         self.semantic_criterion = SemanticLoss(label_names, descriptions, pooling, device, hidden_dim=hidden_dim)
         self.classification_criterion = nn.CrossEntropyLoss()
 
+    def compute_contrastive_loss(self, features, labels):
+        features = F.normalize(features, dim=1)
+        similarity_matrix = torch.matmul(features, features.T) / self.temperature
+        labels = labels.view(-1, 1)
+        mask = torch.eq(labels, labels.T).float().to(self.device)
+        logits_mask = torch.ones_like(mask).to(self.device) - torch.eye(mask.shape[0]).to(self.device)
+        mask = mask * logits_mask
+        exp_logits = torch.exp(similarity_matrix) * logits_mask
+        log_prob = similarity_matrix - torch.log(exp_logits.sum(1, keepdim=True))
+        mean_log_prob_pos = (mask * log_prob).sum(1) / mask.sum(1).clamp(min=1)
+        return -mean_log_prob_pos.mean()
+
     def forward(self, logits, features, projected, labels, epoch=0):
         """
         Compute combined loss with all components
@@ -41,9 +53,14 @@ class ContrastiveCombinedLoss(nn.Module):
         w_semantic = max(0.1, min(0.3, (epoch / 10) * 0.3))
         w_contrastive = max(0.1, min(0.5, (epoch / 20) * 0.5))
         
+        w_classification = 1
+        """w_semantic = 1
+        w_contrastive = 0.5"""
+        
+        
         # Combine all losses
         total_loss = (
-            classification_loss + 
+            classification_loss * w_classification + 
             semantic_loss * w_semantic + 
             contrastive_loss * w_contrastive
         )
@@ -54,18 +71,4 @@ class ContrastiveCombinedLoss(nn.Module):
             'contrastive_loss': contrastive_loss.item(),
             'total_loss': total_loss.item()
         }
-    
-
-    def compute_contrastive_loss(self, features, labels):
-        # Previous implementation remains the same...
-        features = F.normalize(features, dim=1)
-        similarity_matrix = torch.matmul(features, features.T) / self.temperature
-        labels = labels.view(-1, 1)
-        mask = torch.eq(labels, labels.T).float().to(self.device)
-        logits_mask = torch.ones_like(mask).to(self.device) - torch.eye(mask.shape[0]).to(self.device)
-        mask = mask * logits_mask
-        exp_logits = torch.exp(similarity_matrix) * logits_mask
-        log_prob = similarity_matrix - torch.log(exp_logits.sum(1, keepdim=True))
-        mean_log_prob_pos = (mask * log_prob).sum(1) / mask.sum(1).clamp(min=1)
-        return -mean_log_prob_pos.mean()
     
