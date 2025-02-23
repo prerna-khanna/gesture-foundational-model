@@ -87,7 +87,7 @@ def plot_metrics(log_text):
     plt.savefig('metrics_plot.png')
 
 # Read the log text from file
-with open('saved/classifier_contrastive_gru_blind_user_20_120/loss_acc_2025-02-19_19-14-49.txt', 'r') as f:
+with open('saved/classifier_contrastive_gru_blind_user_20_120/loss_acc_2025-02-20_21-01-08.txt', 'r') as f:
     log_text = f.read()
 
 # Create the plots

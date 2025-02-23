@@ -24,6 +24,15 @@ class SemanticLoss(nn.Module):
         self.semantic_sims = self.compute_semantic_similarities(label_names, descriptions)
     
     def compute_semantic_similarities(self, label_names, descriptions):
+
+        """descriptions = [
+            f"a {name} gesture with properties: " + 
+            f"primary type: {'directional' if name in ['up', 'down', 'left', 'right'] else 'rotational' if 'rotate' in name or name in ['circle'] else 'shape' if name in ['square', 'triangle', 'infinity'] else 'complex'}, " +
+            f"direction: {name.split()[0]}, " +
+            f"complexity: {'simple' if name in ['up', 'down', 'left', 'right'] else 'complex'}"
+            for name in label_names
+        ]"""
+
         print("description is ", descriptions)
         with torch.no_grad():
             

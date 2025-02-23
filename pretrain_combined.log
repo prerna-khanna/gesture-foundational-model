@@ -1,0 +1,48 @@
+2025-02-20 22:01:03,643 - INFO - Starting script
+2025-02-20 22:01:03,643 - INFO - Handling arguments for mode: base
+2025-02-20 22:01:03,644 - INFO - Starting main with training_rate=0.8
+2025-02-20 22:01:03,644 - INFO - Starting main function
+2025-02-20 22:01:03,644 - INFO - Loading combined datasets with training_rate=0.8
+2025-02-20 22:01:03,689 - INFO - Successfully loaded combined datasets
+2025-02-20 22:01:03,689 - INFO - Loading configurations
+2025-02-20 22:01:03,690 - INFO - Successfully loaded configurations
+2025-02-20 22:01:03,690 - INFO - Setting up preprocessing pipeline
+2025-02-20 22:01:03,690 - INFO - Preparing train/test split
+2025-02-20 22:01:03,699 - INFO - Train data shape: (12630, 120, 6), Test data shape: (1578, 120, 6)
+2025-02-20 22:01:03,699 - INFO - Creating data loaders
+2025-02-20 22:01:03,699 - INFO - Creating DataLoader with batch_size=128
+2025-02-20 22:01:03,699 - INFO - Successfully created data loaders
+2025-02-20 22:01:03,699 - INFO - Initializing model
+2025-02-20 22:01:03,701 - INFO - Model architecture:
+LIMUBertModel4Pretrain(
+  (transformer): Transformer(
+    (embed): Embeddings(
+      (lin): Linear(in_features=6, out_features=72, bias=True)
+      (pos_embed): Embedding(120, 72)
+      (nucleus_embed): Embedding(2, 72)
+      (sig_axis_embed): Embedding(2, 72)
+      (norm): LayerNorm()
+    )
+    (attn): MultiHeadedSelfAttention(
+      (proj_q): Linear(in_features=72, out_features=72, bias=True)
+      (proj_k): Linear(in_features=72, out_features=72, bias=True)
+      (proj_v): Linear(in_features=72, out_features=72, bias=True)
+    )
+    (proj): Linear(in_features=72, out_features=72, bias=True)
+    (norm1): LayerNorm()
+    (pwff): PositionWiseFeedForward(
+      (fc1): Linear(in_features=72, out_features=144, bias=True)
+      (fc2): Linear(in_features=144, out_features=72, bias=True)
+    )
+    (norm2): LayerNorm()
+  )
+  (fc): Linear(in_features=72, out_features=72, bias=True)
+  (linear): Linear(in_features=72, out_features=72, bias=True)
+  (norm): LayerNorm()
+  (decoder): Linear(in_features=72, out_features=6, bias=True)
+)
+2025-02-20 22:01:04,060 - INFO - Initialized optimizer with learning rate: 0.001
+2025-02-20 22:01:04,082 - INFO - Using device: cuda:0
+2025-02-20 22:01:04,082 - INFO - Successfully initialized trainer
+2025-02-20 22:01:04,082 - INFO - Starting training process
+2025-02-20 22:01:04,082 - INFO - Training with pretrained model: None
