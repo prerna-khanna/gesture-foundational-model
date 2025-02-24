@@ -1,10 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.autograd import Variable
 from contrastive.augmenter import GestureAugmenter
-from contrastive.semantic_loss import SemanticLoss
-
+from contrastive.semantic_prob import ProbabilisticSemanticLoss
 
 class ContrastiveCombinedLoss(nn.Module):
     def __init__(self, label_names, descriptions, pooling, device, temperature=0.07, hidden_dim=128):
@@ -12,7 +10,14 @@ class ContrastiveCombinedLoss(nn.Module):
         self.pooling = pooling
         self.device = device
         self.temperature = temperature
-        self.semantic_criterion = SemanticLoss(label_names, descriptions, pooling, device, hidden_dim=hidden_dim)
+        # Use ProbabilisticSemanticLoss instead of original SemanticLoss
+        self.semantic_criterion = ProbabilisticSemanticLoss(
+            label_names, 
+            descriptions, 
+            pooling, 
+            device, 
+            hidden_dim=hidden_dim
+        )
         self.classification_criterion = nn.CrossEntropyLoss()
 
     def compute_contrastive_loss(self, features, labels):
@@ -29,7 +34,7 @@ class ContrastiveCombinedLoss(nn.Module):
 
     def forward(self, logits, features, projected, labels, epoch=0):
         """
-        Compute combined loss with all components
+        Compute combined loss with all components including probabilistic semantic loss
         
         Args:
             logits: Classification outputs [batch_size, num_classes]
@@ -38,13 +43,18 @@ class ContrastiveCombinedLoss(nn.Module):
             labels: Ground truth labels [batch_size]
             epoch: Current training epoch
         """
+        # Get class probabilities from logits
+        class_probs = F.softmax(logits, dim=1)
         
         # Classification loss
         classification_loss = self.classification_criterion(logits, labels)
         
-        # Semantic loss
-        semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
-        semantic_loss = semantic_output[0] if isinstance(semantic_output, tuple) else semantic_output
+        # Semantic loss with class probabilities
+        semantic_loss = self.semantic_criterion(
+            features=features, 
+            class_probs=class_probs,
+            epoch=epoch
+        )
         
         # Contrastive loss
         contrastive_loss = self.compute_contrastive_loss(projected, labels)
@@ -52,11 +62,7 @@ class ContrastiveCombinedLoss(nn.Module):
         # Dynamic weighting starting with small non-zero values
         w_semantic = max(0.1, min(0.3, (epoch / 10) * 0.3))
         w_contrastive = max(0.1, min(0.5, (epoch / 20) * 0.5))
-        
-        w_classification = 1
-        """w_semantic = 1
-        w_contrastive = 0.5"""
-        
+        w_classification = 1.0
         
         # Combine all losses
         total_loss = (
@@ -71,4 +77,3 @@ class ContrastiveCombinedLoss(nn.Module):
             'contrastive_loss': contrastive_loss.item(),
             'total_loss': total_loss.item()
         }
-    
