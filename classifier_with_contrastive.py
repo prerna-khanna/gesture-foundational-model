@@ -11,6 +11,8 @@ import math
 import argparse
 import copy
 import json
+import os
+import numpy as np
 from sklearn.model_selection import ParameterGrid
 
 from contrastive.augmenter import GestureAugmenter
@@ -40,15 +42,21 @@ def create_config_with_params(original_cfg, params):
         'total_steps': original_cfg.total_steps,
         'lambda1': original_cfg.lambda1,
         'lambda2': params.get('lambda2', original_cfg.lambda2),
-        'pooling': original_cfg.pooling
+        'pooling': getattr(original_cfg, 'pooling', 'mean')  # Default to 'mean' if not present
     }
-    return argparse.Namespace(**config_dict)
+    return type(original_cfg)(**config_dict)
 
 
-def classify_embeddings(args, data, labels, label_index, training_rate, label_rate, balance=False, method=None):
+def classify_embeddings(args, data, labels, label_index, training_rate, label_rate, balance=False, method=None, params=None):
     # contrastive + semantic learning
     try:
         train_cfg, model_cfg, dataset_cfg = load_classifier_config(args)
+        
+        # Update configuration with custom parameters if provided
+        if params:
+            train_cfg = create_config_with_params(train_cfg, params)
+            print(f"Using custom parameters: {params}")
+        
         label_names, label_num, descriptions = load_dataset_label_names(dataset_cfg, label_index)
         device = get_device(args.gpu)
         
@@ -82,7 +90,7 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
 
         # Initialize model with the calculated hidden dimension
         model = ContrastiveGRUClassifier(
-            input_dim=data_train.shape[-1],  # 72 from your data
+            input_dim=data_train.shape[-1],  # Feature dimension
             hidden_dim=hidden_dim,           # Using our default or config value
             num_classes=label_num
         ).to(device)
@@ -93,15 +101,22 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         criterion = ContrastiveCombinedLoss(
             label_names=label_names, 
             descriptions=descriptions,
-            pooling=train_cfg.pooling,
+            pooling=getattr(train_cfg, 'pooling', 'mean'),  # Default to 'mean' if not present
             device=device,
             hidden_dim=hidden_dim  # Pass the hidden dimension
         )
         
         # Setup optimizer and trainer
         optimizer = torch.optim.Adam(params=model.parameters(), lr=train_cfg.lr)
-        print(f"Optimizer initialized with args: {train_cfg}")
-        trainer = train.Trainer(train_cfg, model, optimizer, args.save_path, device)
+        print(f"Optimizer initialized with learning rate: {train_cfg.lr}")
+        
+        # Create a unique save path for this parameter configuration if doing grid search
+        save_path = args.save_path
+        if params:
+            param_str = '_'.join([f"{k}_{v}" for k, v in params.items()])
+            save_path = f"{args.save_path}_{param_str}"
+        
+        trainer = train.Trainer(train_cfg, model, optimizer, save_path, device)
 
         def func_loss(model, batch, current_epoch=0):
             inputs, label = batch
@@ -117,10 +132,6 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
                 labels=label,
                 epoch=current_epoch
             )
-            
-            print(f"Epoch {current_epoch} - Loss Components:")
-            for loss_name, loss_value in loss_dict.items():
-                print(f"  {loss_name}: {loss_value:.4f}")
             
             return total_loss, loss_dict
 
@@ -142,8 +153,11 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         # Final evaluation on test set
         label_estimate_test = trainer.run(func_forward, None, data_loader_test)
         
-        print("Training completed successfully")
-        return label_test, label_estimate_test
+        # Calculate final metrics
+        acc, matrix, f1 = stat_results(label_test, label_estimate_test)
+        
+        print(f"Training completed successfully. Test Accuracy: {acc:.4f}, F1: {f1:.4f}")
+        return label_test, label_estimate_test, acc, f1
         
     except Exception as e:
         print(f"Error in classify_embeddings: {str(e)}")
@@ -151,6 +165,114 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         import traceback
         traceback.print_exc()
         raise e
+
+
+def run_grid_search(args, embedding, labels, label_index, training_rate, label_rate, balance=True, method="gru", param_grid=None):
+    """
+    Run grid search over the parameter grid to find the best hyperparameters.
+    
+    Args:
+        args: Command line arguments
+        embedding: Embedding data
+        labels: Label data
+        label_index: Index of labels to use
+        training_rate: Rate of training data to use
+        label_rate: Rate of labeled data to use
+        balance: Whether to balance classes
+        method: Method to use (e.g., "gru")
+        param_grid: Dictionary of parameter grids to search over
+    
+    Returns:
+        best_params: Best parameters found
+        best_acc: Best accuracy found
+        best_f1: Best F1 score found
+        results: All results from grid search
+    """
+    if param_grid is None:
+        print("No parameter grid provided, using default parameters.")
+        return None, None, None, None
+    
+    # Create a grid of all parameter combinations
+    grid = list(ParameterGrid(param_grid))
+    print(f"Running grid search with {len(grid)} parameter combinations.")
+    
+    # Create directory for grid search results
+    results_dir = os.path.join('results', f'grid_search_{args.dataset}_{args.dataset_version}')
+    os.makedirs(results_dir, exist_ok=True)
+    
+    # Initialize tracking variables
+    best_acc = 0
+    best_f1 = 0
+    best_params = None
+    results = []
+    
+    # Results file
+    results_file = os.path.join(results_dir, f'grid_search_results_{args.save_model}.csv')
+    
+    # Write header to results file
+    with open(results_file, 'w') as f:
+        params_header = ','.join(param_grid.keys())
+        f.write(f"{params_header},accuracy,f1_score\n")
+    
+    # Run each parameter combination
+    for i, params in enumerate(grid):
+        print(f"\n\n===== Running parameter combination {i+1}/{len(grid)} =====")
+        print(f"Parameters: {params}")
+        
+        try:
+            # Modify args to create a unique save path for this run
+            param_str = '_'.join([f"{k}_{v}" for k, v in params.items()])
+            run_args = copy.deepcopy(args)
+            run_args.save_model = f"{args.save_model}_{param_str}"
+            
+            # Run training with these parameters
+            _, _, acc, f1 = classify_embeddings(
+                run_args, embedding, labels, label_index, 
+                training_rate, label_rate, balance, method, params
+            )
+            
+            # Track results
+            result = {**params, 'accuracy': acc, 'f1_score': f1}
+            results.append(result)
+            
+            # Write results to file
+            with open(results_file, 'a') as f:
+                params_values = ','.join([str(params[k]) for k in param_grid.keys()])
+                f.write(f"{params_values},{acc},{f1}\n")
+            
+            # Update best parameters if this combination is better
+            if acc > best_acc:
+                best_acc = acc
+                best_f1 = f1
+                best_params = params
+                print(f"New best: Accuracy = {best_acc:.4f}, F1 = {best_f1:.4f}")
+                print(f"Best parameters: {best_params}")
+            
+        except Exception as e:
+            print(f"Error with parameters {params}: {str(e)}")
+            # Write error to results file
+            with open(results_file, 'a') as f:
+                params_values = ','.join([str(params[k]) for k in param_grid.keys()])
+                f.write(f"{params_values},ERROR,ERROR\n")
+    
+    # Write final results summary
+    summary_file = os.path.join(results_dir, f'grid_search_summary_{args.save_model}.json')
+    with open(summary_file, 'w') as f:
+        summary = {
+            'best_params': best_params,
+            'best_accuracy': float(best_acc),
+            'best_f1': float(best_f1),
+            'all_results': results
+        }
+        json.dump(summary, f, indent=2)
+    
+    print("\n===== Grid Search Complete =====")
+    print(f"Best Accuracy: {best_acc:.4f}, F1: {best_f1:.4f}")
+    print(f"Best Parameters: {best_params}")
+    print(f"Results saved to {results_dir}")
+    
+    return best_params, best_acc, best_f1, results
+
 
 if __name__ == "__main__":
     try:
@@ -160,26 +282,100 @@ if __name__ == "__main__":
         
         mode = "contrastive"
         method = "gru"
+        
+        # Modify the argument parser to include grid search options
+        # This needs to be done before handle_argv is called
+        import sys
+        
+        # Check if grid search options are in command line arguments
+        grid_search_enabled = "--grid_search" in sys.argv
+        grid_config_path = None
+        
+        # Check for grid config path
+        if "--grid_config" in sys.argv:
+            try:
+                idx = sys.argv.index("--grid_config")
+                if idx + 1 < len(sys.argv):
+                    grid_config_path = sys.argv[idx + 1]
+                    # Remove these arguments so they don't interfere with handle_argv
+                    sys.argv.remove("--grid_config")
+                    sys.argv.remove(grid_config_path)
+            except:
+                pass
+                
+        # Remove grid_search flag if present
+        if grid_search_enabled:
+            sys.argv.remove("--grid_search")
+        
+        # Now handle the standard arguments
         args = handle_argv('classifier_' + mode + "_" + method, 'train.json', method)
         
+        # Default parameter grid
+        param_grid = {
+            'batch_size': [64, 128, 256],
+            'lr': [1e-4, 1e-3, 5e-3],
+            'n_epochs': [200, 500, 1000],
+            'warmup': [0.1, 0.2],
+            'lambda2': [0.001, 0.005, 0.01]
+        }
+        
+        # Load custom parameter grid if specified
+        if grid_config_path:
+            try:
+                with open(grid_config_path, 'r') as f:
+                    param_grid = json.load(f)
+                print(f"Loaded parameter grid from {grid_config_path}")
+            except Exception as e:
+                print(f"Error loading grid config: {str(e)}")
+                print("Using default parameter grid.")
+        
+        # Load data
         embedding, labels = load_embedding_label(args.model_file, args.dataset, args.dataset_version)
         print("Data dimensions:", embedding.shape, "Label dimensions:", labels.shape)
 
-        label_test, label_estimate_test = classify_embeddings(
-            args, embedding, labels, args.label_index,
-            training_rate, label_rate, balance=balance, method=method
-        )
-
-        if label_test is not None:
-            label_names, label_num, descriptions = load_dataset_label_names(args.dataset_cfg, args.label_index)
+        # Run grid search if enabled
+        if grid_search_enabled:
+            print("Running grid search...")
+            best_params, best_acc, best_f1, _ = run_grid_search(
+                args, embedding, labels, args.label_index,
+                training_rate, label_rate, balance, method, param_grid
+            )
             
-            if descriptions is None:
-                print("Warning: No descriptions found in dataset config")
-                descriptions = [f"{name} gesture" for name in label_names]
+            # Train final model with best parameters if grid search was successful
+            if best_params:
+                print("Training final model with best parameters...")
+                final_args = copy.deepcopy(args)
+                final_args.save_model = f"{args.save_model}_best"
+                label_test, label_estimate_test, _, _ = classify_embeddings(
+                    final_args, embedding, labels, args.label_index,
+                    training_rate, label_rate, balance, method, best_params
+                )
+                
+                # Plot confusion matrix for best model
+                label_names, label_num, descriptions = load_dataset_label_names(args.dataset_cfg, args.label_index)
+                acc, matrix, f1 = stat_results(label_test, label_estimate_test)
+                print(f"Final model - Accuracy: {acc:.4f}, F1 score: {f1:.4f}")
+                matrix_norm = plot_matrix(matrix, label_names)
+            
+        else:
+            # Run normal training without grid search
+            print("Running normal training...")
+            label_test, label_estimate_test = classify_embeddings(
+                args, embedding, labels, args.label_index,
+                training_rate, label_rate, balance, method
+            )
 
-            acc, matrix, f1 = stat_results(label_test, label_estimate_test)
-            print("calculated acc, matrix, f1")
-            matrix_norm = plot_matrix(matrix, label_names)
+            # Plot confusion matrix
+            if label_test is not None:
+                label_names, label_num, descriptions = load_dataset_label_names(args.dataset_cfg, args.label_index)
+                
+                if descriptions is None:
+                    print("Warning: No descriptions found in dataset config")
+                    descriptions = [f"{name} gesture" for name in label_names]
+
+                acc, matrix, f1 = stat_results(label_test, label_estimate_test)
+                print(f"Normal training - Accuracy: {acc:.4f}, F1 score: {f1:.4f}")
+                matrix_norm = plot_matrix(matrix, label_names)
             
     except Exception as e:
         print(f"Error in main: {str(e)}")

@@ -77,7 +77,7 @@
         "dimension": 6,
         "activity_label_index": 0,
         "activity_label_size": 15,
-        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist andleft", "flick wrist and right", "square", "circle", "triangle", "question mark", "infinity"],
+        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and left", "flick wrist and right", "square", "circle", "triangle", "question mark", "infinity"],
         "user_label_index": 1,
         "user_label_size": 10,
         "size": 1439,
@@ -98,6 +98,40 @@
             
            
             "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+            "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+            "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
+            "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
+        ]
+    },
+
+    "blind_user_filtered_20_120": {
+        "sr": 20,
+        "seq_len": 120,
+        "dimension": 6,
+        "activity_label_index": 0,
+        "activity_label_size": 13,
+        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and right", "circle", "triangle", "question mark", "infinity"],
+        "user_label_index": 1,
+        "user_label_size": 10,
+        "size": 1247,
+        "descriptions": [
+            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+            "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
+            "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
+            
+            "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
+            "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
+            
+            
+            "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
+            "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
+            
+            "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
+            
+           
+            
             "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
             "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
             "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
