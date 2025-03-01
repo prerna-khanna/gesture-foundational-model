@@ -1,12 +1,12 @@
 {
     "seed": 3431,
     "batch_size": 64,
-    "lr": 5e-3,
-    "n_epochs": 1000,
+    "lr": 0.001,
+    "n_epochs": 500,
     "warmup": 0.1,
     "save_steps": 100,
     "total_steps": 500000000,
     "lambda1": 0.0,
-    "lambda2": 0.01,
+    "lambda2": 0.001,
     "pooling": "cls"
 }

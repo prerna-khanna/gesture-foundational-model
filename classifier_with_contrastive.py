@@ -207,7 +207,7 @@ def run_grid_search(args, embedding, labels, label_index, training_rate, label_r
     results = []
     
     # Results file
-    results_file = os.path.join(results_dir, f'grid_search_results_{args.save_model}.csv')
+    results_file = os.path.join(results_dir, f'grid_search_results_new_{args.save_model}.csv')
     
     # Write header to results file
     with open(results_file, 'w') as f:
@@ -312,10 +312,10 @@ if __name__ == "__main__":
         
         # Default parameter grid
         param_grid = {
-            'batch_size': [64, 128, 256],
+            'batch_size': [256],
             'lr': [1e-4, 1e-3, 5e-3],
             'n_epochs': [200, 500, 1000],
-            'warmup': [0.1, 0.2],
+            #'warmup': [0.1, 0.2],
             'lambda2': [0.001, 0.005, 0.01]
         }
         
