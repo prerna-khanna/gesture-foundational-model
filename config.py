@@ -12,7 +12,7 @@ import os
 # from bunch import bunchify
 
 
-class PretrainModelConfig(NamedTuple):
+"""class PretrainModelConfig(NamedTuple):
     "Configuration for BERT model"
     hidden: int = 0  # Dimension of Hidden Layer in Transformer Encoder
     hidden_ff: int = 0  # Dimension of Intermediate Layers in Positionwise Feedforward Net
@@ -27,6 +27,26 @@ class PretrainModelConfig(NamedTuple):
     @classmethod
     def from_json(cls, js):
         return cls(**js)
+    """
+
+
+class PretrainModelConfig(NamedTuple): # BERT model configuration class for pretraining with conformer blocks
+    "Configuration for BERT model"
+    hidden: int = 0  # Dimension of Hidden Layer in Transformer Encoder
+    hidden_ff: int = 0  # Dimension of Intermediate Layers in Positionwise Feedforward Net
+    feature_num: int = 0  # Factorized embedding parameterization
+    
+    n_layers: int = 0  # Number of Hidden Layers
+    n_heads: int = 0  # Number of Heads in Multi-Headed Attention Layers
+    seq_len: int = 0  # Maximum Length for Positional Embeddings
+    emb_norm: bool = True
+    use_conformer: bool = False  # Whether to use Conformer architecture
+    
+    @classmethod
+    def from_json(cls, js):
+        return cls(**js)
+    
+
 
 
 class ClassifierModelConfig(NamedTuple):
@@ -58,8 +78,7 @@ class ClassifierModelConfig(NamedTuple):
         return cls(**js)
 
 
-class TrainConfig(NamedTuple):
-    """ Hyperparameters for training """
+"""class TrainConfig(NamedTuple): # vanilla training configuration class
     seed: int = 0  # random seed
     batch_size: int = 0
     lr: int = 0  # learning rate
@@ -76,6 +95,24 @@ class TrainConfig(NamedTuple):
 
     @classmethod
     def from_json(cls, file): # load config from json file
+        return cls(**json.load(open(file, "r")))"""
+ 
+class TrainConfig(NamedTuple): # training configuration class for pretraining with conformer blocks and frequency domain loss
+    """ Hyperparameters for training """
+    seed: int = 0
+    batch_size: int = 0
+    lr: int = 0
+    n_epochs: int = 0
+    warmup: float = 0
+    save_steps: int = 0
+    total_steps: int = 0
+    lambda1: float = 0
+    lambda2: float = 0
+    pooling: str = "cls"
+    freq_loss_alpha: float = 0.3  # Weight for frequency domain loss
+    
+    @classmethod
+    def from_json(cls, file):
         return cls(**json.load(open(file, "r")))
 
 

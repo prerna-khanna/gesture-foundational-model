@@ -11,6 +11,7 @@ import sys
 import numpy as np
 import torch
 import torch.nn as nn
+from losses import FrequencyDomainLoss
 import copy
 from torch.utils.data import Dataset, TensorDataset, DataLoader
 from torch.utils.tensorboard import SummaryWriter
@@ -34,22 +35,28 @@ def main(args, training_rate):
     data_set_test = LIBERTDataset4Pretrain(data_test, pipeline=pipeline)
     data_loader_train = DataLoader(data_set_train, shuffle=True, batch_size=train_cfg.batch_size)
     data_loader_test = DataLoader(data_set_test, shuffle=False, batch_size=train_cfg.batch_size)
-    model = LIMUBertModel4Pretrain(model_cfg)
+    #model = LIMUBertModel4Pretrain(model_cfg)
+    model = LIMUBertModel4Pretrain(model_cfg, use_conformer=model_cfg.use_conformer)
 
-    criterion = nn.MSELoss(reduction='none')
+    #criterion = nn.MSELoss(reduction='none')
+    criterion = FrequencyDomainLoss(alpha=train_cfg.freq_loss_alpha, reduction='none')
 
     optimizer = torch.optim.Adam(params=model.parameters(), lr=train_cfg.lr)
     device = get_device(args.gpu)
     #device = torch.device("mps")
     trainer = train.Trainer(train_cfg, model, optimizer, args.save_path, device)
 
-    def func_loss(model, batch):
+    """def func_loss(model, batch):
         mask_seqs, masked_pos, seqs = batch #
-
         seq_recon = model(mask_seqs, masked_pos) #
         loss_lm = criterion(seq_recon, seqs) # for masked LM
-        return loss_lm
-
+        return loss_lm"""
+    
+    def func_loss(model, batch): # This is the loss function for the pretraining task with frequency domain loss and convolutional layers
+        mask_seqs, masked_pos, seqs = batch
+        seq_recon = model(mask_seqs, masked_pos)
+        loss_lm = criterion(seq_recon, seqs)  # This now uses frequency domain loss
+        return loss_lm  # Make sure you're returning the loss!
     def func_forward(model, batch):
         mask_seqs, masked_pos, seqs = batch
         seq_recon = model(mask_seqs, masked_pos)
