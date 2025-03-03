@@ -17,7 +17,9 @@ from sklearn.model_selection import ParameterGrid
 
 from contrastive.augmenter import GestureAugmenter
 from contrastive.losses import ContrastiveCombinedLoss
-from contrastive.models import ContrastiveGRUClassifier
+from contrastive.models import ContrastiveGRUClassifier, ContrastiveLSTMClassifier, ContrastiveTransformerClassifier, ContrastiveBiGRUClassifier, ContrastiveBiLSTMAttentionClassifier, ContrastiveTCNClassifier
+from contrastive.models import ContrastiveSVMClassifier
+from contrastive.losses import ContrastiveSVMLoss
 
 import train
 from config import load_dataset_label_names
@@ -89,7 +91,7 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         data_loader_test = DataLoader(data_set_test, shuffle=False, batch_size=train_cfg.batch_size)
 
         # Initialize model with the calculated hidden dimension
-        model = ContrastiveGRUClassifier(
+        model = ContrastiveTCNClassifier(
             input_dim=data_train.shape[-1],  # Feature dimension
             hidden_dim=hidden_dim,           # Using our default or config value
             num_classes=label_num
@@ -101,10 +103,19 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         criterion = ContrastiveCombinedLoss(
             label_names=label_names, 
             descriptions=descriptions,
-            pooling=getattr(train_cfg, 'pooling', 'mean'),  # Default to 'mean' if not present
+            pooling=getattr(train_cfg, 'pooling', 'cls'),  # Default to 'mean' if not present
             device=device,
             hidden_dim=hidden_dim  # Pass the hidden dimension
         )
+
+        # Only when using SVM classifier
+        """criterion = ContrastiveSVMLoss(
+            label_names=label_names, 
+            descriptions=descriptions,
+            pooling=getattr(train_cfg, 'pooling', 'cls'),
+            device=device,
+            hidden_dim=hidden_dim
+        )"""
         
         # Setup optimizer and trainer
         optimizer = torch.optim.Adam(params=model.parameters(), lr=train_cfg.lr)
@@ -360,7 +371,7 @@ if __name__ == "__main__":
         else:
             # Run normal training without grid search
             print("Running normal training...")
-            label_test, label_estimate_test = classify_embeddings(
+            label_test, label_estimate_test, acc, f1 = classify_embeddings(
                 args, embedding, labels, args.label_index,
                 training_rate, label_rate, balance, method
             )
