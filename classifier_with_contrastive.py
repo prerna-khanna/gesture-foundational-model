@@ -91,7 +91,7 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         data_loader_test = DataLoader(data_set_test, shuffle=False, batch_size=train_cfg.batch_size)
 
         # Initialize model with the calculated hidden dimension
-        model = ContrastiveTCNClassifier(
+        model = ContrastiveTransformerClassifier(
             input_dim=data_train.shape[-1],  # Feature dimension
             hidden_dim=hidden_dim,           # Using our default or config value
             num_classes=label_num
@@ -323,9 +323,9 @@ if __name__ == "__main__":
         
         # Default parameter grid
         param_grid = {
-            'batch_size': [256],
+            'batch_size': [64],
             'lr': [1e-4, 1e-3, 5e-3],
-            'n_epochs': [200, 500, 1000],
+            'n_epochs': [500, 1000],
             #'warmup': [0.1, 0.2],
             'lambda2': [0.001, 0.005, 0.01]
         }
