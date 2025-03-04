@@ -46,22 +46,8 @@ class NucleusImpactVisualizer:
         self.labels = np.load(label_path).astype(np.float32)
         
         # Load label names
-        try:
-            # First try with the fixed function signature
-            self.label_names, self.label_num = load_dataset_label_names(self.dataset_cfg, args.label_index)
-            print(f"Loaded {self.label_num} classes: {self.label_names}")
-        except Exception as e:
-            print(f"Error loading label names with standard signature: {e}")
-            # Fallback to alternate function signature
-            try:
-                self.label_names, self.label_num, _ = load_dataset_label_names(self.dataset_cfg, args.label_index)
-                print(f"Loaded {self.label_num} classes with alternate signature: {self.label_names}")
-            except Exception as e2:
-                print(f"Error loading label names with alternate signature: {e2}")
-                # Create default label names if loading fails
-                self.label_num = len(np.unique(self.labels[:, 0, args.label_index]))
-                self.label_names = [f"Class {i}" for i in range(self.label_num)]
-                print(f"Using default label names for {self.label_num} classes")
+        self.label_names, self.label_num, _ = load_dataset_label_names(self.dataset_cfg, args.label_index)
+        print(f"Loaded {self.label_num} classes: {self.label_names}")
         
         # Prepare dataset and loader
         pipeline = [Preprocess4Normalization(self.model_cfg.feature_num)]
@@ -117,6 +103,7 @@ class NucleusImpactVisualizer:
             # Use fixed seed for reproducibility
             set_seeds(42)
             sample_indices = np.random.choice(len(self.dataset), min(num_samples, len(self.dataset)), replace=False)
+            
         
         for idx in sample_indices:
             print(f"Processing sample {idx}...")
@@ -180,13 +167,8 @@ class NucleusImpactVisualizer:
                               fill=False, edgecolor='red', linewidth=2)
             ax.add_patch(rect)
         
-        # Get activity label safely
         activity_label = int(label[0, self.args.label_index])
-        # Make sure we don't go out of bounds with the label index
-        if self.label_names and activity_label < len(self.label_names):
-            activity_name = self.label_names[activity_label]
-        else:
-            activity_name = f"Class {activity_label}"
+        activity_name = self.label_names[activity_label] if self.label_names else f"Class {activity_label}"
         
         plt.title(f"Attention Map - {activity_name} (Sample {sample_idx})")
         plt.xlabel("Sequence Position")
@@ -238,13 +220,8 @@ class NucleusImpactVisualizer:
                 plt.axvline(start, color='orange', linestyle='--')
                 plt.axvline(end, color='orange', linestyle='--')
             
-            # Get activity label safely
             activity_label = int(label[0, self.args.label_index])
-            # Make sure we don't go out of bounds with the label index
-            if self.label_names and activity_label < len(self.label_names):
-                activity_name = self.label_names[activity_label]
-            else:
-                activity_name = f"Class {activity_label}"
+            activity_name = self.label_names[activity_label] if self.label_names else f"Class {activity_label}"
             
             # Add labels and legend
             plt.title(f"IMU Signal with Nucleus Region - {activity_name} (Sample {idx})")
@@ -268,7 +245,6 @@ class NucleusImpactVisualizer:
         non_nucleus_attention_avg = []
         
         for idx in sample_indices:
-            print(f"Processing sample {idx} for attention comparison...")
             # Get sample
             seqs, label = self.dataset[idx]
             seqs = seqs.unsqueeze(0).to(self.device)
@@ -278,12 +254,6 @@ class NucleusImpactVisualizer:
             
             # Detect nucleus
             batch_nucleus_points = detect_nucleus(energy)
-            
-            # Skip samples where nucleus detection failed
-            if len(batch_nucleus_points[0]) != 2:
-                print(f"Skipping sample {idx} - nucleus detection failed")
-                continue
-                
             nucleus_mask = self.generate_nucleus_mask(seqs.size(1), batch_nucleus_points)
             nucleus_mask = nucleus_mask.to(self.device)
             
@@ -311,22 +281,21 @@ class NucleusImpactVisualizer:
                     attn_matrix = attn_matrix[0]
                 
                 # Calculate average attention in nucleus vs non-nucleus regions
-                start, end = batch_nucleus_points[0]
-                
-                # Get nucleus region attention
-                nucleus_region = attn_matrix[start:end, start:end]
-                nucleus_attention_avg.append(nucleus_region.mean())
-                
-                # Get non-nucleus region attention
-                # Create mask for non-nucleus regions
-                seq_len = attn_matrix.shape[0]
-                non_nucleus_mask = np.ones((seq_len, seq_len), dtype=bool)
-                non_nucleus_mask[start:end, start:end] = False
-                
-                non_nucleus_region = attn_matrix[non_nucleus_mask].reshape(-1)
-                non_nucleus_attention_avg.append(non_nucleus_region.mean())
-            else:
-                print(f"Warning: No attention scores captured for sample {idx}")
+                if len(batch_nucleus_points[0]) == 2:
+                    start, end = batch_nucleus_points[0]
+                    
+                    # Get nucleus region attention
+                    nucleus_region = attn_matrix[start:end, start:end]
+                    nucleus_attention_avg.append(nucleus_region.mean())
+                    
+                    # Get non-nucleus region attention
+                    # Create mask for non-nucleus regions
+                    seq_len = attn_matrix.shape[0]
+                    non_nucleus_mask = np.ones((seq_len, seq_len), dtype=bool)
+                    non_nucleus_mask[start:end, start:end] = False
+                    
+                    non_nucleus_region = attn_matrix[non_nucleus_mask].reshape(-1)
+                    non_nucleus_attention_avg.append(non_nucleus_region.mean())
         
         # Create visualization if data was collected
         if nucleus_attention_avg and non_nucleus_attention_avg:
@@ -509,28 +478,8 @@ class NucleusImpactVisualizer:
             
             # Generate confusion matrix
             cm = confusion_matrix(y_test, y_pred)
-            
-            # Make a safe list of class names for the confusion matrix
-            unique_classes = np.unique(y)
-            safe_class_names = []
-            for cls_idx in range(len(unique_classes)):
-                if cls_idx < len(self.label_names):
-                    safe_class_names.append(self.label_names[cls_idx])
-                else:
-                    safe_class_names.append(f"Class {cls_idx}")
-            
             plt.figure(figsize=(10, 8))
-            try:
-                plot_matrix(cm, safe_class_names)
-            except:
-                print(f"Error plotting confusion matrix with class names, using default plot")
-                # Fallback to simple plot
-                plt.imshow(cm, cmap='Blues')
-                plt.colorbar()
-                plt.title(f'Confusion Matrix - {name}')
-                plt.xlabel('Predicted Label')
-                plt.ylabel('True Label')
-            
+            plot_matrix(cm, self.label_names)
             plt.savefig(os.path.join(self.output_dir, f"confusion_matrix_{name.replace(' ', '_')}.png"))
             plt.close()
         
@@ -582,35 +531,20 @@ class NucleusImpactVisualizer:
         """Run all visualizations"""
         print("\n=== Starting nucleus and significant axis impact analysis ===")
         
-        try:
-            print("\nVisualizing attention with nucleus regions...")
-            self.visualize_attention_with_nucleus(num_samples=3)
-        except Exception as e:
-            print(f"Error in attention visualization: {e}")
+        print("\nVisualizing attention with nucleus regions...")
+        self.visualize_attention_with_nucleus(num_samples=3)
         
-        try:
-            print("\nVisualizing raw signals with nucleus regions...")
-            self.visualize_raw_signal_with_nucleus(num_samples=3)
-        except Exception as e:
-            print(f"Error in raw signal visualization: {e}")
+        print("\nVisualizing raw signals with nucleus regions...")
+        self.visualize_raw_signal_with_nucleus(num_samples=3)
         
-        try:
-            print("\nComparing attention in nucleus vs non-nucleus regions...")
-            self.compare_attention_nucleus_vs_non_nucleus(num_samples=10)
-        except Exception as e:
-            print(f"Error in nucleus vs non-nucleus comparison: {e}")
+        print("\nComparing attention in nucleus vs non-nucleus regions...")
+        self.compare_attention_nucleus_vs_non_nucleus(num_samples=10)
         
-        try:
-            print("\nVisualizing embeddings with t-SNE...")
-            self.visualize_embeddings_tsne()
-        except Exception as e:
-            print(f"Error in t-SNE visualization: {e}")
+        print("\nVisualizing embeddings with t-SNE...")
+        self.visualize_embeddings_tsne()
         
-        try:
-            print("\nComparing classification performance...")
-            self.compare_classification_performance()
-        except Exception as e:
-            print(f"Error in classification performance comparison: {e}")
+        print("\nComparing classification performance...")
+        self.compare_classification_performance()
         
         print(f"\n=== Analysis complete. Results saved to {self.output_dir} ===")
 

@@ -111,7 +111,7 @@ def compute_mobile_masks(imu_data):
         imu_data = imu_data.unsqueeze(0)
     
     energy = compute_energy(imu_data)
-    batch_nucleus_points = detect_nucleus(energy, window=20, nucleus_thres=8)
+    batch_nucleus_points = detect_nucleus(energy)
     
     seq_len = imu_data.size(1)
     nucleus_mask = torch.zeros((1, seq_len), dtype=torch.long)

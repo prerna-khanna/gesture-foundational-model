@@ -242,10 +242,32 @@
         "dimension": 6,
         "activity_label_index": 0,
         "activity_label_size": 15,
-        "activity_label": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],
+        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and left", "flick wrist and right", "square", "circle", "triangle", "question mark", "infinity"],
         "user_label_index": 1,
         "user_label_size": 8,
-        "size": 219
+        "size": 219,
+        "descriptions": [
+            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+            "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
+            "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
+            
+            "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
+            "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
+            
+            
+            "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
+            "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
+            "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
+            "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
+            
+           
+            "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+            "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+            "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
+            "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
+        ]
     },
 
 
@@ -255,10 +277,61 @@
         "dimension": 6,
         "activity_label_index": 1,
         "activity_label_size": 5,
-        "activity_label": ["1", "2", "3", "4", "5"],
+        "activity_label": ["left", "right", "up", "down", "tap"],
         "user_label_index": 0,
         "user_label_size": 23,
-        "size": 1538
+        "size": 1538,
+        "descriptions": [
+            "a Leftward motion gesture with properties: primary type: directional, direction: left, complexity: simple",
+            "a Rightward motion gesture with properties: primary type: directional, direction: right, complexity: simple",
+            "a Upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+            "a Downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+            "a Tap gesture with properties: primary type: tap, direction: direct, complexity: simple"
+        ]
+    },
+
+    "sony_watch_20_120": {
+        "sr": 20,
+        "seq_len": 120,
+        "dimension": 6,
+        "activity_label_index": 0,
+        "activity_label_size": 20,
+        "activity_label": [
+            "horizontal right", "horizontal left", "vertical up", "vertical down",
+            "clockwise circle", "counter-clockwise circle", "counter-clockwise square", "clockwise square",
+            "right diagonal", "left diagonal", "vertical down double", "horizontal right double",
+            "V-shape down-up", "V-shape up-down", "triangle upward", "triangle downward",
+            "S-curve leftward", "S-curve rightward", "wave leftward", "wave rightward"
+        ],
+        "user_label_index": 1,
+        "user_label_size": 8,
+        "size": 1538,
+        "descriptions": [
+            "a Horizontal rightward motion gesture with properties: primary type: directional, direction: right, complexity: simple",
+            "a Horizontal leftward motion gesture with properties: primary type: directional, direction: left, complexity: simple",
+            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+            
+            "a Clockwise circular motion gesture with properties: primary type: shape, direction: clockwise, complexity: complex",
+            "a Counter-clockwise circular motion gesture with properties: primary type: shape, direction: counter-clockwise, complexity: complex",
+            "a Counter-clockwise square tracing gesture with properties: primary type: shape, direction: counter-clockwise, complexity: complex",
+            "a Clockwise square tracing gesture with properties: primary type: shape, direction: clockwise, complexity: complex",
+            
+            "a Diagonal rightward motion gesture with properties: primary type: directional, direction: right-diagonal, complexity: simple",
+            "a Diagonal leftward motion gesture with properties: primary type: directional, direction: left-diagonal, complexity: simple",
+            "a Double vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: moderate",
+            "a Double horizontal rightward motion gesture with properties: primary type: directional, direction: right, complexity: moderate",
+            
+            "a V-shaped downward then upward motion gesture with properties: primary type: shape, direction: mixed, complexity: moderate",
+            "a V-shaped upward then downward motion gesture with properties: primary type: shape, direction: mixed, complexity: moderate",
+            "a Triangle upward pointing tracing gesture with properties: primary type: shape, direction: mixed, complexity: complex",
+            "a Triangle downward pointing tracing gesture with properties: primary type: shape, direction: mixed, complexity: complex",
+            
+            "a S-curve leftward tracing gesture with properties: primary type: shape, direction: left, complexity: complex",
+            "a S-curve rightward tracing gesture with properties: primary type: shape, direction: right, complexity: complex",
+            "a Wave-like leftward motion gesture with properties: primary type: shape, direction: left, complexity: complex",
+            "a Wave-like rightward motion gesture with properties: primary type: shape, direction: right, complexity: complex"
+        ]
     },
 
 

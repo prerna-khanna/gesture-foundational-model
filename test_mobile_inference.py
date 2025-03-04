@@ -36,7 +36,7 @@ def compute_masks(imu_data):
         
     # Compute energy
     energy = compute_energy(imu_data)
-    batch_nucleus_points = detect_nucleus(energy, window=20, nucleus_thres=8)
+    batch_nucleus_points = detect_nucleus(energy)
     
     # Generate nucleus mask
     seq_len = imu_data.size(1)
