@@ -1,637 +1,394 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Description: Visualizer for nucleus-based embedding and significant axis impact in LIMU-BERT
 
-import os
-import numpy as np
 import torch
 import torch.nn as nn
-import matplotlib.pyplot as plt
-import seaborn as sns
-from torch.utils.data import DataLoader, Subset
-from sklearn.manifold import TSNE
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
+import torch.nn.functional as F
+from torch.utils.data import DataLoader
+from transformers import AutoTokenizer, AutoModel
+import random
+import math
 import argparse
+import copy
+import json
+import os
+import numpy as np
+from sklearn.model_selection import ParameterGrid
 
-# Import project modules
-from models import LIMUBertModel4Pretrain, Transformer
-from features import detect_nucleus, compute_energy, calculate_significant_axis
-from utils import IMUDataset, Preprocess4Normalization, get_device, set_seeds, handle_argv
-from config import load_dataset_stats, load_model_config, load_dataset_label_names
+from contrastive.augmenter import GestureAugmenter
+from contrastive.losses import ContrastiveCombinedLoss
+from contrastive.models import ContrastiveGRUClassifier, ContrastiveLSTMClassifier, ContrastiveTransformerClassifier, ContrastiveBiGRUClassifier, ContrastiveBiLSTMAttentionClassifier, ContrastiveTCNClassifier
+from contrastive.models import ContrastiveSVMClassifier
+from contrastive.losses import ContrastiveSVMLoss
+
+import train
+from config import load_dataset_label_names
+from embedding import load_embedding_label
+from models import fetch_classifier
 from plot import plot_matrix
+from statistic import stat_acc_f1, stat_results
+from utils import get_device, handle_argv, IMUDataset, load_classifier_config, prepare_classifier_dataset
 
-class NucleusImpactVisualizer:
-    def __init__(self, args):
-        self.args = args
-        self.device = get_device(args.gpu)
-        print(f"Using device: {self.device}")
+
+def create_config_with_params(original_cfg, params):
+    """
+    Creates a new configuration by updating the original config with new parameters.
+    """
+    config_dict = {
+        'seed': original_cfg.seed,
+        'batch_size': params.get('batch_size', original_cfg.batch_size),
+        'lr': params.get('lr', original_cfg.lr),
+        'n_epochs': params.get('n_epochs', original_cfg.n_epochs),
+        'warmup': params.get('warmup', original_cfg.warmup),
+        'save_steps': original_cfg.save_steps,
+        'total_steps': original_cfg.total_steps,
+        'lambda1': original_cfg.lambda1,
+        'lambda2': params.get('lambda2', original_cfg.lambda2),
+        'pooling': getattr(original_cfg, 'pooling', 'mean')  # Default to 'mean' if not present
+    }
+    return type(original_cfg)(**config_dict)
+
+
+def classify_embeddings(args, data, labels, label_index, training_rate, label_rate, balance=False, method=None, params=None):
+    # contrastive + semantic learning
+    try:
+        train_cfg, model_cfg, dataset_cfg = load_classifier_config(args)
         
-        # Create output directory
-        self.output_dir = f"nucleus_impact_analysis_{args.dataset}_{args.version}"
-        os.makedirs(self.output_dir, exist_ok=True)
+        # Update configuration with custom parameters if provided
+        if params:
+            train_cfg = create_config_with_params(train_cfg, params)
+            print(f"Using custom parameters: {params}")
         
-        # Load model config
-        self.model_cfg = load_model_config('pretrain', 'base', args.model_version)
+        label_names, label_num, descriptions = load_dataset_label_names(dataset_cfg, label_index)
+        device = get_device(args.gpu)
         
-        # Load dataset stats
-        self.dataset_cfg = load_dataset_stats(args.dataset, args.version)
+        print(f"Number of classes: {label_num}")
+        print(f"Label names: {label_names}")
+        print(f"Descriptions available: {descriptions is not None}")
+        if descriptions is None:
+            print("Warning: No descriptions found in dataset config, using labels as descriptions")
+            descriptions = [f"{name} gesture" for name in label_names]
         
-        # Load data
-        data_path = os.path.join('dataset', args.dataset, f'data_{args.version}.npy')
-        label_path = os.path.join('dataset', args.dataset, f'label_{args.version}.npy')
+        # Calculate hidden dimension if not in config
+        # Using 128 as default hidden dim - this is a common choice for gesture recognition
+        hidden_dim = getattr(model_cfg, 'hidden_dim', 128)
         
-        self.data = np.load(data_path).astype(np.float32)
-        self.labels = np.load(label_path).astype(np.float32)
+        # Prepare data
+        data_train, label_train, data_vali, label_vali, data_test, label_test = \
+            prepare_classifier_dataset(data, labels, label_index=label_index, training_rate=training_rate,
+                                     label_rate=label_rate, merge=model_cfg.seq_len, seed=train_cfg.seed,
+                                     balance=balance)
         
-        # Load label names
-        try:
-            # First try with the fixed function signature
-            self.label_names, self.label_num = load_dataset_label_names(self.dataset_cfg, args.label_index)
-            print(f"Loaded {self.label_num} classes: {self.label_names}")
-        except Exception as e:
-            print(f"Error loading label names with standard signature: {e}")
-            # Fallback to alternate function signature
-            try:
-                self.label_names, self.label_num, _ = load_dataset_label_names(self.dataset_cfg, args.label_index)
-                print(f"Loaded {self.label_num} classes with alternate signature: {self.label_names}")
-            except Exception as e2:
-                print(f"Error loading label names with alternate signature: {e2}")
-                # Create default label names if loading fails
-                self.label_num = len(np.unique(self.labels[:, 0, args.label_index]))
-                self.label_names = [f"Class {i}" for i in range(self.label_num)]
-                print(f"Using default label names for {self.label_num} classes")
+        # Create datasets with augmentation only for training
+        augmenter = GestureAugmenter()
+        data_set_train = IMUDataset(data_train, label_train, pipeline=[augmenter.augment])
+        data_set_vali = IMUDataset(data_vali, label_vali)  # No augmentation for validation
+        data_set_test = IMUDataset(data_test, label_test)  # No augmentation for testing
         
-        # Prepare dataset and loader
-        pipeline = [Preprocess4Normalization(self.model_cfg.feature_num)]
-        self.dataset = IMUDataset(self.data, self.labels, pipeline=pipeline)
-        self.data_loader = DataLoader(self.dataset, shuffle=False, batch_size=16)
+        # Create dataloaders
+        data_loader_train = DataLoader(data_set_train, shuffle=True, batch_size=train_cfg.batch_size)
+        data_loader_vali = DataLoader(data_set_vali, shuffle=False, batch_size=train_cfg.batch_size)
+        data_loader_test = DataLoader(data_set_test, shuffle=False, batch_size=train_cfg.batch_size)
+
+        # Initialize model with the calculated hidden dimension
+        model = ContrastiveGRUClassifier(
+            input_dim=data_train.shape[-1],  # Feature dimension
+            hidden_dim=hidden_dim,           # Using our default or config value
+            num_classes=label_num
+        ).to(device)
         
-        # Initialize model
-        self.model = LIMUBertModel4Pretrain(self.model_cfg, output_embed=True)
+        print(f"Model architecture initialized with hidden dimension: {hidden_dim}")
         
-        # Load model weights
-        model_path = args.model_file + '.pt'
-        print(f"Loading model from {model_path}")
-        try:
-            self.model.load_state_dict(torch.load(model_path, map_location=self.device, weights_only=True))
-        except:
-            print("Warning: Couldn't load with weights_only=True, trying without this parameter")
-            self.model.load_state_dict(torch.load(model_path, map_location=self.device))
+        # Initialize combined loss (classification + semantic + contrastive)
+        criterion = ContrastiveCombinedLoss(
+            label_names=label_names, 
+            descriptions=descriptions,
+            pooling=getattr(train_cfg, 'pooling', 'cls'),  # Default to 'mean' if not present
+            device=device,
+            hidden_dim=hidden_dim  # Pass the hidden dimension
+        )
+
+        # Only when using SVM classifier
+        """criterion = ContrastiveSVMLoss(
+            label_names=label_names, 
+            descriptions=descriptions,
+            pooling=getattr(train_cfg, 'pooling', 'cls'),
+            device=device,
+            hidden_dim=hidden_dim
+        )"""
         
-        self.model.to(self.device)
-        self.model.eval()
+        # Setup optimizer and trainer
+        optimizer = torch.optim.Adam(params=model.parameters(), lr=train_cfg.lr)
+        print(f"Optimizer initialized with learning rate: {train_cfg.lr}")
         
-        # Store attention scores
-        self.attention_scores = None
+        # Create a unique save path for this parameter configuration if doing grid search
+        save_path = args.save_path
+        if params:
+            param_str = '_'.join([f"{k}_{v}" for k, v in params.items()])
+            save_path = f"{args.save_path}_{param_str}"
         
-        # Register hooks to capture attention
-        self._register_attention_hooks()
-    
-    def _register_attention_hooks(self):
-        """Register hooks to capture attention weights"""
-        def hook_attention(module, input, output):
-            # Store attention scores
-            if hasattr(module, 'scores'):
-                self.attention_scores = module.scores.detach().clone()
-        
-        # Register the hook on the attention module
-        self.model.transformer.attn.register_forward_hook(hook_attention)
-    
-    def generate_nucleus_mask(self, seq_len, batch_nucleus_points):
-        """Generate a binary mask for nucleus regions"""
-        batch_size = len(batch_nucleus_points)
-        nucleus_mask = torch.zeros((batch_size, seq_len), dtype=torch.long)
-        
-        for i, nucleus_points in enumerate(batch_nucleus_points):
-            if len(nucleus_points) == 2:
-                start, end = nucleus_points
-                nucleus_mask[i, start:end] = 1  # Mark nucleus region with 1
-                
-        return nucleus_mask
-    
-    def visualize_attention_with_nucleus(self, sample_indices=None, num_samples=3):
-        """Visualize attention patterns with nucleus regions highlighted"""
-        if sample_indices is None:
-            # Use fixed seed for reproducibility
-            set_seeds(42)
-            sample_indices = np.random.choice(len(self.dataset), min(num_samples, len(self.dataset)), replace=False)
-        
-        for idx in sample_indices:
-            print(f"Processing sample {idx}...")
-            # Get sample
-            seqs, label = self.dataset[idx]
-            seqs = seqs.unsqueeze(0).to(self.device)
+        trainer = train.Trainer(train_cfg, model, optimizer, save_path, device)
+
+        def func_loss(model, batch, current_epoch=0):
+            inputs, label = batch
             
-            # Compute energy
-            energy = compute_energy(seqs)
+            # Get all outputs from model
+            logits, features, projected = model(inputs, True)
             
-            # Detect nucleus
-            batch_nucleus_points = detect_nucleus(energy)
-            nucleus_mask = self.generate_nucleus_mask(seqs.size(1), batch_nucleus_points)
-            nucleus_mask = nucleus_mask.to(self.device)
-            
-            # Calculate significant axis
-            sig_axis = calculate_significant_axis(seqs)
-            sig_axis_mask = (seqs.argmax(dim=-1) == sig_axis[:, None]).float()
-            sig_axis_mask = sig_axis_mask.to(self.device)
-            
-            # Forward pass to get attention weights
-            with torch.no_grad():
-                _ = self.model(seqs, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
-            
-            # Check if attention scores were captured
-            if self.attention_scores is not None:
-                # Process the attention scores
-                attn_matrix = self.attention_scores.cpu().numpy()
-                
-                # Handle different shapes - we want a 2D matrix
-                if len(attn_matrix.shape) == 4:
-                    # If shape is [batch_size, num_heads, seq_len, seq_len]
-                    # Take the first batch and average across heads
-                    attn_matrix = attn_matrix[0].mean(axis=0)
-                elif len(attn_matrix.shape) == 3:
-                    # If shape is [batch_size, seq_len, seq_len]
-                    attn_matrix = attn_matrix[0]
-                
-                # Create visualization
-                self._plot_attention_with_nucleus(
-                    attention_matrix=attn_matrix,
-                    nucleus_points=batch_nucleus_points[0],
-                    sample_idx=idx,
-                    label=label
-                )
-            else:
-                print("Warning: Attention scores not captured. Check hook implementation.")
-    
-    def _plot_attention_with_nucleus(self, attention_matrix, nucleus_points, sample_idx, label):
-        """Plot attention heatmap with nucleus region highlighted"""
-        plt.figure(figsize=(10, 8))
-        
-        # Plot attention heatmap
-        ax = sns.heatmap(attention_matrix, cmap='viridis')
-        
-        # Highlight nucleus region if available
-        if len(nucleus_points) == 2:
-            start, end = nucleus_points
-            # Add rectangle patch to highlight nucleus region
-            rect = plt.Rectangle((start, start), end-start, end-start, 
-                              fill=False, edgecolor='red', linewidth=2)
-            ax.add_patch(rect)
-        
-        # Get activity label safely
-        activity_label = int(label[0, self.args.label_index])
-        # Make sure we don't go out of bounds with the label index
-        if self.label_names and activity_label < len(self.label_names):
-            activity_name = self.label_names[activity_label]
-        else:
-            activity_name = f"Class {activity_label}"
-        
-        plt.title(f"Attention Map - {activity_name} (Sample {sample_idx})")
-        plt.xlabel("Sequence Position")
-        plt.ylabel("Attention")
-        
-        # Save figure
-        plt.savefig(os.path.join(self.output_dir, f"attention_map_sample_{sample_idx}.png"))
-        plt.close()
-    
-    def visualize_raw_signal_with_nucleus(self, sample_indices=None, num_samples=3):
-        """Visualize raw IMU signals with nucleus regions highlighted"""
-        if sample_indices is None:
-            # Use fixed seed for reproducibility
-            set_seeds(42)
-            sample_indices = np.random.choice(len(self.dataset), min(num_samples, len(self.dataset)), replace=False)
-        
-        for idx in sample_indices:
-            print(f"Visualizing raw signal for sample {idx}...")
-            # Get sample
-            seqs, label = self.dataset[idx]
-            
-            # Compute energy
-            energy = compute_energy(seqs.unsqueeze(0))
-            
-            # Detect nucleus
-            batch_nucleus_points = detect_nucleus(energy)
-            
-            # Create figure
-            plt.figure(figsize=(12, 6))
-            
-            # Convert to numpy for plotting
-            seqs_np = seqs.numpy()
-            
-            # Plot IMU data (first 3 channels - typically accelerometer X, Y, Z)
-            seq_len = seqs_np.shape[0]
-            time = np.arange(seq_len)
-            
-            # Plot each axis with a different color
-            colors = ['r', 'g', 'b']
-            labels = ['X-axis', 'Y-axis', 'Z-axis']
-            
-            for j in range(min(3, seqs_np.shape[1])):  # Plot first 3 dimensions
-                plt.plot(time, seqs_np[:, j], color=colors[j], label=labels[j])
-            
-            # Highlight nucleus region
-            if len(batch_nucleus_points[0]) == 2:
-                start, end = batch_nucleus_points[0]
-                plt.axvspan(start, end, alpha=0.3, color='yellow')
-                plt.axvline(start, color='orange', linestyle='--')
-                plt.axvline(end, color='orange', linestyle='--')
-            
-            # Get activity label safely
-            activity_label = int(label[0, self.args.label_index])
-            # Make sure we don't go out of bounds with the label index
-            if self.label_names and activity_label < len(self.label_names):
-                activity_name = self.label_names[activity_label]
-            else:
-                activity_name = f"Class {activity_label}"
-            
-            # Add labels and legend
-            plt.title(f"IMU Signal with Nucleus Region - {activity_name} (Sample {idx})")
-            plt.xlabel("Time Steps")
-            plt.ylabel("Sensor Reading")
-            plt.legend(loc='upper right')
-            plt.grid(True, linestyle='--', alpha=0.6)
-            
-            # Save figure
-            plt.savefig(os.path.join(self.output_dir, f"imu_signal_nucleus_sample_{idx}.png"))
-            plt.close()
-    
-    def compare_attention_nucleus_vs_non_nucleus(self, num_samples=10):
-        """Compare attention in nucleus vs non-nucleus regions"""
-        print("Comparing attention in nucleus vs non-nucleus regions...")
-        # Use fixed seed for reproducibility
-        set_seeds(42)
-        sample_indices = np.random.choice(len(self.dataset), min(num_samples, len(self.dataset)), replace=False)
-        
-        nucleus_attention_avg = []
-        non_nucleus_attention_avg = []
-        
-        for idx in sample_indices:
-            print(f"Processing sample {idx} for attention comparison...")
-            # Get sample
-            seqs, label = self.dataset[idx]
-            seqs = seqs.unsqueeze(0).to(self.device)
-            
-            # Compute energy
-            energy = compute_energy(seqs)
-            
-            # Detect nucleus
-            batch_nucleus_points = detect_nucleus(energy)
-            
-            # Skip samples where nucleus detection failed
-            if len(batch_nucleus_points[0]) != 2:
-                print(f"Skipping sample {idx} - nucleus detection failed")
-                continue
-                
-            nucleus_mask = self.generate_nucleus_mask(seqs.size(1), batch_nucleus_points)
-            nucleus_mask = nucleus_mask.to(self.device)
-            
-            # Calculate significant axis
-            sig_axis = calculate_significant_axis(seqs)
-            sig_axis_mask = (seqs.argmax(dim=-1) == sig_axis[:, None]).float()
-            sig_axis_mask = sig_axis_mask.to(self.device)
-            
-            # Forward pass to get attention weights
-            with torch.no_grad():
-                _ = self.model(seqs, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
-            
-            # Check if attention scores were captured
-            if self.attention_scores is not None:
-                # Process the attention scores
-                attn_matrix = self.attention_scores.cpu().numpy()
-                
-                # Handle different shapes
-                if len(attn_matrix.shape) == 4:
-                    # If shape is [batch_size, num_heads, seq_len, seq_len]
-                    # Take the first batch and average across heads
-                    attn_matrix = attn_matrix[0].mean(axis=0)
-                elif len(attn_matrix.shape) == 3:
-                    # If shape is [batch_size, seq_len, seq_len]
-                    attn_matrix = attn_matrix[0]
-                
-                # Calculate average attention in nucleus vs non-nucleus regions
-                start, end = batch_nucleus_points[0]
-                
-                # Get nucleus region attention
-                nucleus_region = attn_matrix[start:end, start:end]
-                nucleus_attention_avg.append(nucleus_region.mean())
-                
-                # Get non-nucleus region attention
-                # Create mask for non-nucleus regions
-                seq_len = attn_matrix.shape[0]
-                non_nucleus_mask = np.ones((seq_len, seq_len), dtype=bool)
-                non_nucleus_mask[start:end, start:end] = False
-                
-                non_nucleus_region = attn_matrix[non_nucleus_mask].reshape(-1)
-                non_nucleus_attention_avg.append(non_nucleus_region.mean())
-            else:
-                print(f"Warning: No attention scores captured for sample {idx}")
-        
-        # Create visualization if data was collected
-        if nucleus_attention_avg and non_nucleus_attention_avg:
-            self._plot_nucleus_vs_non_nucleus_comparison(nucleus_attention_avg, non_nucleus_attention_avg)
-        else:
-            print("Warning: No attention data collected for comparison.")
-    
-    def _plot_nucleus_vs_non_nucleus_comparison(self, nucleus_attention, non_nucleus_attention):
-        """Plot comparison of attention in nucleus vs non-nucleus regions"""
-        plt.figure(figsize=(10, 6))
-        
-        indices = range(len(nucleus_attention))
-        width = 0.35
-        
-        plt.bar([i - width/2 for i in indices], nucleus_attention, width, label='Nucleus Region', color='blue', alpha=0.7)
-        plt.bar([i + width/2 for i in indices], non_nucleus_attention, width, label='Non-Nucleus Region', color='orange', alpha=0.7)
-        
-        plt.xlabel('Sample Index')
-        plt.ylabel('Average Attention Weight')
-        plt.title('Attention Comparison: Nucleus vs Non-Nucleus Regions')
-        plt.legend()
-        plt.grid(True, linestyle='--', alpha=0.7)
-        
-        # Save figure
-        plt.savefig(os.path.join(self.output_dir, "nucleus_vs_non_nucleus_attention.png"))
-        plt.close()
-        
-        # Also calculate and print statistics
-        nucleus_mean = np.mean(nucleus_attention)
-        non_nucleus_mean = np.mean(non_nucleus_attention)
-        print(f"Nucleus region average attention: {nucleus_mean:.4f}")
-        print(f"Non-nucleus region average attention: {non_nucleus_mean:.4f}")
-        print(f"Ratio (nucleus/non-nucleus): {nucleus_mean/non_nucleus_mean:.4f}")
-        
-        with open(os.path.join(self.output_dir, "attention_stats.txt"), "w") as f:
-            f.write(f"Nucleus region average attention: {nucleus_mean:.4f}\n")
-            f.write(f"Non-nucleus region average attention: {non_nucleus_mean:.4f}\n")
-            f.write(f"Ratio (nucleus/non-nucleus): {nucleus_mean/non_nucleus_mean:.4f}\n")
-    
-    def generate_embeddings(self, use_nucleus=True, use_sig_axis=True, num_samples=100):
-        """Generate embeddings with specified features enabled/disabled"""
-        # Use a fixed set of samples for fair comparison
-        set_seeds(42)
-        indices = np.random.choice(len(self.dataset), min(num_samples, len(self.dataset)), replace=False)
-        subset = Subset(self.dataset, indices)
-        subset_loader = DataLoader(subset, batch_size=16, shuffle=False)
-        
-        all_embeddings = []
-        all_labels = []
-        
-        for batch_idx, (seqs, label) in enumerate(subset_loader):
-            seqs = seqs.to(self.device)
-            
-            # Compute energy
-            energy = compute_energy(seqs)
-            
-            # Detect nucleus if enabled
-            if use_nucleus:
-                batch_nucleus_points = detect_nucleus(energy)
-                nucleus_mask = self.generate_nucleus_mask(seqs.size(1), batch_nucleus_points)
-                nucleus_mask = nucleus_mask.to(self.device)
-            else:
-                nucleus_mask = None
-            
-            # Calculate significant axis if enabled
-            if use_sig_axis:
-                sig_axis = calculate_significant_axis(seqs)
-                sig_axis_mask = (seqs.argmax(dim=-1) == sig_axis[:, None]).float()
-                sig_axis_mask = sig_axis_mask.to(self.device)
-            else:
-                sig_axis_mask = None
-            
-            # Generate embeddings
-            with torch.no_grad():
-                embeddings = self.model(seqs, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
-            
-            all_embeddings.append(embeddings.cpu().numpy())
-            all_labels.append(label.cpu().numpy())
-        
-        # Concatenate results
-        embeddings = np.concatenate(all_embeddings, axis=0)
-        labels = np.concatenate(all_labels, axis=0)
-        
-        return embeddings, labels
-    
-    def visualize_embeddings_tsne(self):
-        """Visualize embeddings with t-SNE for different configurations"""
-        label_index = self.args.label_index
-        
-        # Generate embeddings with different configurations
-        print("Generating embeddings with different feature configurations...")
-        embeddings_full, labels = self.generate_embeddings(use_nucleus=True, use_sig_axis=True)
-        embeddings_no_nucleus, _ = self.generate_embeddings(use_nucleus=False, use_sig_axis=True)
-        embeddings_no_sig_axis, _ = self.generate_embeddings(use_nucleus=True, use_sig_axis=False)
-        embeddings_baseline, _ = self.generate_embeddings(use_nucleus=False, use_sig_axis=False)
-        
-        # Extract specific label type
-        y = labels[:, 0, label_index].astype(int)
-        
-        # Apply t-SNE to reduce dimensionality
-        print("Applying t-SNE dimensionality reduction...")
-        tsne = TSNE(n_components=2, random_state=42, perplexity=min(30, len(y)-1))
-        
-        embeddings_list = [
-            ('Full (Nucleus + Sig Axis)', embeddings_full),
-            ('No Nucleus', embeddings_no_nucleus),
-            ('No Sig Axis', embeddings_no_sig_axis),
-            ('Baseline (No Nucleus, No Sig Axis)', embeddings_baseline)
-        ]
-        
-        plt.figure(figsize=(20, 15))
-        
-        for idx, (name, embeddings) in enumerate(embeddings_list):
-            # Reshape embeddings and apply t-SNE
-            flat_embeddings = embeddings.reshape(embeddings.shape[0], -1)
-            reduced_embeddings = tsne.fit_transform(flat_embeddings)
-            
-            # Plot t-SNE
-            plt.subplot(2, 2, idx+1)
-            scatter = plt.scatter(reduced_embeddings[:, 0], reduced_embeddings[:, 1], 
-                      c=y, cmap='viridis', alpha=0.8, s=50)
-            plt.title(f't-SNE Visualization: {name}')
-            plt.colorbar(scatter, label='Class')
-            plt.xlabel('t-SNE Component 1')
-            plt.ylabel('t-SNE Component 2')
-        
-        plt.tight_layout()
-        plt.savefig(os.path.join(self.output_dir, 'tsne_comparison.png'), dpi=300)
-        plt.close()
-        
-        print("t-SNE visualization saved.")
-    
-    def compare_classification_performance(self):
-        """Compare classification performance with different feature configurations"""
-        label_index = self.args.label_index
-        
-        print("Generating embeddings for classification comparison...")
-        # Generate embeddings with different configurations
-        embeddings_full, labels = self.generate_embeddings(use_nucleus=True, use_sig_axis=True, num_samples=300)
-        embeddings_no_nucleus, _ = self.generate_embeddings(use_nucleus=False, use_sig_axis=True, num_samples=300)
-        embeddings_no_sig_axis, _ = self.generate_embeddings(use_nucleus=True, use_sig_axis=False, num_samples=300)
-        embeddings_baseline, _ = self.generate_embeddings(use_nucleus=False, use_sig_axis=False, num_samples=300)
-        
-        # Extract specific label type
-        y = labels[:, 0, label_index].astype(int)
-        
-        # Prepare embeddings for classification
-        embeddings_list = [
-            ('Full (Nucleus + Sig Axis)', embeddings_full.reshape(embeddings_full.shape[0], -1)),
-            ('No Nucleus', embeddings_no_nucleus.reshape(embeddings_no_nucleus.shape[0], -1)),
-            ('No Sig Axis', embeddings_no_sig_axis.reshape(embeddings_no_sig_axis.shape[0], -1)),
-            ('Baseline', embeddings_baseline.reshape(embeddings_baseline.shape[0], -1))
-        ]
-        
-        # Prepare results storage
-        results = []
-        
-        print("Training classifiers and evaluating performance...")
-        # Train and evaluate classifier for each embedding type
-        for name, embeddings in embeddings_list:
-            # Split data
-            X_train, X_test, y_train, y_test = train_test_split(
-                embeddings, y, test_size=0.3, random_state=42, stratify=y
+            # Pass all necessary components to criterion
+            total_loss, loss_dict = criterion(
+                logits=logits,
+                features=features,
+                projected=projected,
+                labels=label,
+                epoch=current_epoch
             )
             
-            # Train classifier
-            clf = RandomForestClassifier(n_estimators=100, random_state=42)
-            clf.fit(X_train, y_train)
-            
-            # Predict and evaluate
-            y_pred = clf.predict(X_test)
-            accuracy = accuracy_score(y_test, y_pred)
-            f1 = f1_score(y_test, y_pred, average='weighted')
-            
-            results.append({
-                'name': name,
-                'accuracy': accuracy,
-                'f1': f1
-            })
-            
-            # Generate confusion matrix
-            cm = confusion_matrix(y_test, y_pred)
-            
-            # Make a safe list of class names for the confusion matrix
-            unique_classes = np.unique(y)
-            safe_class_names = []
-            for cls_idx in range(len(unique_classes)):
-                if cls_idx < len(self.label_names):
-                    safe_class_names.append(self.label_names[cls_idx])
-                else:
-                    safe_class_names.append(f"Class {cls_idx}")
-            
-            plt.figure(figsize=(10, 8))
-            try:
-                plot_matrix(cm, safe_class_names)
-            except:
-                print(f"Error plotting confusion matrix with class names, using default plot")
-                # Fallback to simple plot
-                plt.imshow(cm, cmap='Blues')
-                plt.colorbar()
-                plt.title(f'Confusion Matrix - {name}')
-                plt.xlabel('Predicted Label')
-                plt.ylabel('True Label')
-            
-            plt.savefig(os.path.join(self.output_dir, f"confusion_matrix_{name.replace(' ', '_')}.png"))
-            plt.close()
+            return total_loss, loss_dict
+
+        def func_forward(model, batch):
+            inputs, label = batch
+            # For inference, we only need classification output
+            logits = model(inputs, False)
+            return logits, label
+
+        def func_evaluate(label, predicts):
+            # Compute accuracy and F1 score
+            stat = stat_acc_f1(label.cpu().numpy(), predicts.cpu().numpy())
+            return stat
+
+        # Train the model
+        trainer.train(func_loss, func_forward, func_evaluate,
+                     data_loader_train, data_loader_test, data_loader_vali)
         
-        # Visualize classification performance
-        self._plot_classification_performance(results)
+        # Final evaluation on test set
+        label_estimate_test = trainer.run(func_forward, None, data_loader_test)
         
-        print("Classification performance comparison saved.")
+        # Calculate final metrics
+        acc, matrix, f1 = stat_results(label_test, label_estimate_test)
+        
+        print(f"Training completed successfully. Test Accuracy: {acc:.4f}, F1: {f1:.4f}")
+        return label_test, label_estimate_test, acc, f1
+        
+    except Exception as e:
+        print(f"Error in classify_embeddings: {str(e)}")
+        print(f"Error type: {type(e)}")
+        import traceback
+        traceback.print_exc()
+        raise e
+
+
+def run_grid_search(args, embedding, labels, label_index, training_rate, label_rate, balance=True, method="gru", param_grid=None):
+    """
+    Run grid search over the parameter grid to find the best hyperparameters.
     
-    def _plot_classification_performance(self, results):
-        """Plot classification performance metrics"""
-        plt.figure(figsize=(12, 6))
-        
-        # Extract data
-        names = [r['name'] for r in results]
-        accuracies = [r['accuracy'] for r in results]
-        f1_scores = [r['f1'] for r in results]
-        
-        # Bar width
-        width = 0.35
-        
-        # Positions
-        x = np.arange(len(names))
-        
-        # Create bars
-        plt.bar(x - width/2, accuracies, width, label='Accuracy', color='blue', alpha=0.7)
-        plt.bar(x + width/2, f1_scores, width, label='F1 Score', color='green', alpha=0.7)
-        
-        # Add labels and legend
-        plt.xlabel('Embedding Configuration')
-        plt.ylabel('Score')
-        plt.title('Classification Performance Comparison')
-        plt.xticks(x, names, rotation=45, ha='right')
-        plt.legend()
-        plt.grid(True, linestyle='--', alpha=0.6)
-        
-        plt.tight_layout()
-        plt.savefig(os.path.join(self.output_dir, 'classification_performance.png'), dpi=300)
-        plt.close()
-        
-        # Also save as text
-        with open(os.path.join(self.output_dir, "classification_results.txt"), "w") as f:
-            f.write("Classification Performance Results:\n\n")
-            for result in results:
-                f.write(f"{result['name']}:\n")
-                f.write(f"  Accuracy: {result['accuracy']:.4f}\n")
-                f.write(f"  F1 Score: {result['f1']:.4f}\n\n")
+    Args:
+        args: Command line arguments
+        embedding: Embedding data
+        labels: Label data
+        label_index: Index of labels to use
+        training_rate: Rate of training data to use
+        label_rate: Rate of labeled data to use
+        balance: Whether to balance classes
+        method: Method to use (e.g., "gru")
+        param_grid: Dictionary of parameter grids to search over
     
-    def run_all_visualizations(self):
-        """Run all visualizations"""
-        print("\n=== Starting nucleus and significant axis impact analysis ===")
+    Returns:
+        best_params: Best parameters found
+        best_acc: Best accuracy found
+        best_f1: Best F1 score found
+        results: All results from grid search
+    """
+    if param_grid is None:
+        print("No parameter grid provided, using default parameters.")
+        return None, None, None, None
+    
+    # Create a grid of all parameter combinations
+    grid = list(ParameterGrid(param_grid))
+    print(f"Running grid search with {len(grid)} parameter combinations.")
+    
+    # Create directory for grid search results
+    results_dir = os.path.join('results', f'grid_search_{args.dataset}_{args.dataset_version}')
+    os.makedirs(results_dir, exist_ok=True)
+    
+    # Initialize tracking variables
+    best_acc = 0
+    best_f1 = 0
+    best_params = None
+    results = []
+    
+    # Results file
+    results_file = os.path.join(results_dir, f'grid_search_results_new_{args.save_model}.csv')
+    
+    # Write header to results file
+    with open(results_file, 'w') as f:
+        params_header = ','.join(param_grid.keys())
+        f.write(f"{params_header},accuracy,f1_score\n")
+    
+    # Run each parameter combination
+    for i, params in enumerate(grid):
+        print(f"\n\n===== Running parameter combination {i+1}/{len(grid)} =====")
+        print(f"Parameters: {params}")
         
         try:
-            print("\nVisualizing attention with nucleus regions...")
-            self.visualize_attention_with_nucleus(num_samples=3)
+            # Modify args to create a unique save path for this run
+            param_str = '_'.join([f"{k}_{v}" for k, v in params.items()])
+            run_args = copy.deepcopy(args)
+            run_args.save_model = f"{args.save_model}_{param_str}"
+            
+            # Run training with these parameters
+            _, _, acc, f1 = classify_embeddings(
+                run_args, embedding, labels, label_index, 
+                training_rate, label_rate, balance, method, params
+            )
+            
+            # Track results
+            result = {**params, 'accuracy': acc, 'f1_score': f1}
+            results.append(result)
+            
+            # Write results to file
+            with open(results_file, 'a') as f:
+                params_values = ','.join([str(params[k]) for k in param_grid.keys()])
+                f.write(f"{params_values},{acc},{f1}\n")
+            
+            # Update best parameters if this combination is better
+            if acc > best_acc:
+                best_acc = acc
+                best_f1 = f1
+                best_params = params
+                print(f"New best: Accuracy = {best_acc:.4f}, F1 = {best_f1:.4f}")
+                print(f"Best parameters: {best_params}")
+            
         except Exception as e:
-            print(f"Error in attention visualization: {e}")
-        
-        try:
-            print("\nVisualizing raw signals with nucleus regions...")
-            self.visualize_raw_signal_with_nucleus(num_samples=3)
-        except Exception as e:
-            print(f"Error in raw signal visualization: {e}")
-        
-        try:
-            print("\nComparing attention in nucleus vs non-nucleus regions...")
-            self.compare_attention_nucleus_vs_non_nucleus(num_samples=10)
-        except Exception as e:
-            print(f"Error in nucleus vs non-nucleus comparison: {e}")
-        
-        try:
-            print("\nVisualizing embeddings with t-SNE...")
-            self.visualize_embeddings_tsne()
-        except Exception as e:
-            print(f"Error in t-SNE visualization: {e}")
-        
-        try:
-            print("\nComparing classification performance...")
-            self.compare_classification_performance()
-        except Exception as e:
-            print(f"Error in classification performance comparison: {e}")
-        
-        print(f"\n=== Analysis complete. Results saved to {self.output_dir} ===")
+            print(f"Error with parameters {params}: {str(e)}")
+            # Write error to results file
+            with open(results_file, 'a') as f:
+                params_values = ','.join([str(params[k]) for k in param_grid.keys()])
+                f.write(f"{params_values},ERROR,ERROR\n")
+    
+    # Write final results summary
+    summary_file = os.path.join(results_dir, f'grid_search_summary_{args.save_model}.json')
+    with open(summary_file, 'w') as f:
+        summary = {
+            'best_params': best_params,
+            'best_accuracy': float(best_acc),
+            'best_f1': float(best_f1),
+            'all_results': results
+        }
+        json.dump(summary, f, indent=2)
+    
+    print("\n===== Grid Search Complete =====")
+    print(f"Best Accuracy: {best_acc:.4f}, F1: {best_f1:.4f}")
+    print(f"Best Parameters: {best_params}")
+    print(f"Results saved to {results_dir}")
+    
+    return best_params, best_acc, best_f1, results
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Visualize nucleus and significant axis impact')
-    
-    parser.add_argument('--model_file', type=str, required=True,
-                        help='Path to the pretrained model (without .pt extension)')
-    parser.add_argument('--model_version', type=str, default='v1',
-                        help='Model version (default: v1)')
-    parser.add_argument('--dataset', type=str, required=True,
-                        help='Dataset name (e.g., motion, hhar, uci, shoaib)')
-    parser.add_argument('--version', type=str, default='20_120',
-                        help='Dataset version (default: 20_120)')
-    parser.add_argument('--label_index', type=int, default=0,
-                        help='Label index for classification (default: 0, typically activity)')
-    parser.add_argument('--gpu', type=int, default=-1,
-                        help='GPU device ID (default: -1 for CPU)')
-    
-    args = parser.parse_args()
-    
-    visualizer = NucleusImpactVisualizer(args)
-    visualizer.run_all_visualizations()
+    try:
+        training_rate = 0.8
+        label_rate = 0.1
+        balance = True
+        
+        mode = "contrastive"
+        method = "gru"
+        
+        # Modify the argument parser to include grid search options
+        # This needs to be done before handle_argv is called
+        import sys
+        
+        # Check if grid search options are in command line arguments
+        grid_search_enabled = "--grid_search" in sys.argv
+        grid_config_path = None
+        
+        # Check for grid config path
+        if "--grid_config" in sys.argv:
+            try:
+                idx = sys.argv.index("--grid_config")
+                if idx + 1 < len(sys.argv):
+                    grid_config_path = sys.argv[idx + 1]
+                    # Remove these arguments so they don't interfere with handle_argv
+                    sys.argv.remove("--grid_config")
+                    sys.argv.remove(grid_config_path)
+            except:
+                pass
+                
+        # Remove grid_search flag if present
+        if grid_search_enabled:
+            sys.argv.remove("--grid_search")
+        
+        # Now handle the standard arguments
+        args = handle_argv('classifier_' + mode + "_" + method, 'train.json', method)
+        
+        # Default parameter grid
+        param_grid = {
+            'batch_size': [64],
+            'lr': [1e-4, 1e-3, 5e-3],
+            'n_epochs': [500, 1000],
+            #'warmup': [0.1, 0.2],
+            'lambda2': [0.001, 0.005, 0.01]
+        }
+        
+        # Load custom parameter grid if specified
+        if grid_config_path:
+            try:
+                with open(grid_config_path, 'r') as f:
+                    param_grid = json.load(f)
+                print(f"Loaded parameter grid from {grid_config_path}")
+            except Exception as e:
+                print(f"Error loading grid config: {str(e)}")
+                print("Using default parameter grid.")
+        
+        # Load data
+        embedding, labels = load_embedding_label(args.model_file, args.dataset, args.dataset_version)
+        print("Data dimensions:", embedding.shape, "Label dimensions:", labels.shape)
+
+        # Run grid search if enabled
+        if grid_search_enabled:
+            print("Running grid search...")
+            best_params, best_acc, best_f1, _ = run_grid_search(
+                args, embedding, labels, args.label_index,
+                training_rate, label_rate, balance, method, param_grid
+            )
+            
+            # Train final model with best parameters if grid search was successful
+            if best_params:
+                print("Training final model with best parameters...")
+                final_args = copy.deepcopy(args)
+                final_args.save_model = f"{args.save_model}_best"
+                label_test, label_estimate_test, _, _ = classify_embeddings(
+                    final_args, embedding, labels, args.label_index,
+                    training_rate, label_rate, balance, method, best_params
+                )
+                
+                # Plot confusion matrix for best model
+                label_names, label_num, descriptions = load_dataset_label_names(args.dataset_cfg, args.label_index)
+                acc, matrix, f1 = stat_results(label_test, label_estimate_test)
+                print(f"Final model - Accuracy: {acc:.4f}, F1 score: {f1:.4f}")
+                matrix_norm = plot_matrix(matrix, label_names)
+            
+        else:
+            # Run normal training without grid search
+            print("Running normal training...")
+            label_test, label_estimate_test, acc, f1 = classify_embeddings(
+                args, embedding, labels, args.label_index,
+                training_rate, label_rate, balance, method
+            )
+
+            # Plot confusion matrix
+            if label_test is not None:
+                label_names, label_num, descriptions = load_dataset_label_names(args.dataset_cfg, args.label_index)
+                
+                if descriptions is None:
+                    print("Warning: No descriptions found in dataset config")
+                    descriptions = [f"{name} gesture" for name in label_names]
+
+                acc, matrix, f1 = stat_results(label_test, label_estimate_test)
+                print(f"Normal training - Accuracy: {acc:.4f}, F1 score: {f1:.4f}")
+                matrix_norm = plot_matrix(matrix, label_names)
+            
+    except Exception as e:
+        print(f"Error in main: {str(e)}")
+        import traceback
+        traceback.print_exc()
