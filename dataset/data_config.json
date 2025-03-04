@@ -71,6 +71,33 @@
         ]
     },
 
+    "earbud_filtered_20_120": {
+        "sr": 20,
+        "seq_len": 120,
+        "dimension": 6,
+        "activity_label_index": 0,
+        "activity_label_size": 7,
+        "activity_label": ["Tap", "Double Tap", "Swipe upwards", "Swipe downwards", "Long press", "Rotate finger", "Tap on lower end"],
+        "user_label_index": 1,
+        "user_label_size": 10,
+        "size": 1538,
+        "descriptions": [
+            
+            "a Single tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
+            "a Double tap gesture with properties: primary type: tap, direction: direct, complexity: complex",
+            
+            "a Upward swipe gesture with properties: primary type: directional, direction: up, complexity: simple",
+            "a Downward swipe gesture with properties: primary type: directional, direction: down, complexity: simple",
+            
+            "a Long press gesture with properties: primary type: stationary, direction: direct, complexity: simple",
+
+            "a Finger rotation gesture with properties: primary type: rotational, direction: circular, complexity: complex",
+         
+            "a Lower earbud tap gesture with properties: primary type: tap, direction: bottom, complexity: simple"
+            
+        ]
+    },
+
     "blind_user_20_120": {
         "sr": 20,
         "seq_len": 120,
@@ -110,11 +137,11 @@
         "seq_len": 120,
         "dimension": 6,
         "activity_label_index": 0,
-        "activity_label_size": 13,
-        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and right", "circle", "triangle", "question mark", "infinity"],
+        "activity_label_size": 12,
+        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and left", "flick wrist and right", "square", "circle"],
         "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 1247,
+        "user_label_size": 12,
+        "size": 1439,
         "descriptions": [
             "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
             "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
@@ -127,15 +154,11 @@
             
             "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
             "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
-            
+            "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
             "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
             
-           
-            
-            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
-            "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
+            "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
         ]
     },
 

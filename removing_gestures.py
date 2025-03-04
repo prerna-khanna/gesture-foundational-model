@@ -2,10 +2,6 @@ import numpy as np
 import os
 
 def filter_and_remap_gestures():
-    """
-    Specifically removes gesture IDs 9 and 11, then remaps the remaining gestures
-    to be consecutive 1-indexed labels (1 to 13)
-    """
     # Define paths
     data_path = 'dataset/blind_user/data_20_120.npy'
     label_path = 'dataset/blind_user/label_20_120.npy'
@@ -30,7 +26,7 @@ def filter_and_remap_gestures():
     print(f"Unique activity labels: {unique_activities}")
     
     # Step 1: Filter out gesture IDs 9 and 11
-    gesture_ids_to_remove = [9, 11]
+    gesture_ids_to_remove = [13,14,15]
     print(f"\nRemoving gesture IDs: {gesture_ids_to_remove}")
     
     indices_to_keep = []

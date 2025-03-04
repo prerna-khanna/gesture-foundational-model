@@ -294,7 +294,10 @@ class Trainer(object):
 
 
             # Save best model based on validation accuracy
-            if vali_acc > vali_acc_best:
+            # round the  val accuracy to 2 decimal places
+            vali_acc = round(vali_acc, 2)
+
+            if vali_acc >= vali_acc_best:
                 vali_acc_best = vali_acc
                 best_stat = (train_acc, vali_acc, test_acc, train_f1, vali_f1, test_f1)
                 model_best = copy.deepcopy(self.model.state_dict())
