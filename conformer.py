@@ -16,7 +16,7 @@ class ConvModule(nn.Module):
         )
         
         # Depthwise convolution
-        kernel_size = 15  # Typically 15-31 for audio, we use 15 for IMU data
+        kernel_size = 5 # Typically 15-31 for audio, we use 15 for IMU data
         self.depthwise_conv = nn.Conv1d(
             cfg.hidden, cfg.hidden, kernel_size=kernel_size,
             stride=1, padding=(kernel_size - 1) // 2, groups=cfg.hidden
