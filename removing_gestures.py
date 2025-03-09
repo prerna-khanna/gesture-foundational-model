@@ -26,6 +26,7 @@ def filter_and_remap_gestures():
     print(f"Unique activity labels: {unique_activities}")
     
     # Step 1: Filter out gesture IDs 9 and 11
+
     gesture_ids_to_remove = [13,14,15]
     print(f"\nRemoving gesture IDs: {gesture_ids_to_remove}")
     

@@ -8,13 +8,12 @@
 import copy
 import os
 import datetime
-
 import numpy as np
 import os   
 import time
 import torch
 import torch.nn as nn
-
+import torch.nn.functional as F
 from utils import count_model_parameters
 
 
@@ -97,7 +96,7 @@ class Trainer(object):
         # self.save(global_step)
 
     def run(self, func_forward, func_evaluate, data_loader, model_file=None, data_parallel=False, load_self=False):
-        """ Evaluation Loop """
+        #Evaluation Loop
         self.model.eval() # evaluation mode
         self.load(model_file, load_self=load_self)
         # print(count_model_parameters(self.model))
@@ -121,6 +120,67 @@ class Trainer(object):
             return func_evaluate(torch.cat(labels, 0), torch.cat(results, 0))
         else:
             return torch.cat(results, 0).cpu().numpy()
+    
+    """def run(self, func_forward, func_evaluate, data_loader, model_file=None, data_parallel=False, load_self=False):
+        # Evaluation Loop # use with contrastive loss func and save results
+        self.model.eval() # evaluation mode
+        self.load(model_file, load_self=load_self)
+        # print(count_model_parameters(self.model))
+        model = self.model.to(self.device)
+        if data_parallel: # use Data Parallelism with Multi-GPU
+            model = nn.DataParallel(model)
+
+        logits_list = []  # raw logits for probability calculation
+        results = []  # prediction results (argmax)
+        labels = []  # true labels
+        time_sum = 0.0
+        
+        for batch in data_loader:
+            batch = [t.to(self.device) for t in batch]
+            with torch.no_grad(): # evaluation without gradient calculation
+                start_time = time.time()
+                logits, label = func_forward(model, batch)
+                
+                # Store raw logits for later probability calculation
+                logits_list.append(logits)
+                
+                # Get predictions (argmax)
+                result = torch.argmax(logits, dim=1)
+                
+                time_sum += time.time() - start_time
+                results.append(result)
+                labels.append(label)
+        
+        # Concatenate all batches
+        all_logits = torch.cat(logits_list, 0)
+        all_results = torch.cat(results, 0)
+        all_labels = torch.cat(labels, 0)
+        
+        # Calculate probabilities using softmax
+        all_probs = F.softmax(all_logits, dim=1)
+        
+        # Convert to numpy for easier handling
+        predictions = all_results.cpu().numpy()
+        true_labels = all_labels.cpu().numpy()
+        probabilities = all_probs.cpu().numpy()
+        
+        if func_evaluate:
+            metrics = func_evaluate(all_labels, all_results)
+            
+            # Check if being called from train() function
+            import inspect
+            caller = inspect.currentframe().f_back
+            caller_name = caller.f_code.co_name if caller else None
+            
+            if caller_name == 'train':
+                # Return just the metrics for backward compatibility
+                return metrics
+            else:
+                # Return full data for other callers
+                return true_labels, predictions, probabilities, metrics
+        else:
+            # Return predictions and data
+            return true_labels, predictions, probabilities"""
 
     """def train(self, func_loss, func_forward, func_evaluate, data_loader_train, data_loader_test, data_loader_vali
               , model_file=None, data_parallel=False, load_self=False): # to be used with triplet loss func
@@ -233,6 +293,7 @@ class Trainer(object):
     def train(self, func_loss, func_forward, func_evaluate, data_loader_train, data_loader_test, data_loader_vali): # use with contrastive loss func
         global_step = 0
         vali_acc_best = 0.0
+        combined_score = 0.0
         best_stat = None
         model_best = self.model.state_dict()
 
@@ -297,8 +358,10 @@ class Trainer(object):
             # round the  val accuracy to 2 decimal places
             vali_acc = round(vali_acc, 2)
 
-            if vali_acc >= vali_acc_best:
-                vali_acc_best = vali_acc
+            combined_score = (0.6 * vali_acc) + (0.3 * vali_f1) + (0.1 * min(train_f1, 0.99))
+
+            if combined_score >= combined_score:
+                combined_score = combined_score
                 best_stat = (train_acc, vali_acc, test_acc, train_f1, vali_f1, test_f1)
                 model_best = copy.deepcopy(self.model.state_dict())
                 self.save(0)

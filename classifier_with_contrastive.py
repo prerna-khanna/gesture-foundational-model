@@ -91,7 +91,7 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         data_loader_test = DataLoader(data_set_test, shuffle=False, batch_size=train_cfg.batch_size)
 
         # Initialize model with the calculated hidden dimension
-        model = ContrastiveGRUClassifier(
+        model = ContrastiveTransformerClassifier(
             input_dim=data_train.shape[-1],  # Feature dimension
             hidden_dim=hidden_dim,           # Using our default or config value
             num_classes=label_num

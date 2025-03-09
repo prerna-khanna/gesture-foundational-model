@@ -1,0 +1,18 @@
+Epoch 1/200:
+Loss Components:
+  classification_loss: 2.3068
+  semantic_loss: 0.8000
+  contrastive_loss: 4.4399
+  total_loss: 2.8308
+Accuracies: Train=0.160, Val=0.189, Test=0.189
+F1 Scores: Train=0.068, Val=0.045, Test=0.045
+
+Epoch 2/200:
+Loss Components:
+  classification_loss: 2.0744
+  semantic_loss: 0.8799
+  contrastive_loss: 4.0364
+  total_loss: 2.5660
+Accuracies: Train=0.183, Val=0.081, Test=0.135
+F1 Scores: Train=0.084, Val=0.024, Test=0.062
+

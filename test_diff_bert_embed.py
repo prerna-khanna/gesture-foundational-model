@@ -100,7 +100,7 @@ class SemanticEmbedder:
 if __name__ == "__main__":
     # Example descriptions
 
-    """descriptions = [
+    descriptions = [
             
             "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
             "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
@@ -122,9 +122,10 @@ if __name__ == "__main__":
             "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
             "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
             "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
-        ]"""
+        ]
     
-    descriptions = [
+
+    """descriptions = [
     # Basic tap gestures
     f"a Single tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
     f"a Double tap gesture with properties: primary type: tap, direction: direct, complexity: complex",
@@ -145,7 +146,7 @@ if __name__ == "__main__":
     f"a Ear top tap gesture with properties: primary type: tap, direction: cartilage, complexity: simple",
     f"a Earlobe tap gesture with properties: primary type: tap, direction: lobe, complexity: simple",
     f"a Jaw tap gesture with properties: primary type: tap, direction: jaw, complexity: simple"
-]
+]"""
 
     """descriptions = ["move forearm upwards", "move forearm down", "move forearm left", "move forearm right", "rotate wrist and then move forearm right", "rotate wrist and then move forearm left", "flick wrist and then move forearm up", "flick wrist and then move forearm down", "flick wrist andthen move forearm  left", "flick wrist and then move forearm right", "draw square in the air", "draw circle in the air", "draw triangle in the air", "draw question mark in the air", "draw infinity in the air"]
     """

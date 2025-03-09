@@ -23,7 +23,7 @@ def to_numpy(tensor):
 
 
 
-"""def detect_nucleus(energy, window=20, nucleus_thres=8):
+def detect_nucleus(energy, window=20, nucleus_thres=8):
    
     batch_nucleus_points = []
 
