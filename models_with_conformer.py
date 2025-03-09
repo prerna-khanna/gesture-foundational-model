@@ -7,6 +7,10 @@
 # @Description : In this script, the implementation of BERT refers from https://github.com/dhlee347/pytorchic-bert
 
 from utils import split_last, merge_last
+
+#from common import LayerNorm, gelu, split_last, merge_last # this is for the transformer with conformer and freq loss
+
+from conformer import ConformerTransformer
 import math
 import numpy as np
 import torch
@@ -211,7 +215,36 @@ class LIMUBertModel4Pretrain(nn.Module): # vanilla BERT
         logits_lm = self.decoder(h_masked)
         return logits_lm
 
-
+ 
+"""class LIMUBertModel4Pretrain(nn.Module): # vanilla BERT with Conformer
+    def __init__(self, cfg, output_embed=False, use_conformer=False):
+        super().__init__()
+        # Use Conformer if specified, otherwise use regular Transformer
+        if use_conformer:
+            self.transformer = ConformerTransformer(cfg)  # Use conformer architecture
+        else:
+            self.transformer = Transformer(cfg)  # Use original transformer
+            
+        self.fc = nn.Linear(cfg.hidden, cfg.hidden)
+        self.linear = nn.Linear(cfg.hidden, cfg.hidden)
+        self.activ = gelu
+        self.norm = LayerNorm(cfg)
+        self.decoder = nn.Linear(cfg.hidden, cfg.feature_num)
+        self.output_embed = output_embed
+        
+    def forward(self, input_seqs, masked_pos=None, nucleus_mask=None, sig_axis_mask=None):
+        # Embed the input sequence
+        h_masked = self.transformer(input_seqs, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
+        if self.output_embed:
+            return h_masked
+        if masked_pos is not None:
+            masked_pos = masked_pos[:, :, None].expand(-1, -1, h_masked.size(-1))
+            h_masked = torch.gather(h_masked, 1, masked_pos)
+        h_masked = self.activ(self.linear(h_masked))
+        h_masked = self.norm(h_masked)
+        logits_lm = self.decoder(h_masked)
+        return logits_lm"""
+    
 
 
 class ClassifierLSTM(nn.Module):
