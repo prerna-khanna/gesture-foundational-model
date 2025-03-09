@@ -21,6 +21,7 @@ from features import detect_nucleus, compute_energy, calculate_significant_axis
 from utils import IMUDataset, Preprocess4Normalization, get_device, set_seeds, handle_argv
 from config import load_dataset_stats, load_model_config, load_dataset_label_names
 from plot import plot_matrix
+from matplotlib.colors import Normalize
 
 class NucleusImpactVisualizer:
     def __init__(self, args):
@@ -526,28 +527,304 @@ class NucleusImpactVisualizer:
                 f.write(f"{result['name']}:\n")
                 f.write(f"  Accuracy: {result['accuracy']:.4f}\n")
                 f.write(f"  F1 Score: {result['f1']:.4f}\n\n")
-    
+    import os
+    import numpy as np
+    import torch
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    from torch.utils.data import DataLoader
+    from matplotlib.colors import Normalize
+
+    # Add this method to your NucleusImpactVisualizer class
+    def compare_attention_heatmaps(self, sample_indices=None, num_samples=3):
+        """
+        Generate and compare attention heatmaps with different embedding configurations:
+        1. Full model (nucleus + significant axis)
+        2. No nucleus embedding
+        3. No significant axis embedding
+        4. No embeddings (baseline)
+        """
+        if sample_indices is None:
+            # Use fixed seed for reproducibility
+            set_seeds(42)
+            sample_indices = np.random.choice(len(self.dataset), min(num_samples, len(self.dataset)), replace=False)
+        
+        for idx in sample_indices:
+            print(f"Generating heatmap comparison for sample {idx}...")
+            
+            # Get sample
+            seqs, label = self.dataset[idx]
+            seqs = seqs.unsqueeze(0).to(self.device)
+            
+            # Compute energy
+            energy = compute_energy(seqs)
+            
+            # Detect nucleus
+            batch_nucleus_points = detect_nucleus(energy)
+            nucleus_mask = self.generate_nucleus_mask(seqs.size(1), batch_nucleus_points)
+            nucleus_mask = nucleus_mask.to(self.device)
+            
+            # Calculate significant axis
+            sig_axis = calculate_significant_axis(seqs)
+            sig_axis_mask = (seqs.argmax(dim=-1) == sig_axis[:, None]).float()
+            sig_axis_mask = sig_axis_mask.to(self.device)
+            
+            # Create configurations
+            configs = [
+                ("Full (Nucleus + Sig Axis)", nucleus_mask, sig_axis_mask),
+                ("No Nucleus", None, sig_axis_mask),
+                ("No Sig Axis", nucleus_mask, None),
+                ("No Embeddings (Baseline)", None, None)
+            ]
+            
+            # Store attention matrices for each configuration
+            attention_matrices = []
+            
+            # Process each configuration
+            for name, nuc_mask, sig_mask in configs:
+                # Forward pass to get attention weights
+                with torch.no_grad():
+                    _ = self.model(seqs, nucleus_mask=nuc_mask, sig_axis_mask=sig_mask)
+                
+                # Check if attention scores were captured
+                if self.attention_scores is not None:
+                    # Process the attention scores
+                    attn_matrix = self.attention_scores.cpu().numpy()
+                    
+                    # Handle different shapes - we want a 2D matrix
+                    if len(attn_matrix.shape) == 4:
+                        # If shape is [batch_size, num_heads, seq_len, seq_len]
+                        # Take the first batch and average across heads
+                        attn_matrix = attn_matrix[0].mean(axis=0)
+                    elif len(attn_matrix.shape) == 3:
+                        # If shape is [batch_size, seq_len, seq_len]
+                        attn_matrix = attn_matrix[0]
+                    
+                    attention_matrices.append((name, attn_matrix))
+                else:
+                    print("Warning: Attention scores not captured for configuration:", name)
+            
+            # Create visualization with all configurations
+            if attention_matrices:
+                self._plot_attention_comparison(
+                    attention_matrices=attention_matrices,
+                    nucleus_points=batch_nucleus_points[0],
+                    sample_idx=idx,
+                    label=label
+                )
+            else:
+                print("Warning: No attention data collected for comparison.")
+
+    def _plot_attention_comparison(self, attention_matrices, nucleus_points, sample_idx, label):
+        """Plot comparison of attention heatmaps for different configurations"""
+        fig, axes = plt.subplots(2, 2, figsize=(18, 15))
+        axes = axes.flatten()
+        
+        # Ensure consistent colormap scaling across all heatmaps
+        all_values = np.concatenate([matrix.flatten() for _, matrix in attention_matrices])
+        vmin, vmax = np.min(all_values), np.max(all_values)
+        norm = Normalize(vmin=vmin, vmax=vmax)
+        
+        # Get activity name
+        activity_label = int(label[0, self.args.label_index])
+        activity_name = self.label_names[activity_label] if self.label_names and activity_label < len(self.label_names) else f"Class {activity_label}"
+        
+        for i, (name, matrix) in enumerate(attention_matrices):
+            ax = axes[i]
+            im = sns.heatmap(matrix, ax=ax, cmap='viridis', norm=norm)
+            
+            # Highlight nucleus region if available and not in "No Nucleus" configuration
+            if len(nucleus_points) == 2 and "No Nucleus" not in name:
+                start, end = nucleus_points
+                # Add rectangle patch to highlight nucleus region
+                rect = plt.Rectangle((start, start), end-start, end-start, 
+                                fill=False, edgecolor='red', linewidth=2)
+                ax.add_patch(rect)
+            
+            ax.set_title(f"Attention Map - {name}")
+            ax.set_xlabel("Sequence Position")
+            ax.set_ylabel("Attention")
+        
+        plt.suptitle(f"Attention Heatmap Comparison - {activity_name} (Sample {sample_idx})", fontsize=16)
+        plt.tight_layout(rect=[0, 0.03, 1, 0.95])  # Adjust for suptitle
+        
+        # Save figure
+        plt.savefig(os.path.join(self.output_dir, f"attention_comparison_{sample_idx}.png"), dpi=300)
+        plt.close()
+
+    def compare_diagonal_attention(self, sample_indices=None, num_samples=3):
+        """Compare diagonal attention patterns across different configurations"""
+        if sample_indices is None:
+            # Use fixed seed for reproducibility
+            set_seeds(42)
+            sample_indices = np.random.choice(len(self.dataset), min(num_samples, len(self.dataset)), replace=False)
+        
+        for idx in sample_indices:
+            print(f"Comparing diagonal attention for sample {idx}...")
+            
+            # Get sample
+            seqs, label = self.dataset[idx]
+            seqs = seqs.unsqueeze(0).to(self.device)
+            
+            # Compute energy
+            energy = compute_energy(seqs)
+            
+            # Detect nucleus
+            batch_nucleus_points = detect_nucleus(energy)
+            nucleus_mask = self.generate_nucleus_mask(seqs.size(1), batch_nucleus_points)
+            nucleus_mask = nucleus_mask.to(self.device)
+            
+            # Calculate significant axis
+            sig_axis = calculate_significant_axis(seqs)
+            sig_axis_mask = (seqs.argmax(dim=-1) == sig_axis[:, None]).float()
+            sig_axis_mask = sig_axis_mask.to(self.device)
+            
+            # Create configurations
+            configs = [
+                ("Full (Nucleus + Sig Axis)", nucleus_mask, sig_axis_mask),
+                ("No Nucleus", None, sig_axis_mask),
+                ("No Sig Axis", nucleus_mask, None),
+                ("No Embeddings (Baseline)", None, None)
+            ]
+            
+            # Store diagonal attention values
+            diagonal_attentions = []
+            
+            # Process each configuration
+            for name, nuc_mask, sig_mask in configs:
+                # Forward pass to get attention weights
+                with torch.no_grad():
+                    _ = self.model(seqs, nucleus_mask=nuc_mask, sig_axis_mask=sig_mask)
+                
+                # Check if attention scores were captured
+                if self.attention_scores is not None:
+                    # Process the attention scores
+                    attn_matrix = self.attention_scores.cpu().numpy()
+                    
+                    # Handle different shapes
+                    if len(attn_matrix.shape) == 4:
+                        # If shape is [batch_size, num_heads, seq_len, seq_len]
+                        attn_matrix = attn_matrix[0].mean(axis=0)
+                    elif len(attn_matrix.shape) == 3:
+                        # If shape is [batch_size, seq_len, seq_len]
+                        attn_matrix = attn_matrix[0]
+                    
+                    # Extract diagonal attention
+                    seq_len = attn_matrix.shape[0]
+                    diagonal = np.diagonal(attn_matrix)
+                    
+                    # Get nucleus region indices if available
+                    if len(batch_nucleus_points[0]) == 2:
+                        start, end = batch_nucleus_points[0]
+                        nucleus_indices = np.arange(start, end)
+                    else:
+                        nucleus_indices = np.array([])
+                    
+                    diagonal_attentions.append((name, diagonal, nucleus_indices))
+                else:
+                    print("Warning: Attention scores not captured for configuration:", name)
+            
+            # Create visualization of diagonal attention patterns
+            if diagonal_attentions:
+                self._plot_diagonal_attention_comparison(
+                    diagonal_attentions=diagonal_attentions,
+                    sample_idx=idx,
+                    label=label
+                )
+            else:
+                print("Warning: No diagonal attention data collected.")
+
+    def _plot_diagonal_attention_comparison(self, diagonal_attentions, sample_idx, label):
+        """Plot comparison of diagonal attention patterns"""
+        plt.figure(figsize=(14, 8))
+        
+        # Get activity name
+        activity_label = int(label[0, self.args.label_index])
+        activity_name = self.label_names[activity_label] if self.label_names and activity_label < len(self.label_names) else f"Class {activity_label}"
+        
+        # Plot diagonal attention for each configuration
+        for name, diagonal, nucleus_indices in diagonal_attentions:
+            x = np.arange(len(diagonal))
+            plt.plot(x, diagonal, label=name, alpha=0.8, linewidth=2)
+            
+            # Highlight nucleus region if available
+            if len(nucleus_indices) > 0:
+                plt.axvspan(nucleus_indices[0], nucleus_indices[-1], 
+                            alpha=0.2, color='yellow', label='Nucleus Region' if name == diagonal_attentions[0][0] else None)
+        
+        plt.xlabel("Sequence Position")
+        plt.ylabel("Self-Attention Weight")
+        plt.title(f"Diagonal Attention Comparison - {activity_name} (Sample {sample_idx})")
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        
+        # Save figure
+        plt.savefig(os.path.join(self.output_dir, f"diagonal_attention_comparison_{sample_idx}.png"), dpi=300)
+        plt.close()
+
+    # Add this to the run_all_visualizations method
     def run_all_visualizations(self):
         """Run all visualizations"""
         print("\n=== Starting nucleus and significant axis impact analysis ===")
         
-        print("\nVisualizing attention with nucleus regions...")
-        self.visualize_attention_with_nucleus(num_samples=3)
+        try:
+            print("\nVisualizing attention with nucleus regions...")
+            self.visualize_attention_with_nucleus(num_samples=3)
+        except Exception as e:
+            import traceback
+            print(f"Error in attention visualization: {e}")
+            traceback.print_exc()
         
-        print("\nVisualizing raw signals with nucleus regions...")
-        self.visualize_raw_signal_with_nucleus(num_samples=3)
+        try:
+            print("\nComparing attention heatmaps across configurations...")
+            self.compare_attention_heatmaps(num_samples=3)
+        except Exception as e:
+            import traceback
+            print(f"Error in attention heatmap comparison: {e}")
+            traceback.print_exc()
         
-        print("\nComparing attention in nucleus vs non-nucleus regions...")
-        self.compare_attention_nucleus_vs_non_nucleus(num_samples=10)
+        try:
+            print("\nComparing diagonal attention patterns...")
+            self.compare_diagonal_attention(num_samples=3)
+        except Exception as e:
+            import traceback
+            print(f"Error in diagonal attention comparison: {e}")
+            traceback.print_exc()
         
-        print("\nVisualizing embeddings with t-SNE...")
-        self.visualize_embeddings_tsne()
+        try:
+            print("\nVisualizing raw signals with nucleus regions...")
+            self.visualize_raw_signal_with_nucleus(num_samples=3)
+        except Exception as e:
+            import traceback
+            print(f"Error in raw signal visualization: {e}")
+            traceback.print_exc()
         
-        print("\nComparing classification performance...")
-        self.compare_classification_performance()
+        try:
+            print("\nComparing attention in nucleus vs non-nucleus regions...")
+            self.compare_attention_nucleus_vs_non_nucleus(num_samples=10)
+        except Exception as e:
+            import traceback
+            print(f"Error in nucleus vs non-nucleus comparison: {e}")
+            traceback.print_exc()
+        
+        try:
+            print("\nVisualizing embeddings with t-SNE...")
+            self.visualize_embeddings_tsne()
+        except Exception as e:
+            import traceback
+            print(f"Error in t-SNE visualization: {e}")
+            traceback.print_exc()
+        
+        try:
+            print("\nComparing classification performance...")
+            self.compare_classification_performance()
+        except Exception as e:
+            import traceback
+            print(f"Error in classification performance comparison: {e}")
+            traceback.print_exc()
         
         print(f"\n=== Analysis complete. Results saved to {self.output_dir} ===")
-
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Visualize nucleus and significant axis impact')

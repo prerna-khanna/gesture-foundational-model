@@ -23,7 +23,7 @@ def to_numpy(tensor):
 
 
 
-"""def detect_nucleus(energy, window=20, nucleus_thres=8):
+def detect_nucleus(energy, window=20, nucleus_thres=8):
    
     batch_nucleus_points = []
 
@@ -60,9 +60,98 @@ def to_numpy(tensor):
 
         batch_nucleus_points.append(filtered_change_pts)
 
-    return batch_nucleus_points  # Returns nucleus points for each sequence in the batch """
+    return batch_nucleus_points  # Returns nucleus points for each sequence in the batch
 
-def detect_nucleus(energy, min_nucleus_width=15, max_nucleus_width=40):
+def improved_detect_nucleus(energy, window=20, nucleus_thres=8):
+    """
+    Improved nucleus detection that better handles gestures at the beginning of signals.
+    
+    Parameters:
+    - energy: Tensor (batch_size, sequence_length) containing energy values
+    - window: int, window size for detecting changes
+    - nucleus_thres: float, threshold for significant energy change
+    
+    Returns:
+    - batch_nucleus_points: list of lists, each containing start and end points of the nucleus
+    """
+    batch_nucleus_points = []
+    
+    # Loop over each sequence in the batch
+    for sequence_energy in energy:
+        # Convert to numpy for easier manipulation
+        if sequence_energy.is_cuda:
+            sequence_energy = sequence_energy.cpu().numpy()
+        elif hasattr(sequence_energy, 'device') and sequence_energy.device.type == 'mps':
+            sequence_energy = sequence_energy.to('cpu').numpy()
+        else:
+            sequence_energy = sequence_energy.numpy()
+        
+        # Get sequence length
+        seq_len = len(sequence_energy)
+        
+        # Check for early gesture (energy at the beginning)
+        early_gesture = False
+        if seq_len > window and np.mean(sequence_energy[:window]) > 0.5 * np.max(sequence_energy):
+            early_gesture = True
+        
+        # Find energy peak
+        peak_index = np.argmax(sequence_energy)
+        
+        # Detect significant changes in energy
+        change_pts = []
+        for i in range(seq_len - min(15, seq_len-1)):
+            if i + 15 < seq_len and abs(sequence_energy[i + 15] - sequence_energy[i]) > nucleus_thres:
+                change_pts.append(i)
+        
+        # Handle special cases
+        if early_gesture:
+            # For early gestures, include the beginning in nucleus
+            start = 0
+            # Find the point where energy drops significantly after the peak
+            end = peak_index
+            for i in range(peak_index, min(peak_index + 30, seq_len)):
+                if sequence_energy[i] < 0.3 * sequence_energy[peak_index]:
+                    end = i
+                    break
+            end = min(end + 10, seq_len)  # Add some padding
+            nucleus_points = [start, end]
+            
+        elif not change_pts:
+            # If no significant changes detected, focus on the peak area
+            start = max(0, peak_index - window//2)
+            end = min(seq_len, peak_index + window//2)
+            nucleus_points = [start, end]
+            
+        else:
+            # Process change points normally
+            change_pts = list(map(lambda x: x + window, change_pts))
+            
+            # Filter close change points
+            filtered_change_pts = [change_pts[0]]
+            for i in range(1, len(change_pts)):
+                if change_pts[i] - filtered_change_pts[-1] >= window:
+                    filtered_change_pts.append(change_pts[i])
+            
+            # Take first two change points (or add if only one)
+            filtered_change_pts = filtered_change_pts[:2]
+            if len(filtered_change_pts) == 1:
+                filtered_change_pts.append(min(filtered_change_pts[0] + 20, seq_len))
+            
+            # Check if nucleus includes the peak
+            if peak_index < filtered_change_pts[0] or peak_index > filtered_change_pts[1]:
+                # If peak is outside nucleus, expand nucleus to include it
+                if peak_index < filtered_change_pts[0]:
+                    filtered_change_pts[0] = max(0, peak_index - 5)
+                else:
+                    filtered_change_pts[1] = min(seq_len, peak_index + 5)
+            
+            nucleus_points = filtered_change_pts
+        
+        batch_nucleus_points.append(nucleus_points)
+    
+    return batch_nucleus_points
+
+def adaptive_detect_nucleus(energy, min_nucleus_width=15, max_nucleus_width=40):
     """
     Adaptive nucleus detection that works across different energy profiles.
     
