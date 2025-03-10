@@ -56,7 +56,70 @@ class ContrastiveLSTMClassifier(nn.Module):
         
         return logits
 
-class ContrastiveTransformerClassifier(nn.Module):
+
+class ContrastiveTransformerClassifier(nn.Module): # Modified Transformer Classifier with Dropout
+    def __init__(self, input_dim, hidden_dim, num_classes, num_heads=4, num_layers=2, proj_dim=128, dropout=0.4):
+        super().__init__()
+        
+        # Add input normalization to stabilize training
+        self.input_norm = nn.LayerNorm(input_dim)
+        
+        # Add dropout after the input projection
+        self.input_projection = nn.Linear(input_dim, hidden_dim)
+        self.input_dropout = nn.Dropout(dropout)
+        
+        # Modified transformer encoder with dropout
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=hidden_dim, 
+            nhead=num_heads,
+            dropout=dropout,  # Add dropout to attention and feedforward
+            batch_first=True
+        )
+        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        
+        # Add dropout before classification
+        self.feature_dropout = nn.Dropout(dropout)
+        self.classifier = nn.Linear(hidden_dim, num_classes)
+        
+        # Keep your projector as is
+        self.projector = ProjectionHead(hidden_dim, hidden_dim*2, proj_dim)
+        
+        # Initialize weights to prevent overfitting
+        self._init_weights()
+        
+    def _init_weights(self):
+        # More conservative initialization to prevent overfitting
+        for module in self.modules():
+            if isinstance(module, nn.Linear):
+                nn.init.xavier_uniform_(module.weight, gain=0.5)  # Reduced gain
+                if module.bias is not None:
+                    nn.init.zeros_(module.bias)
+                    
+    def forward(self, x, return_features=False):
+        # Normalize input
+        x = self.input_norm(x)
+        
+        # Project input to hidden dimension with dropout
+        x = self.input_projection(x)
+        x = self.input_dropout(x)
+        
+        # Apply transformer encoder
+        transformer_out = self.transformer_encoder(x)
+        
+        # Apply feature averaging with dropout
+        features = transformer_out.mean(dim=1)
+        features = self.feature_dropout(features)
+        
+        # Apply classifier
+        logits = self.classifier(features)
+        
+        if return_features:
+            projected = self.projector(features)
+            return logits, features, projected
+        
+        return logits
+    
+"""class ContrastiveTransformerClassifier(nn.Module):
     def __init__(self, input_dim, hidden_dim, num_classes, num_heads=4, num_layers=2, proj_dim=128):
         super().__init__()
         self.input_projection = nn.Linear(input_dim, hidden_dim)
@@ -81,7 +144,7 @@ class ContrastiveTransformerClassifier(nn.Module):
             projected = self.projector(features)
             return logits, features, projected
         
-        return logits
+        return logits"""
     
 class ContrastiveBiGRUClassifier(nn.Module):
     def __init__(self, input_dim, hidden_dim, num_classes, proj_dim=128):

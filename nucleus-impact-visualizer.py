@@ -762,6 +762,8 @@ class NucleusImpactVisualizer:
         plt.savefig(os.path.join(self.output_dir, f"diagonal_attention_comparison_{sample_idx}.png"), dpi=300)
         plt.close()
 
+    
+
     # Add this to the run_all_visualizations method
     def run_all_visualizations(self):
         """Run all visualizations"""
@@ -824,7 +826,432 @@ class NucleusImpactVisualizer:
             traceback.print_exc()
         
         print(f"\n=== Analysis complete. Results saved to {self.output_dir} ===")
+
+    def compare_mask_reconstruction(self, sample_indices=None, num_samples=3):
+        """
+        Compares how the model fills masked sequences with and without nucleus/sig axis embeddings.
+        Visualizes both the reconstruction quality and attention patterns.
+        
+        Args:
+            sample_indices: Specific indices to use, if None will select random samples
+            num_samples: Number of samples to visualize if sample_indices is None
+        """
+        if sample_indices is None:
+            # Use fixed seed for reproducibility
+            set_seeds(42)
+            sample_indices = np.random.choice(len(self.dataset), min(num_samples, len(self.dataset)), replace=False)
+        
+        for idx in sample_indices:
+            print(f"Comparing mask reconstruction for sample {idx}...")
+            
+            # Get sample
+            seqs, label = self.dataset[idx]
+            original_seqs = seqs.clone()  # Save original sequence
+            
+            # Create a masked version of the sequence (mask ~15% of values)
+            masked_seqs = seqs.clone()
+            seq_len, feature_dim = seqs.shape
+            
+            # Create mask indices (mask 15% of sequence)
+            mask_percentage = 0.15
+            num_masks = int(seq_len * mask_percentage)
+            mask_indices = np.random.choice(seq_len, num_masks, replace=False)
+            
+            # Keep track of masked positions and values
+            masked_positions = []
+            masked_values = []
+            
+            # Apply masking (replace with zeros or another mask value)
+            for pos in mask_indices:
+                masked_values.append(masked_seqs[pos].clone())
+                masked_seqs[pos] = torch.zeros(feature_dim)
+                masked_positions.append(pos)
+            
+            # Convert to tensors
+            masked_positions_tensor = torch.tensor(masked_positions, dtype=torch.long)
+            masked_values_tensor = torch.stack(masked_values)
+            
+            # Prepare batch dimension
+            masked_seqs_batch = masked_seqs.unsqueeze(0).to(self.device)
+            masked_positions_batch = masked_positions_tensor.unsqueeze(0).to(self.device)
+            
+            # Compute energy for nucleus detection
+            energy = compute_energy(masked_seqs_batch)
+            
+            # Detect nucleus
+            batch_nucleus_points = detect_nucleus(energy)
+            nucleus_mask = self.generate_nucleus_mask(masked_seqs_batch.size(1), batch_nucleus_points)
+            nucleus_mask = nucleus_mask.to(self.device)
+            
+            # Calculate significant axis
+            sig_axis = calculate_significant_axis(masked_seqs_batch)
+            sig_axis_mask = (masked_seqs_batch.argmax(dim=-1) == sig_axis[:, None]).float()
+            sig_axis_mask = sig_axis_mask.to(self.device)
+            
+            # Create configurations for comparison
+            configs = [
+                ("Full (Nucleus + Sig Axis)", nucleus_mask, sig_axis_mask),
+                ("No Nucleus", None, sig_axis_mask),
+                ("No Sig Axis", nucleus_mask, None),
+                ("No Embeddings (Baseline)", None, None)
+            ]
+            
+            # Store reconstruction results and attention matrices
+            reconstruction_results = []
+            attention_matrices = []
+            
+            # Process each configuration
+            for name, nuc_mask, sig_mask in configs:
+                # Forward pass to get reconstructed values and attention weights
+                # For this to work, you need to modify the model to return reconstructed values
+                with torch.no_grad():
+                    # Get reconstructions from the model
+                    reconstructed = self.model(masked_seqs_batch, masked_positions_batch, nucleus_mask=nuc_mask, sig_axis_mask=sig_mask)
+                    reconstructed = reconstructed.cpu()
+                    
+                    # Store reconstruction results
+                    reconstruction_results.append((name, reconstructed))
+                    
+                    # Get attention matrices if available
+                    if self.attention_scores is not None:
+                        attn_matrix = self.attention_scores.cpu().numpy()
+                        
+                        # Handle different shapes
+                        if len(attn_matrix.shape) == 4:
+                            # If shape is [batch_size, num_heads, seq_len, seq_len]
+                            attn_matrix = attn_matrix[0].mean(axis=0)
+                        elif len(attn_matrix.shape) == 3:
+                            # If shape is [batch_size, seq_len, seq_len]
+                            attn_matrix = attn_matrix[0]
+                        
+                        attention_matrices.append((name, attn_matrix))
+            
+            # Create visualization with all configurations
+            if reconstruction_results:
+                # Create visualization of masked sequence, reconstructions, and attention
+                self._plot_mask_reconstruction_comparison(
+                    original_seqs=original_seqs.numpy(),
+                    masked_seqs=masked_seqs.numpy(),
+                    masked_positions=masked_positions,
+                    reconstruction_results=reconstruction_results,
+                    attention_matrices=attention_matrices,
+                    nucleus_points=batch_nucleus_points[0],
+                    sample_idx=idx,
+                    label=label
+                )
+            else:
+                print("Warning: No reconstruction data collected.")
+
+    def _plot_mask_reconstruction_comparison(self, original_seqs, masked_seqs, masked_positions, 
+                                         reconstruction_results, attention_matrices, 
+                                         nucleus_points, sample_idx, label):
+        """
+        Plot comparison of mask reconstruction and attention for different configurations.
+        
+        Args:
+            original_seqs: Original sequence data
+            masked_seqs: Masked sequence data
+            masked_positions: Positions that were masked
+            reconstruction_results: List of (name, reconstructed) tuples
+            attention_matrices: List of (name, matrix) tuples for attention visualizations
+            nucleus_points: Start and end of nucleus region
+            sample_idx: Sample index
+            label: Label data
+        """
+        # Get activity name
+        activity_label = int(label[0, self.args.label_index])
+        activity_name = self.label_names[activity_label] if self.label_names and activity_label < len(self.label_names) else f"Class {activity_label}"
+        
+        # Calculate reconstruction error metrics for each configuration
+        mse_values = {}
+        for name, reconstructed in reconstruction_results:
+            # Debug prints for shape information
+            print(f"Shape of original_seqs: {original_seqs.shape}")
+            print(f"Shape of reconstructed: {reconstructed.shape}")
+            
+            # Extract only the FIRST 6 FEATURES from reconstructed to match original
+            # or use dimensionality reduction if appropriate
+            if reconstructed.shape[2] > original_seqs.shape[1]:
+                print(f"Reconstructed has more features ({reconstructed.shape[2]}) than original ({original_seqs.shape[1]})")
+                print("Using only the first matching features for comparison")
+                
+                # Option 1: Use only the first N features that match original
+                reconstructed_trimmed = reconstructed[0, :, :original_seqs.shape[1]].numpy()
+                
+                # Calculate MSE only on masked positions
+                mse_sum = 0
+                for pos in masked_positions:
+                    pos_mse = np.mean((original_seqs[pos] - reconstructed_trimmed[pos])**2)
+                    mse_sum += pos_mse
+                
+                mse = mse_sum / len(masked_positions)
+                mse_values[name] = mse
+        
+        # Create a figure with subplots
+        fig = plt.figure(figsize=(20, 15))
+        
+        # Define grid layout: 3 rows, 2 columns
+        gs = fig.add_gridspec(3, 2, height_ratios=[1, 2, 1])
+        
+        # Plot 1: Original vs Masked Signal
+        ax1 = fig.add_subplot(gs[0, :])
+        seq_len, feature_dim = original_seqs.shape
+        
+        # Plot first 3 dimensions of original signal
+        time = np.arange(seq_len)
+        for j in range(min(3, feature_dim)):
+            ax1.plot(time, original_seqs[:, j], label=f'Original Dim {j}', alpha=0.7)
+        
+        # Highlight masked positions
+        for pos in masked_positions:
+            ax1.axvline(pos, color='red', alpha=0.3, linestyle='--')
+        
+        # Highlight nucleus region
+        if len(nucleus_points) == 2:
+            start, end = nucleus_points
+            ax1.axvspan(start, end, alpha=0.2, color='yellow', label='Nucleus Region')
+        
+        ax1.set_title("Original Signal with Masked Positions", fontsize=14)
+        ax1.set_xlabel("Sequence Position")
+        ax1.set_ylabel("Signal Value")
+        ax1.legend(loc='upper right')
+        ax1.grid(True, alpha=0.3)
+        
+        # Plot 2-5: Attention Matrices for each configuration
+        if attention_matrices:
+            # Create subplots for attention matrices
+            axes_attn = [fig.add_subplot(gs[1, i]) for i in range(2)]
+            
+            # Ensure consistent colormap scaling across all heatmaps
+            all_values = np.concatenate([matrix.flatten() for _, matrix in attention_matrices[:2]])
+            vmin, vmax = np.min(all_values), np.max(all_values)
+            
+            # Plot first two attention matrices
+            for i, (name, matrix) in enumerate(attention_matrices[:2]):
+                ax = axes_attn[i]
+                im = ax.imshow(matrix, cmap='viridis', aspect='auto', vmin=vmin, vmax=vmax)
+                
+                # Highlight nucleus region if available
+                if len(nucleus_points) == 2 and i == 0:  # Only for Full model
+                    start, end = nucleus_points
+                    rect = plt.Rectangle((start, start), end-start, end-start, 
+                                    fill=False, edgecolor='red', linewidth=2)
+                    ax.add_patch(rect)
+                
+                # Highlight masked positions
+                for pos in masked_positions:
+                    ax.axhline(pos, color='white', alpha=0.3, linestyle='--')
+                    ax.axvline(pos, color='white', alpha=0.3, linestyle='--')
+                
+                ax.set_title(f"Attention Map - {name}", fontsize=14)
+                ax.set_xlabel("Sequence Position")
+                ax.set_ylabel("Attention")
+                fig.colorbar(im, ax=ax)
+        
+        # Plot 6: Reconstruction Error Comparison
+        ax_error = fig.add_subplot(gs[2, :])
+        
+        # Bar chart of MSE values
+        names = list(mse_values.keys())
+        values = [mse_values[name] for name in names]
+        
+        bars = ax_error.bar(names, values, color=['blue', 'orange', 'green', 'red'])
+        
+        # Add error values on top of each bar
+        for bar, value in zip(bars, values):
+            height = bar.get_height()
+            ax_error.text(bar.get_x() + bar.get_width()/2., height + 0.001,
+                    f'{value:.5f}', ha='center', va='bottom', rotation=0, fontsize=12)
+        
+        ax_error.set_title("Reconstruction Error (MSE) Comparison", fontsize=14)
+        ax_error.set_ylabel("Mean Squared Error")
+        ax_error.grid(True, alpha=0.3, axis='y')
+        
+        # Add a title for the entire figure
+        plt.suptitle(f"Mask Reconstruction Comparison - {activity_name} (Sample {sample_idx})", fontsize=16)
+        plt.tight_layout(rect=[0, 0.03, 1, 0.95])  # Adjust for suptitle
+        
+        # Save figure
+        plt.savefig(os.path.join(self.output_dir, f"mask_reconstruction_comparison_{sample_idx}.png"), dpi=300)
+        plt.close()
+
+    def compare_mask_fill_pattern(self, sample_indices=None, num_samples=3):
+        """
+        Visualizes how the model fills masked values in different regions of the sequence
+        with and without nucleus/sig axis embeddings, using correlation as a metric.
+        """
+        if sample_indices is None:
+            # Use fixed seed for reproducibility
+            set_seeds(42)
+            sample_indices = np.random.choice(len(self.dataset), min(num_samples, len(self.dataset)), replace=False)
+        
+        for idx in sample_indices:
+            print(f"Comparing mask fill pattern for sample {idx}...")
+            
+            # Get sample
+            seqs, label = self.dataset[idx]
+            original_seqs = seqs.clone()  # Save original sequence
+            seq_len, feature_dim = seqs.shape
+            
+            # Compute energy for nucleus detection
+            energy = compute_energy(seqs.unsqueeze(0))
+            
+            # Detect nucleus
+            batch_nucleus_points = detect_nucleus(energy)
+            start, end = batch_nucleus_points[0] if len(batch_nucleus_points[0]) == 2 else (seq_len//3, 2*seq_len//3)
+            
+            # Define three regions: pre-nucleus, nucleus, post-nucleus
+            pre_nucleus = list(range(0, start))
+            nucleus = list(range(start, end))
+            post_nucleus = list(range(end, seq_len))
+            
+            # Create masks for each region (mask ~30% of each region)
+            mask_percentage = 0.3
+            regions = [
+                ("Pre-Nucleus", pre_nucleus),
+                ("Nucleus", nucleus),
+                ("Post-Nucleus", post_nucleus)
+            ]
+            
+            # Store results by region
+            results_by_region = {}
+            
+            for region_name, region_indices in regions:
+                if not region_indices:  # Skip empty regions
+                    continue
+                    
+                # Create mask indices for this region
+                num_masks = max(1, int(len(region_indices) * mask_percentage))
+                mask_indices = np.random.choice(region_indices, num_masks, replace=False)
+                
+                # Apply masking
+                masked_seqs = original_seqs.clone()
+                masked_values = []
+                
+                for pos in mask_indices:
+                    masked_values.append(masked_seqs[pos].clone())
+                    masked_seqs[pos] = torch.zeros(feature_dim)
+                
+                # Convert to batch format
+                masked_seqs_batch = masked_seqs.unsqueeze(0).to(self.device)
+                masked_positions_tensor = torch.tensor(mask_indices, dtype=torch.long).unsqueeze(0).to(self.device)
+                
+                # Create nucleus and sig axis masks
+                nucleus_mask = self.generate_nucleus_mask(seq_len, batch_nucleus_points)
+                nucleus_mask = nucleus_mask.to(self.device)
+                
+                sig_axis = calculate_significant_axis(masked_seqs_batch)
+                sig_axis_mask = (masked_seqs_batch.argmax(dim=-1) == sig_axis[:, None]).float()
+                sig_axis_mask = sig_axis_mask.to(self.device)
+                
+                # Create configurations
+                configs = [
+                    ("Full (Nucleus + Sig Axis)", nucleus_mask, sig_axis_mask),
+                    ("No Nucleus", None, sig_axis_mask),
+                    ("No Sig Axis", nucleus_mask, None),
+                    ("No Embeddings (Baseline)", None, None)
+                ]
+                
+                # Store reconstruction results for this region
+                region_results = []
+                
+                # Process each configuration
+                for name, nuc_mask, sig_mask in configs:
+                    # Forward pass to get reconstructed values
+                    with torch.no_grad():
+                        reconstructed = self.model(masked_seqs_batch, masked_positions_tensor, 
+                                                nucleus_mask=nuc_mask, sig_axis_mask=sig_mask)
+                    
+                    # Calculate correlation instead of MSE
+                    correlation_sum = 0
+                    count = 0
+                    
+                    # Use only the first feature_dim features from reconstructed
+                    reconstructed_trimmed = reconstructed[0, :, :feature_dim].cpu()
+                    
+                    for pos in mask_indices:
+                        # Calculate correlation for matched features
+                        orig_values = original_seqs[pos]
+                        recon_values = reconstructed_trimmed[pos]
+                        
+                        # Calculate average absolute difference
+                        diff = torch.mean(torch.abs(orig_values - recon_values)).item()
+                        correlation_sum += diff
+                        count += 1
+                    
+                    # Calculate average difference (lower is better)
+                    avg_diff = correlation_sum / count if count > 0 else 0
+                    region_results.append((name, avg_diff))
+                
+                results_by_region[region_name] = region_results
+            
+            # Create visualization of reconstruction performance by region
+            self._plot_mask_fill_by_region(
+                results_by_region=results_by_region,
+                sample_idx=idx,
+                label=label,
+                nucleus_points=(start, end)
+            )
     
+    def _plot_mask_fill_by_region(self, results_by_region, sample_idx, label, nucleus_points):
+        """
+        Plot mask fill performance by region for different configurations using correlation metric.
+        """
+        # Get activity name
+        activity_label = int(label[0, self.args.label_index])
+        activity_name = self.label_names[activity_label] if self.label_names and activity_label < len(self.label_names) else f"Class {activity_label}"
+        
+        # Create figure
+        plt.figure(figsize=(14, 8))
+        
+        # Extract configuration names (assuming consistent across regions)
+        config_names = [result[0] for result in next(iter(results_by_region.values()))]
+        
+        # Number of regions and configurations
+        num_regions = len(results_by_region)
+        num_configs = len(config_names)
+        
+        # Set up bar positions
+        bar_width = 0.2
+        r = np.arange(num_regions)
+        
+        # Plot bars for each configuration
+        for i, config_name in enumerate(config_names):
+            # Extract correlation values for this configuration across all regions
+            diff_values = []
+            region_names = []
+            
+            for region_name, region_results in results_by_region.items():
+                diff = next(res[1] for res in region_results if res[0] == config_name)
+                diff_values.append(diff)
+                region_names.append(region_name)
+            
+            # Plot bars
+            bars = plt.bar(r + i*bar_width, diff_values, width=bar_width, label=config_name)
+            
+            # Add values on top of each bar
+            for bar, value in zip(bars, diff_values):
+                height = bar.get_height()
+                plt.text(bar.get_x() + bar.get_width()/2., height + 0.001,
+                        f'{value:.4f}', ha='center', va='bottom', rotation=0, fontsize=8)
+        
+        # Add labels and legend
+        plt.xlabel('Sequence Region')
+        plt.ylabel('Average Absolute Difference (lower is better)')
+        plt.title(f'Mask Reconstruction Quality by Region - {activity_name} (Sample {sample_idx})')
+        plt.xticks(r + bar_width * (num_configs-1) / 2, region_names)
+        plt.legend()
+        plt.grid(True, axis='y', alpha=0.3)
+        
+        # Add annotation for nucleus region
+        start, end = nucleus_points
+        plt.annotate(f'Nucleus Region: {start}-{end}', xy=(0.5, 0.95), xycoords='axes fraction',
+                    ha='center', va='top', fontsize=12, bbox=dict(boxstyle="round,pad=0.3", fc="yellow", alpha=0.3))
+        
+        # Save figure
+        plt.tight_layout()
+        plt.savefig(os.path.join(self.output_dir, f"mask_fill_by_region_{sample_idx}.png"), dpi=300)
+        plt.close()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Visualize nucleus and significant axis impact')
@@ -845,4 +1272,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     visualizer = NucleusImpactVisualizer(args)
-    visualizer.run_all_visualizations()
+    #visualizer.run_all_visualizations()
+    visualizer.compare_mask_reconstruction(num_samples=3)
+    visualizer.compare_mask_fill_pattern(num_samples=3) 

@@ -233,6 +233,8 @@ class Trainer(object):
     def train(self, func_loss, func_forward, func_evaluate, data_loader_train, data_loader_test, data_loader_vali): # use with contrastive loss func
         global_step = 0
         vali_acc_best = 0.0
+        combined_sore = 0.0
+        combined_sore_best = 0.0
         best_stat = None
         model_best = self.model.state_dict()
 
@@ -297,8 +299,10 @@ class Trainer(object):
             # round the  val accuracy to 2 decimal places
             vali_acc = round(vali_acc, 2)
 
-            if vali_acc >= vali_acc_best:
-                vali_acc_best = vali_acc
+            combined_sore = (0.6 * vali_acc) + (0.3 * vali_f1) + (0.1 * min(train_f1, 0.99))
+
+            if combined_sore >= combined_sore_best:
+                combined_sore_best = combined_sore
                 best_stat = (train_acc, vali_acc, test_acc, train_f1, vali_f1, test_f1)
                 model_best = copy.deepcopy(self.model.state_dict())
                 self.save(0)

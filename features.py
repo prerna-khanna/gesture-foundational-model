@@ -22,7 +22,6 @@ def to_numpy(tensor):
     return tensor.numpy()
 
 
-
 def detect_nucleus(energy, window=20, nucleus_thres=8):
    
     batch_nucleus_points = []
