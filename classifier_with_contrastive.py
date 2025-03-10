@@ -7,6 +7,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, AutoModel
 import random
+import datetime
+import pandas as pd
 import math
 import argparse
 import copy
@@ -375,6 +377,34 @@ if __name__ == "__main__":
                 args, embedding, labels, args.label_index,
                 training_rate, label_rate, balance, method
             )
+
+            save_path = input("Enter save path for model with dataset and label rate (blind_user_filtered_10): ")
+            
+            now = datetime.datetime.now()
+            save_path = save_path + "_" + now.strftime("%m_%d_%Y_%H_%M")
+            save_path = os.path.join("results", "final_results", save_path)
+            os.makedirs(save_path, exist_ok=True)
+
+            results_df = pd.DataFrame({'true_label': label_test})
+            if len(label_estimate_test.shape) > 1 and label_estimate_test.shape[1] > 1:
+                # Get the predicted class (argmax along axis 1)
+                predicted_labels = np.argmax(label_estimate_test, axis=1)
+                results_df['predicted_label'] = predicted_labels
+                
+                # Add probability columns for each class
+                for i in range(label_estimate_test.shape[1]):
+                    results_df[f'prob_class_{i}'] = label_estimate_test[:, i]
+            else:
+                # If label_estimate_test already contains class predictions
+                results_df['predicted_label'] = label_estimate_test
+
+            # Add a column for correct/incorrect predictions
+            results_df['correct'] = (results_df['true_label'] == results_df['predicted_label']).astype(int)
+
+            # Save to CSV
+            results_df.to_csv(os.path.join(save_path, "results.csv"), index=False)
+            print(f"Results saved to {os.path.join(save_path, 'results.csv')}")
+            print(f"Shape of true labels: {label_test.shape}, predicted: {label_estimate_test.shape}")
 
             # Plot confusion matrix
             if label_test is not None:

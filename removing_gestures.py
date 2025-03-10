@@ -3,10 +3,10 @@ import os
 
 def filter_and_remap_gestures():
     # Define paths
-    data_path = 'dataset/blind_user/data_20_120.npy'
-    label_path = 'dataset/blind_user/label_20_120.npy'
-    filtered_data_path = 'dataset/blind_user_filtered/data_20_120.npy'
-    filtered_label_path = 'dataset/blind_user_filtered/label_20_120.npy'
+    data_path = 'dataset/earbud/data_20_120.npy'
+    label_path = 'dataset/earbud/label_20_120.npy'
+    filtered_data_path = 'dataset/earbud_filtered/data_20_120.npy'
+    filtered_label_path = 'dataset/earbud_filtered/label_20_120.npy'
     
     # Create output directory if it doesn't exist
     os.makedirs(os.path.dirname(filtered_data_path), exist_ok=True)
@@ -18,6 +18,8 @@ def filter_and_remap_gestures():
     # Check data types before processing
     print(f"Original data type: {data.dtype}")
     print(f"Original labels type: {labels.dtype}")
+    print(f"Original data shape: {data.shape}")
+
     
     # Analyze original dataset
     print("\n=== Original Dataset Analysis ===")
@@ -27,7 +29,8 @@ def filter_and_remap_gestures():
     
     # Step 1: Filter out gesture IDs 9 and 11
 
-    gesture_ids_to_remove = [13,14,15]
+    #gesture_ids_to_remove = [7,9,10,11] for earbud
+    gesture_ids_to_remove = [7,9,10,11]
     print(f"\nRemoving gesture IDs: {gesture_ids_to_remove}")
     
     indices_to_keep = []
