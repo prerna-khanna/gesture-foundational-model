@@ -369,7 +369,7 @@
     "shoaib_20_120": {
         "sr": 20,
         "seq_len": 120,
-        "dimension": 9,
+        "dimension": 6,
         "activity_label_index": 0,
         "activity_label_size": 7,
         "activity_label": [
@@ -389,7 +389,8 @@
             "a Standing stationary gesture with properties: primary type: stationary, direction: direct, complexity: simple",
             "a Jogging motion gesture with properties: primary type: directional, direction: forward, complexity: simple",
             "a Biking motion gesture with properties: primary type: directional, direction: forward, complexity: simple",
-            "an Upward stair climbing motion gesture with properties: primary type: directional, direction: up, complexity: simple"
+            "an Upward stair climbing motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+            "an Downward stair climbing motion gesture with properties: primary type: directional, direction: down, complexity: simple"
         ]
     }
 }
