@@ -25,7 +25,15 @@
         ],
         "user_label_index": 1,
         "user_label_size": 24,
-        "size": 4534
+        "size": 4534,
+        "descriptions": [
+            "a Downward stair descending motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+            "an Upward stair climbing motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+            "a Sitting stationary gesture with properties: primary type: stationary, direction: direct, complexity: simple",
+            "a Standing stationary gesture with properties: primary type: stationary, direction: direct, complexity: simple",
+            "a Walking motion gesture with properties: primary type: directional, direction: forward, complexity: simple",
+            "a Jogging motion gesture with properties: primary type: directional, direction: forward, complexity: simple"
+        ]
     },
     "uci_20_120": {
         "sr": 20,
@@ -374,7 +382,15 @@
         ],
         "user_label_index": 2,
         "user_label_size": 10,
-        "size": 10500
+        "size": 10500,
+        "descriptions": [
+            "a Walking motion gesture with properties: primary type: directional, direction: forward, complexity: simple",
+            "a Sitting stationary gesture with properties: primary type: stationary, direction: direct, complexity: simple",
+            "a Standing stationary gesture with properties: primary type: stationary, direction: direct, complexity: simple",
+            "a Jogging motion gesture with properties: primary type: directional, direction: forward, complexity: simple",
+            "a Biking motion gesture with properties: primary type: directional, direction: forward, complexity: simple",
+            "an Upward stair climbing motion gesture with properties: primary type: directional, direction: up, complexity: simple"
+        ]
     }
 }
 

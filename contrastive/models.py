@@ -57,11 +57,11 @@ class ContrastiveLSTMClassifier(nn.Module):
         return logits
 
 
-class ContrastiveTransformerClassifier(nn.Module): # Modified Transformer Classifier with Dropout
+"""class ContrastiveTransformerClassifier(nn.Module): # Modified Transformer Classifier with Dropout
     def __init__(self, input_dim, hidden_dim, num_classes, num_heads=4, num_layers=2, proj_dim=128, dropout=0.4):
         super().__init__()
         
-        # Add input normalization to stabilize training
+        # Add input normalization to stabilize training`1 `
         self.input_norm = nn.LayerNorm(input_dim)
         
         # Add dropout after the input projection
@@ -117,9 +117,9 @@ class ContrastiveTransformerClassifier(nn.Module): # Modified Transformer Classi
             projected = self.projector(features)
             return logits, features, projected
         
-        return logits
+        return logits"""
     
-"""class ContrastiveTransformerClassifier(nn.Module):
+class ContrastiveTransformerClassifier(nn.Module):
     def __init__(self, input_dim, hidden_dim, num_classes, num_heads=4, num_layers=2, proj_dim=128):
         super().__init__()
         self.input_projection = nn.Linear(input_dim, hidden_dim)
@@ -144,7 +144,7 @@ class ContrastiveTransformerClassifier(nn.Module): # Modified Transformer Classi
             projected = self.projector(features)
             return logits, features, projected
         
-        return logits"""
+        return logits
     
 class ContrastiveBiGRUClassifier(nn.Module):
     def __init__(self, input_dim, hidden_dim, num_classes, proj_dim=128):
