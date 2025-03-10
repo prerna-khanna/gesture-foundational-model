@@ -1,0 +1,7 @@
+we get best results for blind hand filtered gesture with combined_score = (0.6 * vali_acc) + (0.3 * vali_f1) + (0.1 * min(train_f1, 0.99)) with ContrastiveTransformerClassifier and 0.4 dropout in the results branch gesture_ids_to_remove = last 3
+
+we get best results for earbud gesture filtered with combined_score = combined_score = combined_score_cal(train_acc, vali_acc, vali_f1, train_f1) with ContrastiveTransformerClassifier native (no dropout) in the results branch  gesture_ids_to_remove = [2,5,10,11]
+
+we get best results for sony samrt watch with combined_score = (0.6 * vali_acc) + (0.3 * vali_f1) + (0.1 * min(train_f1, 0.99)) with ContrastiveTransformerClassifier native (no dropout) in the classifier_with_semantic branch
+
+we get best results for har (uci, shoaib, motion) with combined_score = (0.6 * vali_acc) + (0.3 * vali_f1) + (0.1 * min(train_f1, 0.99)) with ContrastiveTransformerClassifier native (no dropout) in the classifier_with_semantic branch (motion, uci)
