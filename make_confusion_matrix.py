@@ -19,7 +19,7 @@ def plot_matrix(matrix, labels_name=None):
     plt.ylabel('Actual')
     plt.xlabel('Predicted')
     plt.title('Normalized Confusion Matrix')
-    plt.savefig('plots/confusion_matrix_new_30.png')
+    plt.savefig('plots/confusion_matrix_new_0.png')
     plt.close()
     return matrix
 
@@ -139,7 +139,7 @@ def plot_multiple_confusion_matrices(csv_files, output_dir='./plots'):
 if __name__ == "__main__":
     # Example usage
     # Single file
-    plot_confusion_matrix("results/final_results/sony_watch_30_03_10_2025_19_40/results.csv")
+    plot_confusion_matrix("results/final_results/sony_watch_80_03_11_2025_02_10/results.csv")
     
     # Multiple files (uncomment to use)
     # csv_files = ["bilstm_predictions.csv", "cnn_predictions.csv", "svm_predictions.csv"]

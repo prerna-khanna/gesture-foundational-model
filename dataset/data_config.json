@@ -93,23 +93,25 @@
         "dimension": 6,
         "activity_label_index": 0,
         "activity_label_size": 7,
-        "activity_label": ["Tap", "Double Tap", "Swipe upwards", "Swipe downwards", "Long press", "Rotate finger", "Tap on lower end"],
+        "activity_label": ["Tap", "Swipe upwards", "Swipe downwards", "Rotate finger", "Tap on lower end", "Tap on upper end", "Tap on top of ear"],
         "user_label_index": 1,
         "user_label_size": 10,
         "size": 1538,
         "descriptions": [
             
             "a Single tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
-            "a Double tap gesture with properties: primary type: tap, direction: direct, complexity: complex",
+            
             
             "a Upward swipe gesture with properties: primary type: directional, direction: up, complexity: simple",
             "a Downward swipe gesture with properties: primary type: directional, direction: down, complexity: simple",
             
-            "a Long press gesture with properties: primary type: stationary, direction: direct, complexity: simple",
+           
 
             "a Finger rotation gesture with properties: primary type: rotational, direction: circular, complexity: complex",
          
-            "a Lower earbud tap gesture with properties: primary type: tap, direction: bottom, complexity: simple"
+            "a Lower earbud tap gesture with properties: primary type: tap, direction: bottom, complexity: simple",
+            "a Upper earbud tap gesture with properties: primary type: tap, direction: top, complexity: simple",
+            "a Ear top tap gesture with properties: primary type: tap, direction: cartilage, complexity: simple"
             
         ]
     },
@@ -156,7 +158,7 @@
         "activity_label_size": 12,
         "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and left", "flick wrist and right", "square", "circle"],
         "user_label_index": 1,
-        "user_label_size": 12,
+        "user_label_size": 10,
         "size": 1439,
         "descriptions": [
             "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
