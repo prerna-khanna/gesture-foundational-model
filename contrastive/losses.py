@@ -54,17 +54,17 @@ class ContrastiveCombinedLoss(nn.Module):
         w_contrastive = max(0.1, min(0.5, (epoch / 20) * 0.5))
         
         w_classification = 1
-        """w_semantic = 1
-        w_contrastive = 0.5"""
+        #w_semantic = 0
+        #w_contrastive = 0
         
         
         # Combine all losses
         total_loss = (
             classification_loss * w_classification + 
-            semantic_loss * w_semantic + 
+            semantic_loss * w_semantic+
             contrastive_loss * w_contrastive
         )
-        
+
         return total_loss, {
             'classification_loss': classification_loss.item(),
             'semantic_loss': semantic_loss.item(),
@@ -133,12 +133,13 @@ class ContrastiveSVMLoss(nn.Module):
         # Dynamic weighting
         w_semantic = max(0.1, min(0.3, (epoch / 10) * 0.3))
         w_contrastive = max(0.1, min(0.5, (epoch / 20) * 0.5))
+        
         w_classification = 1
         
         # Combine all losses
         total_loss = (
             classification_loss * w_classification + 
-            semantic_loss * w_semantic + 
+            semantic_loss * w_semantic+
             contrastive_loss * w_contrastive
         )
         
