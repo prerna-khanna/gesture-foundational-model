@@ -1,0 +1,195 @@
+{
+  "num_samples": 3251,
+  "total_correct": 159,
+  "overall_accuracy": 4.890802829898493,
+  "avg_class_accuracy": 4.937888198757763,
+  "class_metrics": {
+    "0": {
+      "label": "horizontal right",
+      "total": 0,
+      "correct": 0,
+      "accuracy": 0
+    },
+    "1": {
+      "label": "horizontal left",
+      "total": 160,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "2": {
+      "label": "vertical up",
+      "total": 161,
+      "correct": 159,
+      "accuracy": 98.75776397515527
+    },
+    "3": {
+      "label": "vertical down",
+      "total": 166,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "4": {
+      "label": "clockwise circle",
+      "total": 166,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "5": {
+      "label": "counter-clockwise circle",
+      "total": 160,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "6": {
+      "label": "counter-clockwise square",
+      "total": 164,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "7": {
+      "label": "clockwise square",
+      "total": 161,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "8": {
+      "label": "right diagonal",
+      "total": 164,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "9": {
+      "label": "left diagonal",
+      "total": 161,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "10": {
+      "label": "vertical down double",
+      "total": 164,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "11": {
+      "label": "horizontal right double",
+      "total": 162,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "12": {
+      "label": "V-shape down-up",
+      "total": 161,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "13": {
+      "label": "V-shape up-down",
+      "total": 161,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "14": {
+      "label": "triangle upward",
+      "total": 168,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "15": {
+      "label": "triangle downward",
+      "total": 162,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "16": {
+      "label": "S-curve leftward",
+      "total": 161,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "17": {
+      "label": "S-curve rightward",
+      "total": 163,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "18": {
+      "label": "wave leftward",
+      "total": 163,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "19": {
+      "label": "wave rightward",
+      "total": 162,
+      "correct": 0,
+      "accuracy": 0.0
+    }
+  },
+  "confusion_matrix": {
+    "1": {
+      "2": 159,
+      "12": 1
+    },
+    "2": {
+      "2": 159,
+      "12": 2
+    },
+    "3": {
+      "2": 166
+    },
+    "4": {
+      "2": 166
+    },
+    "5": {
+      "2": 160
+    },
+    "6": {
+      "2": 164
+    },
+    "7": {
+      "2": 160,
+      "12": 1
+    },
+    "8": {
+      "2": 164
+    },
+    "9": {
+      "2": 161
+    },
+    "10": {
+      "2": 164
+    },
+    "11": {
+      "2": 162
+    },
+    "12": {
+      "2": 161
+    },
+    "13": {
+      "2": 161
+    },
+    "14": {
+      "2": 168
+    },
+    "15": {
+      "2": 162
+    },
+    "16": {
+      "2": 161
+    },
+    "17": {
+      "2": 163
+    },
+    "18": {
+      "2": 163
+    },
+    "19": {
+      "2": 162
+    },
+    "20": {
+      "2": 161
+    }
+  },
+  "elapsed_time": 7.0135133266448975,
+  "samples_per_second": 463.5337310402179
+}

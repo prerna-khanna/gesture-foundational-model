@@ -1,0 +1,272 @@
+{
+  "random_samples": [
+    {
+      "index": 469,
+      "true_label": "vertical down",
+      "predicted_label": "counter-clockwise square",
+      "confidence": 0.057979971170425415,
+      "correct": false
+    },
+    {
+      "index": 3206,
+      "true_label": "S-curve rightward",
+      "predicted_label": "vertical up",
+      "confidence": 0.05674358084797859,
+      "correct": false
+    },
+    {
+      "index": 1419,
+      "true_label": "right diagonal",
+      "predicted_label": "counter-clockwise square",
+      "confidence": 0.05786658078432083,
+      "correct": false
+    },
+    {
+      "index": 2179,
+      "true_label": "counter-clockwise square",
+      "predicted_label": "S-curve rightward",
+      "confidence": 0.056539345532655716,
+      "correct": false
+    },
+    {
+      "index": 2345,
+      "true_label": "triangle upward",
+      "predicted_label": "counter-clockwise circle",
+      "confidence": 0.058199986815452576,
+      "correct": false
+    },
+    {
+      "index": 2309,
+      "true_label": "V-shape up-down",
+      "predicted_label": "counter-clockwise square",
+      "confidence": 0.05723583325743675,
+      "correct": false
+    },
+    {
+      "index": 1942,
+      "true_label": "triangle upward",
+      "predicted_label": "vertical up",
+      "confidence": 0.058813221752643585,
+      "correct": false
+    },
+    {
+      "index": 1451,
+      "true_label": "vertical down double",
+      "predicted_label": "counter-clockwise square",
+      "confidence": 0.05781020224094391,
+      "correct": false
+    },
+    {
+      "index": 2741,
+      "true_label": "triangle upward",
+      "predicted_label": "counter-clockwise circle",
+      "confidence": 0.05885820463299751,
+      "correct": false
+    },
+    {
+      "index": 780,
+      "true_label": "wave leftward",
+      "predicted_label": "wave rightward",
+      "confidence": 0.05675334855914116,
+      "correct": false
+    },
+    {
+      "index": 791,
+      "true_label": "wave leftward",
+      "predicted_label": "wave rightward",
+      "confidence": 0.05827180668711662,
+      "correct": false
+    },
+    {
+      "index": 236,
+      "true_label": "horizontal right double",
+      "predicted_label": "vertical up",
+      "confidence": 0.05730070173740387,
+      "correct": false
+    },
+    {
+      "index": 1943,
+      "true_label": "triangle upward",
+      "predicted_label": "vertical up",
+      "confidence": 0.057818733155727386,
+      "correct": false
+    },
+    {
+      "index": 592,
+      "true_label": "left diagonal",
+      "predicted_label": "vertical up",
+      "confidence": 0.057460010051727295,
+      "correct": false
+    },
+    {
+      "index": 2132,
+      "true_label": "clockwise circle",
+      "predicted_label": "vertical up",
+      "confidence": 0.057680290192365646,
+      "correct": false
+    },
+    {
+      "index": 1109,
+      "true_label": "V-shape up-down",
+      "predicted_label": "vertical up",
+      "confidence": 0.058131273835897446,
+      "correct": false
+    },
+    {
+      "index": 1160,
+      "true_label": "triangle downward",
+      "predicted_label": "vertical up",
+      "confidence": 0.059098683297634125,
+      "correct": false
+    },
+    {
+      "index": 3063,
+      "true_label": "vertical down double",
+      "predicted_label": "vertical up",
+      "confidence": 0.05753398686647415,
+      "correct": false
+    },
+    {
+      "index": 1855,
+      "true_label": "vertical down double",
+      "predicted_label": "vertical up",
+      "confidence": 0.057702332735061646,
+      "correct": false
+    },
+    {
+      "index": 2022,
+      "true_label": "wave leftward",
+      "predicted_label": "counter-clockwise square",
+      "confidence": 0.056837134063243866,
+      "correct": false
+    }
+  ],
+  "random_accuracy": 0.0,
+  "full_dataset": {
+    "overall_accuracy": 2.583820362965241,
+    "correct": 84,
+    "total": 3251,
+    "class_stats": {
+      "horizontal right": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 160,
+        "confidence": 0.052702344954013824
+      },
+      "horizontal left": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 161,
+        "confidence": 0.04936094582080841
+      },
+      "vertical up": {
+        "accuracy": 7.83132530120482,
+        "correct": 13,
+        "total": 166,
+        "confidence": 0.05669755861163139
+      },
+      "vertical down": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 166,
+        "confidence": 0.051839057356119156
+      },
+      "clockwise circle": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 160,
+        "confidence": 0.04654592648148537
+      },
+      "counter-clockwise circle": {
+        "accuracy": 25.0,
+        "correct": 41,
+        "total": 164,
+        "confidence": 0.05651518702507019
+      },
+      "counter-clockwise square": {
+        "accuracy": 18.633540372670808,
+        "correct": 30,
+        "total": 161,
+        "confidence": 0.05470961704850197
+      },
+      "clockwise square": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 164,
+        "confidence": 0.049364667385816574
+      },
+      "right diagonal": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 161,
+        "confidence": 0.05260654538869858
+      },
+      "left diagonal": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 164,
+        "confidence": 0.04220722243189812
+      },
+      "vertical down double": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 162,
+        "confidence": 0.04786964878439903
+      },
+      "horizontal right double": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 161,
+        "confidence": 0.05380629375576973
+      },
+      "V-shape down-up": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 161,
+        "confidence": 0.04311537742614746
+      },
+      "V-shape up-down": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 168,
+        "confidence": 0.046484485268592834
+      },
+      "triangle upward": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 162,
+        "confidence": 0.04907436668872833
+      },
+      "triangle downward": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 161,
+        "confidence": 0.04618145897984505
+      },
+      "S-curve leftward": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 163,
+        "confidence": 0.054565973579883575
+      },
+      "S-curve rightward": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 163,
+        "confidence": 0.05334977060556412
+      },
+      "wave leftward": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 162,
+        "confidence": 0.04559481516480446
+      },
+      "wave rightward": {
+        "accuracy": 0.0,
+        "correct": 0,
+        "total": 161,
+        "confidence": 0.05046746879816055
+      }
+    }
+  }
+}
