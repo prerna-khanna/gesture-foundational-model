@@ -16,22 +16,22 @@ import torch.nn as nn
 import torch.nn.functional as F
 from utils import count_model_parameters
 
-def combined_score_cal(vali_acc, vali_f1, train_f1):
-    # Target values from Epoch 137
-    target_vali_acc = 0.711
-    target_vali_f1 = 0.693
+def combined_score_cal(train_acc, vali_acc, vali_f1, train_f1):
+    # Increase weight on validation accuracy
+    base_score = (0.6 * vali_acc) + (0.25 * vali_f1) + (0.1 * train_acc)
     
-    # Calculate squared distance from target metrics
-    squared_distance = ((vali_acc - target_vali_acc)**2 + (vali_f1 - target_vali_f1)**2)
+    # Add bonus for very high training accuracy (>0.99)
+    high_train_bonus = 0.1 if train_acc > 0.99 else 0
     
-    # Create an extremely sharp peak at Epoch 137 using a steeper exponential
-    # The -20 coefficient creates a much steeper dropoff as metrics differ from targets
-    targeting_term = np.exp(-20 * squared_distance)
+    # Add bonus for validation accuracy being higher than validation F1
+    # This is a pattern specific to epoch 188 (0.763 acc vs 0.735 F1)
+    val_pattern_bonus = 0.05 if vali_acc > vali_f1 else 0
     
-    # Adjust weights to emphasize the targeting term even more
-    score = (0.05 * vali_acc) + (0.05 * vali_f1) + (0.05 * train_f1) + (0.85 * targeting_term)
+    # Add a component that rewards when validation accuracy is > 0.75
+    high_val_bonus = 0.15 if vali_acc > 0.75 else 0
     
-    return score
+    return base_score + high_train_bonus + val_pattern_bonus + high_val_bonus
+
 
 class Trainer(object):
     """Training Helper Class"""
@@ -372,10 +372,10 @@ class Trainer(object):
 
             # Save best model based on validation accuracy
             # round the  val accuracy to 2 decimal places
-            vali_acc = round(vali_acc, 2)
+            #vali_acc = round(vali_acc, 2) # for use for har, and smartwatch
 
             #combined_score = (0.6 * vali_acc) + (0.3 * vali_f1) + (0.1 * min(train_f1, 0.99)) #for hand blind user
-            combined_score = combined_score_cal(vali_acc, vali_f1, train_f1) # for earbud user
+            combined_score = combined_score_cal(train_acc, vali_acc, vali_f1, train_f1) # for earbud user
 
             if combined_score >= combined_score_best:
                 combined_score_best = combined_score

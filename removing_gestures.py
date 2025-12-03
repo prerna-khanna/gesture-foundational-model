@@ -29,8 +29,8 @@ def filter_and_remap_gestures():
     
     # Step 1: Filter out gesture IDs 9 and 11
 
-    #gesture_ids_to_remove = [7,9,10,11] for earbud
-    gesture_ids_to_remove = [7,9,10,11]
+    #gesture_ids_to_remove = [7,9,10,11] for earbud 2,5,10,11
+    gesture_ids_to_remove = [2,5,10,11]
     print(f"\nRemoving gesture IDs: {gesture_ids_to_remove}")
     
     indices_to_keep = []
