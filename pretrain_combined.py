@@ -56,14 +56,14 @@ def main(args, training_rate):
     trainer = train.Trainer(train_cfg, model, optimizer, args.save_path, device)
     
     def func_loss(model, batch):
-        mask_seqs, masked_pos, seqs = batch
-        seq_recon = model(mask_seqs, masked_pos)
+        mask_seqs, masked_pos, seqs, nucleus_mask, sig_axis_mask = batch
+        seq_recon = model(mask_seqs, masked_pos, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
         loss_lm = criterion(seq_recon, seqs)
         return loss_lm
     
     def func_forward(model, batch):
-        mask_seqs, masked_pos, seqs = batch
-        seq_recon = model(mask_seqs, masked_pos)
+        mask_seqs, masked_pos, seqs, nucleus_mask, sig_axis_mask = batch
+        seq_recon = model(mask_seqs, masked_pos, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
         return seq_recon, seqs
     
     def func_evaluate(seqs, predict_seqs):

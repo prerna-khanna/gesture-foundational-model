@@ -26,7 +26,8 @@ from utils import set_seeds, get_device \
 def main(args, training_rate):
     data, labels, train_cfg, model_cfg, mask_cfg, dataset_cfg = load_pretrain_data_config(args)
 
-    pipeline = [Preprocess4Normalization(model_cfg.feature_num), Preprocess4Mask(mask_cfg)]
+    # Use nucleus-aware masking with 80% probability
+    pipeline = [Preprocess4Normalization(model_cfg.feature_num), Preprocess4Mask(mask_cfg, nucleus_aware=True, nucleus_prob=0.8)]
     # pipeline = [Preprocess4Mask(mask_cfg)]
     data_train, label_train, data_test, label_test = prepare_pretrain_dataset(data, labels, training_rate, seed=train_cfg.seed)
 
@@ -46,14 +47,14 @@ def main(args, training_rate):
     trainer = train.Trainer(train_cfg, model, optimizer, args.save_path, device)
 
     def func_loss(model, batch):
-        mask_seqs, masked_pos, seqs = batch #
-        seq_recon = model(mask_seqs, masked_pos) #
+        mask_seqs, masked_pos, seqs, nucleus_mask, sig_axis_mask = batch
+        seq_recon = model(mask_seqs, masked_pos, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
         loss_lm = criterion(seq_recon, seqs) # for masked LM
         return loss_lm
     
     def func_forward(model, batch):
-        mask_seqs, masked_pos, seqs = batch
-        seq_recon = model(mask_seqs, masked_pos)
+        mask_seqs, masked_pos, seqs, nucleus_mask, sig_axis_mask = batch
+        seq_recon = model(mask_seqs, masked_pos, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
         return seq_recon, seqs
 
     def func_evaluate(seqs, predict_seqs):

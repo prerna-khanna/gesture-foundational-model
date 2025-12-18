@@ -70,7 +70,7 @@ class SemanticLoss(nn.Module):
 def classify_embeddings(args, data, labels, label_index, training_rate, label_rate, balance=False, method=None):
     try:
         train_cfg, model_cfg, dataset_cfg = load_classifier_config(args)
-        label_names, label_num = load_dataset_label_names(dataset_cfg, label_index)
+        label_names, label_num, descriptions = load_dataset_label_names(dataset_cfg, label_index)
         device = get_device(args.gpu)
         
         print(f"Number of classes: {label_num}")
@@ -102,7 +102,7 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         optimizer = torch.optim.Adam(params=model.parameters(), lr=train_cfg.lr)
         trainer = train.Trainer(train_cfg, model, optimizer, args.save_path, device)
 
-        def func_loss(model, batch):
+        def func_loss(model, batch, current_epoch=None):
             inputs, label = batch
             
             # Get logits for classification
@@ -112,18 +112,16 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
             # Get GRU features for semantic losses
             semantic_features = model.gru0(inputs)[0][:, -1, :]
             
-            # Multiple semantic loss components
-            basic_sem_loss = semantic_criterion(semantic_features, label)
-            triplet_loss = semantic_criterion.triplet_semantic_loss(semantic_features, label)
+            # Semantic loss component
+            sem_loss = semantic_criterion(semantic_features, label)
             
             # Weighted combination
-            total_loss = class_loss + 0.3 * basic_sem_loss + 0.3 * triplet_loss
+            total_loss = class_loss + 0.5 * sem_loss
             
             # Return all losses for printing
             return total_loss, {
                 'classification_loss': class_loss.item(),
-                'semantic_loss': basic_sem_loss.item(),
-                'triplet_loss': triplet_loss.item(),
+                'semantic_loss': sem_loss.item(),
                 'total_loss': total_loss.item()
             }
 

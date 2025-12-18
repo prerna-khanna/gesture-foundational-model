@@ -174,10 +174,9 @@ class Transformer(nn.Module):
         # self.drop = nn.Dropout(cfg.p_drop_hidden)
 
     def forward(self, x, nucleus_mask=None, sig_axis_mask=None):
-        h = self.embed(x, nucleus_mask=nucleus_mask)
+        h = self.embed(x, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
 
         for _ in range(self.n_layers):
-            #h = self.attn(h, sig_axis_mask=sig_axis_mask)  # Pass the significant axis mask
             h = self.attn(h)
             h = self.norm1(h + self.proj(h))
             h = self.norm2(h + self.pwff(h))

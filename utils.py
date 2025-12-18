@@ -91,6 +91,52 @@ def span_mask(seq_len, max_gram=3, p=0.2, goal_num_predict=15):
     return list(mask_pos)
 
 
+def nucleus_aware_span_mask(seq_len, nucleus_start, nucleus_end, max_gram=3, p=0.2, goal_num_predict=15, nucleus_prob=0.8):
+    """
+    Span-based masking that focuses on nucleus zones.
+    
+    Args:
+        seq_len: Total sequence length
+        nucleus_start: Start index of nucleus zone
+        nucleus_end: End index of nucleus zone  
+        max_gram: Maximum span length
+        p: Probability parameter for span length distribution
+        goal_num_predict: Target number of positions to mask
+        nucleus_prob: Probability of selecting mask anchor from nucleus zone (default 0.8)
+    
+    Returns:
+        list: Indices of positions to mask
+    """
+    ngrams = np.arange(1, max_gram + 1, dtype=np.int64)
+    pvals = p * np.power(1 - p, np.arange(max_gram))
+    pvals /= pvals.sum(keepdims=True)
+    
+    nucleus_len = nucleus_end - nucleus_start
+    has_nucleus = nucleus_len > 0
+    
+    mask_pos = set()
+    while len(mask_pos) < goal_num_predict:
+        n = np.random.choice(ngrams, p=pvals)
+        n = min(n, goal_num_predict - len(mask_pos))
+        
+        # Decide whether to sample from nucleus or full sequence
+        if has_nucleus and np.random.rand() < nucleus_prob:
+            # Sample anchor from nucleus zone
+            anchor = np.random.randint(nucleus_start, nucleus_end)
+        else:
+            # Sample anchor from full sequence
+            anchor = np.random.randint(seq_len)
+        
+        if anchor in mask_pos:
+            continue
+            
+        # Add span starting from anchor
+        for i in range(anchor, min(anchor + n, seq_len - 1)):
+            mask_pos.add(i)
+    
+    return list(mask_pos)
+
+
 def merge_dataset(data, label, mode='all'):
     index = np.zeros(data.shape[0], dtype=bool)
     label_new = []
@@ -387,12 +433,14 @@ class Preprocess4Normalization(Pipeline):
 
 class Preprocess4Mask:
     """ Pre-processing steps for pretraining transformer """
-    def __init__(self, mask_cfg):
+    def __init__(self, mask_cfg, nucleus_aware=True, nucleus_prob=0.8):
         self.mask_ratio = mask_cfg.mask_ratio  # masking probability
         self.mask_alpha = mask_cfg.mask_alpha
         self.max_gram = mask_cfg.max_gram
         self.mask_prob = mask_cfg.mask_prob
         self.replace_prob = mask_cfg.replace_prob
+        self.nucleus_aware = nucleus_aware
+        self.nucleus_prob = nucleus_prob
 
     def gather(self, data, position1, position2):
         result = []
@@ -410,15 +458,23 @@ class Preprocess4Mask:
             data[position1[i], position2[i]] = np.random.random(position2[i].size)
         return data
 
-    def __call__(self, instance):
+    def __call__(self, instance, nucleus_start=None, nucleus_end=None):
         shape = instance.shape
 
         # the number of prediction is sometimes less than max_pred when sequence is short
         n_pred = max(1, int(round(shape[0] * self.mask_ratio)))
 
-        # For masked Language Models
-        # mask_pos = bert_mask(shape[0], n_pred)
-        mask_pos = span_mask(shape[0], self.max_gram,  goal_num_predict=n_pred)
+        # Choose masking strategy based on nucleus_aware flag
+        if self.nucleus_aware and nucleus_start is not None and nucleus_end is not None and nucleus_end > nucleus_start:
+            # Use nucleus-aware masking
+            mask_pos = nucleus_aware_span_mask(
+                shape[0], nucleus_start, nucleus_end, 
+                self.max_gram, goal_num_predict=n_pred, 
+                nucleus_prob=self.nucleus_prob
+            )
+        else:
+            # Fall back to random span masking
+            mask_pos = span_mask(shape[0], self.max_gram, goal_num_predict=n_pred)
 
         instance_mask = instance.copy()
 
@@ -489,11 +545,49 @@ class LIBERTDataset4Pretrain(Dataset):
         self.data = data
 
     def __getitem__(self, index):
+        from features import compute_energy, detect_nucleus, calculate_significant_axis
+        import numpy as np
+        
         instance = self.data[index]
+        
+        # Store original instance for nucleus/sig_axis computation
+        original_instance = instance.copy()
+        
+        # Compute nucleus information FIRST from ORIGINAL unmasked data
+        original_tensor = torch.from_numpy(original_instance).unsqueeze(0)  # Add batch dim
+        energy = compute_energy(original_tensor)
+        nucleus_points = detect_nucleus(energy)
+        
+        # Get nucleus start and end indices
+        nucleus_start, nucleus_end = 0, 0
+        if nucleus_points and len(nucleus_points[0]) == 2:
+            nucleus_start, nucleus_end = nucleus_points[0]
+        
+        # Apply preprocessing pipeline with nucleus information
+        # The first proc should be Preprocess4Mask which will use nucleus info
         for proc in self.pipeline:
-            instance = proc(instance)
+            if isinstance(proc, Preprocess4Mask):
+                instance = proc(instance, nucleus_start, nucleus_end)
+            else:
+                instance = proc(instance)
         mask_seq, masked_pos, seq = instance
-        return torch.from_numpy(mask_seq), torch.from_numpy(masked_pos).long(), torch.from_numpy(seq)
+        
+        # Generate nucleus mask (binary: 0 or 1) for embedding layer
+        seq_len = original_instance.shape[0]
+        nucleus_mask = np.zeros(seq_len, dtype=np.int64)
+        if nucleus_start < nucleus_end:
+            nucleus_mask[nucleus_start:nucleus_end] = 1
+        
+        # Compute significant axis mask from ORIGINAL unmasked data
+        sig_axis = calculate_significant_axis(original_tensor)
+        # sig_axis_mask: 1 where the max value is on the significant axis, 0 otherwise
+        sig_axis_mask = (original_tensor.argmax(dim=-1).squeeze(0) == sig_axis[0]).long().numpy()
+        
+        return (torch.from_numpy(mask_seq), 
+                torch.from_numpy(masked_pos).long(), 
+                torch.from_numpy(seq),
+                torch.from_numpy(nucleus_mask).long(),
+                torch.from_numpy(sig_axis_mask).long())
 
     def __len__(self):
         return len(self.data)

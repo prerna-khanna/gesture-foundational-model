@@ -75,7 +75,7 @@ def generate_embedding_or_output(args, save=False, output_embed=True):
         
         # Calculate significant axis mask
         sig_axis = calculate_significant_axis(seqs)
-        sig_axis_mask = (seqs.argmax(dim=-1) == sig_axis[:, None]).float()  # Shape: (batch_size, seq_len)
+        sig_axis_mask = (seqs.argmax(dim=-1) == sig_axis[:, None]).long()  # Shape: (batch_size, seq_len)
 
         # Pass sequences and batched nucleus mask, sig axis mask to the model
         embed = model(seqs, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
