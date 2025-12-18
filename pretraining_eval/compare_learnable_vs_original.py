@@ -3,7 +3,34 @@
 """
 Compare embeddings from learnable vs original model using decoder performance.
 Uses the same decoder as in pretraining to reconstruct sequences.
+
+python pretraining_eval/compare_learnable_vs_original.py \
+  --original_embed embed/embed_limu_v1_hhar_20_120.npy \
+  --original_model saved/pretrain_base_hhar_20_120/limu_v1.pt \
+  --learnable_embed embed/embed_limu_v1_learnable_hhar_20_120.npy \
+  --learnable_model saved/pretrain_base_hhar_20_120/limu_v1_learnable.pt \
+  --learnable_nucleus_embed embed/embed_limu_v1_learnable_nucleus_hhar_20_120.npy \
+  --learnable_nucleus_model saved/pretrain_base_hhar_20_120/limu_v1_learnable_nucleus.pt \
+  --data hhar \
+  --version 20_120
+
+  python pretraining_eval/compare_learnable_vs_original.py \
+  --original_embed embed/embed_limu_v1_blind_user_20_120.npy \
+  --original_model saved/pretrain_base_blind_user_20_120/limu_v1.pt \
+  --learnable_embed embed/embed_limu_v1_learnable_blind_user_20_120.npy \
+  --learnable_model saved/pretrain_base_blind_user_20_120/limu_v1_learnable.pt \
+  --learnable_nucleus_embed embed/embed_limu_v1_learnable_nucleus_blind_user_20_120.npy \
+  --learnable_nucleus_model saved/pretrain_base_blind_user_20_120/limu_v1_learnable_nucleus.pt \
+  --data blind_user \
+  --version 20_120
+
+
 """
+
+import sys
+import os
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np
 import torch
@@ -85,14 +112,18 @@ def evaluate_reconstruction(model, embeddings, original_seqs, device, batch_size
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--learnable_embed', type=str, required=True,
-                        help='Path to learnable embeddings .npy file')
     parser.add_argument('--original_embed', type=str, required=True,
                         help='Path to original embeddings .npy file')
-    parser.add_argument('--learnable_model', type=str, required=True,
-                        help='Path to learnable pretrained model')
     parser.add_argument('--original_model', type=str, required=True,
                         help='Path to original pretrained model')
+    parser.add_argument('--learnable_embed', type=str, required=True,
+                        help='Path to learnable embeddings .npy file')
+    parser.add_argument('--learnable_model', type=str, required=True,
+                        help='Path to learnable pretrained model')
+    parser.add_argument('--learnable_nucleus_embed', type=str, required=True,
+                        help='Path to learnable nucleus embeddings .npy file')
+    parser.add_argument('--learnable_nucleus_model', type=str, required=True,
+                        help='Path to learnable nucleus pretrained model')
     parser.add_argument('--data', type=str, default='hhar',
                         help='Dataset name (default: hhar)')
     parser.add_argument('--version', type=str, default='20_120',
@@ -110,12 +141,13 @@ def main():
     print("\n" + "="*80)
     print("LOADING EMBEDDINGS")
     print("="*80)
-    learnable_embeddings = load_embeddings_and_data(args.learnable_embed)
     original_embeddings = load_embeddings_and_data(args.original_embed)
+    learnable_embeddings = load_embeddings_and_data(args.learnable_embed)
+    learnable_nucleus_embeddings = load_embeddings_and_data(args.learnable_nucleus_embed)
     
     # Verify shapes match
-    assert learnable_embeddings.shape == original_embeddings.shape, \
-        f"Shape mismatch: {learnable_embeddings.shape} vs {original_embeddings.shape}"
+    assert learnable_embeddings.shape == original_embeddings.shape == learnable_nucleus_embeddings.shape, \
+        f"Shape mismatch: Original={original_embeddings.shape}, Learnable={learnable_embeddings.shape}, Learnable Nucleus={learnable_nucleus_embeddings.shape}"
     
     # Load original sequences for reconstruction evaluation
     # We need to load the actual data to compare reconstructions
@@ -139,41 +171,41 @@ def main():
     print("LOADING MODELS")
     print("="*80)
     
+    # Original model
+    original_model_path = args.original_model if args.original_model.endswith('.pt') else f"{args.original_model}.pt"
+    print(f"\nLoading original model from {original_model_path}")
+    original_model = LIMUBertModel4Pretrain(model_cfg)
+    original_model.load_state_dict(torch.load(original_model_path, map_location=device))
+    original_model.to(device)
+    original_model.eval()
+    
     # Learnable model
     learnable_model_path = args.learnable_model if args.learnable_model.endswith('.pt') else f"{args.learnable_model}.pt"
-    print(f"\nLoading learnable model from {learnable_model_path}")
+    print(f"Loading learnable model from {learnable_model_path}")
     learnable_model = LIMUBertModel4Pretrain(model_cfg)
     learnable_model.load_state_dict(torch.load(learnable_model_path, map_location=device))
     learnable_model.to(device)
     learnable_model.eval()
     
-    # Original model
-    original_model_path = args.original_model if args.original_model.endswith('.pt') else f"{args.original_model}.pt"
-    print(f"Loading original model from {original_model_path}")
-    original_model = LIMUBertModel4Pretrain(model_cfg)
-    original_model.load_state_dict(torch.load(original_model_path, map_location=device))
-    original_model.to(device)
-    original_model.eval()
+    # Learnable Nucleus model
+    learnable_nucleus_model_path = args.learnable_nucleus_model if args.learnable_nucleus_model.endswith('.pt') else f"{args.learnable_nucleus_model}.pt"
+    print(f"Loading learnable nucleus model from {learnable_nucleus_model_path}")
+    learnable_nucleus_model = LIMUBertModel4Pretrain(model_cfg)
+    learnable_nucleus_model.load_state_dict(torch.load(learnable_nucleus_model_path, map_location=device))
+    learnable_nucleus_model.to(device)
+    learnable_nucleus_model.eval()
     
     # Evaluate reconstruction performance
     print("\n" + "="*80)
     print("EVALUATING RECONSTRUCTION PERFORMANCE")
     print("="*80)
     
-    # Use the same data for both (first N samples matching embedding size)
-    n_samples = learnable_embeddings.shape[0]
+    # Use the same data for all (first N samples matching embedding size)
+    n_samples = original_embeddings.shape[0]
     original_seqs = np.array(data[:n_samples])
     
     print(f"\nEvaluating on {n_samples} samples")
     print(f"Original sequence shape: {original_seqs.shape}")
-    
-    # Evaluate learnable model
-    print("\n--- LEARNABLE MODEL ---")
-    learnable_mse, learnable_mae = evaluate_reconstruction(
-        learnable_model, learnable_embeddings, original_seqs, device
-    )
-    print(f"MSE: {learnable_mse:.6f}")
-    print(f"MAE: {learnable_mae:.6f}")
     
     # Evaluate original model
     print("\n--- ORIGINAL MODEL ---")
@@ -183,39 +215,59 @@ def main():
     print(f"MSE: {original_mse:.6f}")
     print(f"MAE: {original_mae:.6f}")
     
+    # Evaluate learnable model
+    print("\n--- LEARNABLE MODEL ---")
+    learnable_mse, learnable_mae = evaluate_reconstruction(
+        learnable_model, learnable_embeddings, original_seqs, device
+    )
+    print(f"MSE: {learnable_mse:.6f}")
+    print(f"MAE: {learnable_mae:.6f}")
+    
+    # Evaluate learnable nucleus model
+    print("\n--- LEARNABLE NUCLEUS MODEL ---")
+    learnable_nucleus_mse, learnable_nucleus_mae = evaluate_reconstruction(
+        learnable_nucleus_model, learnable_nucleus_embeddings, original_seqs, device
+    )
+    print(f"MSE: {learnable_nucleus_mse:.6f}")
+    print(f"MAE: {learnable_nucleus_mae:.6f}")
+    
     # Compare
     print("\n" + "="*80)
     print("COMPARISON")
     print("="*80)
     print(f"\nReconstruction MSE:")
-    print(f"  Learnable: {learnable_mse:.6f}")
-    print(f"  Original:  {original_mse:.6f}")
-    print(f"  Difference: {learnable_mse - original_mse:.6f} ({'better' if learnable_mse < original_mse else 'worse'})")
-    print(f"  Improvement: {((original_mse - learnable_mse) / original_mse * 100):.2f}%")
+    print(f"  Original:           {original_mse:.6f}")
+    print(f"  Learnable:          {learnable_mse:.6f} ({((original_mse - learnable_mse) / original_mse * 100):+.2f}%)")
+    print(f"  Learnable Nucleus:  {learnable_nucleus_mse:.6f} ({((original_mse - learnable_nucleus_mse) / original_mse * 100):+.2f}%)")
     
     print(f"\nReconstruction MAE:")
-    print(f"  Learnable: {learnable_mae:.6f}")
-    print(f"  Original:  {original_mae:.6f}")
-    print(f"  Difference: {learnable_mae - original_mae:.6f} ({'better' if learnable_mae < original_mae else 'worse'})")
-    print(f"  Improvement: {((original_mae - learnable_mae) / original_mae * 100):.2f}%")
+    print(f"  Original:           {original_mae:.6f}")
+    print(f"  Learnable:          {learnable_mae:.6f} ({((original_mae - learnable_mae) / original_mae * 100):+.2f}%)")
+    print(f"  Learnable Nucleus:  {learnable_nucleus_mae:.6f} ({((original_mae - learnable_nucleus_mae) / original_mae * 100):+.2f}%)")
     
     # Embedding statistics
     print("\n" + "="*80)
     print("EMBEDDING STATISTICS")
     print("="*80)
     
-    learnable_mean = np.mean(learnable_embeddings)
-    learnable_std = np.std(learnable_embeddings)
     original_mean = np.mean(original_embeddings)
     original_std = np.std(original_embeddings)
+    learnable_mean = np.mean(learnable_embeddings)
+    learnable_std = np.std(learnable_embeddings)
+    learnable_nucleus_mean = np.mean(learnable_nucleus_embeddings)
+    learnable_nucleus_std = np.std(learnable_nucleus_embeddings)
+    
+    print(f"\nOriginal embeddings:")
+    print(f"  Mean: {original_mean:.6f}")
+    print(f"  Std:  {original_std:.6f}")
     
     print(f"\nLearnable embeddings:")
     print(f"  Mean: {learnable_mean:.6f}")
     print(f"  Std:  {learnable_std:.6f}")
     
-    print(f"\nOriginal embeddings:")
-    print(f"  Mean: {original_mean:.6f}")
-    print(f"  Std:  {original_std:.6f}")
+    print(f"\nLearnable Nucleus embeddings:")
+    print(f"  Mean: {learnable_nucleus_mean:.6f}")
+    print(f"  Std:  {learnable_nucleus_std:.6f}")
     
     # Cosine similarity between embeddings
     learnable_flat = learnable_embeddings.reshape(n_samples, -1)
@@ -238,12 +290,16 @@ def main():
     print("SUMMARY")
     print("="*80)
     
-    if learnable_mse < original_mse:
-        print(f"\n✓ Learnable model shows BETTER reconstruction performance!")
-        print(f"  MSE improvement: {((original_mse - learnable_mse) / original_mse * 100):.2f}%")
+    best_mse = min(original_mse, learnable_mse, learnable_nucleus_mse)
+    if best_mse == learnable_nucleus_mse:
+        print(f"\n✓ Learnable Nucleus model shows BEST reconstruction performance!")
+        print(f"  MSE improvement over Original: {((original_mse - learnable_nucleus_mse) / original_mse * 100):.2f}%")
+        print(f"  MSE improvement over Learnable: {((learnable_mse - learnable_nucleus_mse) / learnable_mse * 100):.2f}%")
+    elif best_mse == learnable_mse:
+        print(f"\n✓ Learnable model shows BEST reconstruction performance!")
+        print(f"  MSE improvement over Original: {((original_mse - learnable_mse) / original_mse * 100):.2f}%")
     else:
-        print(f"\n✗ Original model shows better reconstruction performance.")
-        print(f"  MSE difference: {((learnable_mse - original_mse) / original_mse * 100):.2f}%")
+        print(f"\n✗ Original model shows best reconstruction performance.")
     
     # Generate visualizations
     print("\n" + "="*80)
@@ -260,12 +316,14 @@ def main():
     # 1. Reconstruction Loss Comparison (Bar Chart)
     ax1 = plt.subplot(2, 3, 1)
     metrics = ['MSE', 'MAE']
-    learnable_vals = [learnable_mse, learnable_mae]
     original_vals = [original_mse, original_mae]
+    learnable_vals = [learnable_mse, learnable_mae]
+    learnable_nucleus_vals = [learnable_nucleus_mse, learnable_nucleus_mae]
     x = np.arange(len(metrics))
-    width = 0.35
-    ax1.bar(x - width/2, learnable_vals, width, label='Learnable', color='#2ecc71', alpha=0.8)
-    ax1.bar(x + width/2, original_vals, width, label='Original', color='#e74c3c', alpha=0.8)
+    width = 0.25
+    ax1.bar(x - width, original_vals, width, label='Original', color='#e74c3c', alpha=0.8)
+    ax1.bar(x, learnable_vals, width, label='Learnable', color='#3498db', alpha=0.8)
+    ax1.bar(x + width, learnable_nucleus_vals, width, label='Learnable+Nucleus', color='#2ecc71', alpha=0.8)
     ax1.set_ylabel('Loss Value', fontsize=12)
     ax1.set_title('Reconstruction Loss Comparison', fontsize=14, fontweight='bold')
     ax1.set_xticks(x)
@@ -275,8 +333,9 @@ def main():
     
     # 2. Embedding Distribution (Histogram)
     ax2 = plt.subplot(2, 3, 2)
-    ax2.hist(learnable_embeddings.flatten(), bins=50, alpha=0.6, label='Learnable', color='#2ecc71', density=True)
-    ax2.hist(original_embeddings.flatten(), bins=50, alpha=0.6, label='Original', color='#e74c3c', density=True)
+    ax2.hist(original_embeddings.flatten(), bins=50, alpha=0.5, label='Original', color='#e74c3c', density=True)
+    ax2.hist(learnable_embeddings.flatten(), bins=50, alpha=0.5, label='Learnable', color='#3498db', density=True)
+    ax2.hist(learnable_nucleus_embeddings.flatten(), bins=50, alpha=0.5, label='Learnable+Nucleus', color='#2ecc71', density=True)
     ax2.set_xlabel('Embedding Value', fontsize=12)
     ax2.set_ylabel('Density', fontsize=12)
     ax2.set_title('Embedding Value Distribution', fontsize=14, fontweight='bold')
@@ -351,25 +410,37 @@ def main():
     ax5.legend()
     ax5.grid(alpha=0.3)
     
-    # 6. Improvement Percentage
+    # 6. Improvement Percentage (compared to Original)
     ax6 = plt.subplot(2, 3, 6)
-    improvements = {
-        'MSE': ((original_mse - learnable_mse) / original_mse * 100),
-        'MAE': ((original_mae - learnable_mae) / original_mae * 100)
-    }
-    colors = ['#2ecc71' if v > 0 else '#e74c3c' for v in improvements.values()]
-    bars = ax6.bar(improvements.keys(), improvements.values(), color=colors, alpha=0.8)
+    metrics_names = ['MSE', 'MAE']
+    learnable_improvements = [
+        ((original_mse - learnable_mse) / original_mse * 100),
+        ((original_mae - learnable_mae) / original_mae * 100)
+    ]
+    learnable_nucleus_improvements = [
+        ((original_mse - learnable_nucleus_mse) / original_mse * 100),
+        ((original_mae - learnable_nucleus_mae) / original_mae * 100)
+    ]
+    
+    x = np.arange(len(metrics_names))
+    width = 0.35
+    bars1 = ax6.bar(x - width/2, learnable_improvements, width, label='Learnable', color='#3498db', alpha=0.8)
+    bars2 = ax6.bar(x + width/2, learnable_nucleus_improvements, width, label='Learnable+Nucleus', color='#2ecc71', alpha=0.8)
     ax6.axhline(y=0, color='black', linestyle='-', linewidth=0.5)
-    ax6.set_ylabel('Improvement (%)', fontsize=12)
-    ax6.set_title('Learnable vs Original Improvement', fontsize=14, fontweight='bold')
+    ax6.set_ylabel('Improvement over Original (%)', fontsize=12)
+    ax6.set_title('Improvement Comparison', fontsize=14, fontweight='bold')
+    ax6.set_xticks(x)
+    ax6.set_xticklabels(metrics_names)
+    ax6.legend()
     ax6.grid(axis='y', alpha=0.3)
     
     # Add value labels on bars
-    for bar in bars:
-        height = bar.get_height()
-        ax6.text(bar.get_x() + bar.get_width()/2., height,
-                f'{height:.1f}%',
-                ha='center', va='bottom' if height > 0 else 'top', fontsize=11, fontweight='bold')
+    for bars in [bars1, bars2]:
+        for bar in bars:
+            height = bar.get_height()
+            ax6.text(bar.get_x() + bar.get_width()/2., height,
+                    f'{height:.1f}%',
+                    ha='center', va='bottom' if height > 0 else 'top', fontsize=9, fontweight='bold')
     
     plt.tight_layout()
     
