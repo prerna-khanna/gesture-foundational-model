@@ -5,26 +5,18 @@ Compare embeddings from learnable vs original model using decoder performance.
 Uses the same decoder as in pretraining to reconstruct sequences.
 
 python pretraining_eval/compare_learnable_vs_original.py \
-  --original_embed embed/embed_limu_v1_hhar_20_120.npy \
   --original_model saved/pretrain_base_hhar_20_120/limu_v1.pt \
-  --learnable_embed embed/embed_limu_v1_learnable_hhar_20_120.npy \
   --learnable_model saved/pretrain_base_hhar_20_120/limu_v1_learnable.pt \
-  --learnable_nucleus_embed embed/embed_limu_v1_learnable_nucleus_hhar_20_120.npy \
   --learnable_nucleus_model saved/pretrain_base_hhar_20_120/limu_v1_learnable_nucleus.pt \
   --data hhar \
   --version 20_120
 
-  python pretraining_eval/compare_learnable_vs_original.py \
-  --original_embed embed/embed_limu_v1_blind_user_20_120.npy \
+python pretraining_eval/compare_learnable_vs_original.py \
   --original_model saved/pretrain_base_blind_user_20_120/limu_v1.pt \
-  --learnable_embed embed/embed_limu_v1_learnable_blind_user_20_120.npy \
   --learnable_model saved/pretrain_base_blind_user_20_120/limu_v1_learnable.pt \
-  --learnable_nucleus_embed embed/embed_limu_v1_learnable_nucleus_blind_user_20_120.npy \
   --learnable_nucleus_model saved/pretrain_base_blind_user_20_120/limu_v1_learnable_nucleus.pt \
   --data blind_user \
   --version 20_120
-
-
 """
 
 import sys
@@ -41,14 +33,60 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+import json
 
 from models import LIMUBertModel4Pretrain
 from config import PretrainModelConfig
-from utils import handle_argv, load_pretrain_data_config
+from features import detect_nucleus, compute_energy, calculate_significant_axis
+from utils import Preprocess4Normalization
+
+
+def generate_nucleus_mask(seq_len, batch_nucleus_points):
+    """Generate binary mask for nucleus regions"""
+    batch_size = len(batch_nucleus_points)
+    nucleus_mask = torch.zeros((batch_size, seq_len), dtype=torch.long)
+    for i, nucleus_points in enumerate(batch_nucleus_points):
+        if len(nucleus_points) == 2:
+            start, end = nucleus_points
+            nucleus_mask[i, start:end] = 1
+    return nucleus_mask
+
+
+def generate_embeddings(model, data, model_cfg, device, batch_size=32):
+    """Generate embeddings from raw data using the model's encoder"""
+    model.eval()
+    preprocess = Preprocess4Normalization(model_cfg.feature_num)
+    
+    # Preprocess data
+    data_processed = np.array([preprocess(seq) for seq in data])
+    
+    all_embeddings = []
+    
+    with torch.no_grad():
+        for i in range(0, len(data_processed), batch_size):
+            batch = data_processed[i:i+batch_size]
+            seqs = torch.from_numpy(batch).float().to(device)
+            
+            # Compute energy and detect nucleus
+            energy = compute_energy(seqs)
+            batch_nucleus_points = detect_nucleus(energy)
+            nucleus_mask = generate_nucleus_mask(seqs.size(1), batch_nucleus_points).to(device)
+            
+            # Calculate significant axis mask
+            sig_axis = calculate_significant_axis(seqs)
+            sig_axis_mask = (seqs.argmax(dim=-1) == sig_axis[:, None]).long()
+            
+            # Get embeddings from encoder (set output_embed=True mode)
+            embeddings = model(seqs, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
+            all_embeddings.append(embeddings.cpu().numpy())
+    
+    return np.vstack(all_embeddings)
+
+
 
 
 def load_embeddings_and_data(embed_file, data_file=None):
-    """Load embeddings and corresponding original data"""
+    """DEPRECATED - keeping for compatibility but not used"""
     print(f"Loading embeddings from {embed_file}")
     embeddings = np.load(embed_file)
     print(f"  Shape: {embeddings.shape}")
@@ -90,9 +128,11 @@ def evaluate_reconstruction(model, embeddings, original_seqs, device, batch_size
             embed_batch = embed_batch.to(device)
             seq_batch = seq_batch.to(device)
             
-            # Use decoder to reconstruct from embeddings
-            # The decoder is model.decoder in LIMUBertModel4Pretrain
-            seq_recon = model.decoder(embed_batch)
+            # Apply the full reconstruction path: activ -> linear -> norm -> decoder
+            # This matches what happens during pretraining
+            h = model.activ(model.linear(embed_batch))
+            h = model.norm(h)
+            seq_recon = model.decoder(h)
             
             # Calculate losses
             mse = criterion_mse(seq_recon, seq_batch)
@@ -112,16 +152,10 @@ def evaluate_reconstruction(model, embeddings, original_seqs, device, batch_size
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--original_embed', type=str, required=True,
-                        help='Path to original embeddings .npy file')
     parser.add_argument('--original_model', type=str, required=True,
                         help='Path to original pretrained model')
-    parser.add_argument('--learnable_embed', type=str, required=True,
-                        help='Path to learnable embeddings .npy file')
     parser.add_argument('--learnable_model', type=str, required=True,
                         help='Path to learnable pretrained model')
-    parser.add_argument('--learnable_nucleus_embed', type=str, required=True,
-                        help='Path to learnable nucleus embeddings .npy file')
     parser.add_argument('--learnable_nucleus_model', type=str, required=True,
                         help='Path to learnable nucleus pretrained model')
     parser.add_argument('--data', type=str, default='hhar',
@@ -130,6 +164,8 @@ def main():
                         help='Data version (default: 20_120)')
     parser.add_argument('--gpu', type=str, default='0',
                         help='GPU to use (default: 0)')
+    parser.add_argument('--batch_size', type=int, default=32,
+                        help='Batch size for processing (default: 32)')
     
     args = parser.parse_args()
     
@@ -137,34 +173,20 @@ def main():
     device = torch.device(f'cuda:{args.gpu}' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
     
-    # Load embeddings
+    # Load dataset
     print("\n" + "="*80)
-    print("LOADING EMBEDDINGS")
+    print("LOADING DATASET")
     print("="*80)
-    original_embeddings = load_embeddings_and_data(args.original_embed)
-    learnable_embeddings = load_embeddings_and_data(args.learnable_embed)
-    learnable_nucleus_embeddings = load_embeddings_and_data(args.learnable_nucleus_embed)
-    
-    # Verify shapes match
-    assert learnable_embeddings.shape == original_embeddings.shape == learnable_nucleus_embeddings.shape, \
-        f"Shape mismatch: Original={original_embeddings.shape}, Learnable={learnable_embeddings.shape}, Learnable Nucleus={learnable_nucleus_embeddings.shape}"
-    
-    # Load original sequences for reconstruction evaluation
-    # We need to load the actual data to compare reconstructions
-    print("\n" + "="*80)
-    print("LOADING ORIGINAL DATA")
-    print("="*80)
-    
-    # Load data directly
     data_path = f"dataset/{args.data}/data_{args.version}.npy"
+    labels_path = f"dataset/{args.data}/label_{args.version}.npy"
     data = np.load(data_path).astype(np.float32)
+    labels = np.load(labels_path).astype(np.float32)
     print(f"Loaded {len(data)} sequences with shape {data[0].shape}")
+    print(f"Labels shape: {labels.shape}")
     
-    # Load model config from JSON file
-    import json
+    # Load model config
     with open('config/limu_bert.json', 'r') as f:
-        model_cfg_dict = json.load(f)['base_v1']  # Use base_v1 config
-    model_cfg = PretrainModelConfig.from_json(model_cfg_dict)
+        model_cfg = PretrainModelConfig.from_json(json.load(f)['base_v1'])
     
     # Load models
     print("\n" + "="*80)
@@ -174,7 +196,7 @@ def main():
     # Original model
     original_model_path = args.original_model if args.original_model.endswith('.pt') else f"{args.original_model}.pt"
     print(f"\nLoading original model from {original_model_path}")
-    original_model = LIMUBertModel4Pretrain(model_cfg)
+    original_model = LIMUBertModel4Pretrain(model_cfg, output_embed=True)
     original_model.load_state_dict(torch.load(original_model_path, map_location=device))
     original_model.to(device)
     original_model.eval()
@@ -182,7 +204,7 @@ def main():
     # Learnable model
     learnable_model_path = args.learnable_model if args.learnable_model.endswith('.pt') else f"{args.learnable_model}.pt"
     print(f"Loading learnable model from {learnable_model_path}")
-    learnable_model = LIMUBertModel4Pretrain(model_cfg)
+    learnable_model = LIMUBertModel4Pretrain(model_cfg, output_embed=True)
     learnable_model.load_state_dict(torch.load(learnable_model_path, map_location=device))
     learnable_model.to(device)
     learnable_model.eval()
@@ -190,10 +212,26 @@ def main():
     # Learnable Nucleus model
     learnable_nucleus_model_path = args.learnable_nucleus_model if args.learnable_nucleus_model.endswith('.pt') else f"{args.learnable_nucleus_model}.pt"
     print(f"Loading learnable nucleus model from {learnable_nucleus_model_path}")
-    learnable_nucleus_model = LIMUBertModel4Pretrain(model_cfg)
+    learnable_nucleus_model = LIMUBertModel4Pretrain(model_cfg, output_embed=True)
     learnable_nucleus_model.load_state_dict(torch.load(learnable_nucleus_model_path, map_location=device))
     learnable_nucleus_model.to(device)
     learnable_nucleus_model.eval()
+    
+    # Generate embeddings on-the-fly
+    print("\n" + "="*80)
+    print("GENERATING EMBEDDINGS")
+    print("="*80)
+    print("Generating embeddings from ORIGINAL model...")
+    original_embeddings = generate_embeddings(original_model, data, model_cfg, device, args.batch_size)
+    print(f"  Shape: {original_embeddings.shape}")
+    
+    print("Generating embeddings from LEARNABLE model...")
+    learnable_embeddings = generate_embeddings(learnable_model, data, model_cfg, device, args.batch_size)
+    print(f"  Shape: {learnable_embeddings.shape}")
+    
+    print("Generating embeddings from LEARNABLE+NUCLEUS model...")
+    learnable_nucleus_embeddings = generate_embeddings(learnable_nucleus_model, data, model_cfg, device, args.batch_size)
+    print(f"  Shape: {learnable_nucleus_embeddings.shape}")
     
     # Evaluate reconstruction performance
     print("\n" + "="*80)
@@ -392,8 +430,14 @@ def main():
             embed_o = torch.from_numpy(original_embeddings[i:i+1]).float().to(device)
             seq = torch.from_numpy(original_seqs[i:i+1]).float().to(device)
             
-            recon_l = learnable_model.decoder(embed_l)
-            recon_o = original_model.decoder(embed_o)
+            # Apply full reconstruction path: activ -> linear -> norm -> decoder
+            h_l = learnable_model.activ(learnable_model.linear(embed_l))
+            h_l = learnable_model.norm(h_l)
+            recon_l = learnable_model.decoder(h_l)
+            
+            h_o = original_model.activ(original_model.linear(embed_o))
+            h_o = original_model.norm(h_o)
+            recon_o = original_model.decoder(h_o)
             
             error_l = torch.mean((recon_l - seq) ** 2).cpu().item()
             error_o = torch.mean((recon_o - seq) ** 2).cpu().item()

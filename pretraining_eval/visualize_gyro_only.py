@@ -4,18 +4,18 @@
 Visualize significant gyro axis reconstructions for 3 models: Original, Learnable, Learnable+Nucleus.
 
 python pretraining_eval/visualize_gyro_only.py \
-  --original_embed embed/embed_limu_v1_hhar_20_120.npy \
   --original_model saved/pretrain_base_hhar_20_120/limu_v1.pt \
-  --learnable_embed embed/embed_limu_v1_learnable_hhar_20_120.npy \
   --learnable_model saved/pretrain_base_hhar_20_120/limu_v1_learnable.pt \
-  --learnable_nucleus_embed embed/embed_limu_v1_learnable_nucleus_hhar_20_120.npy \
   --learnable_nucleus_model saved/pretrain_base_hhar_20_120/limu_v1_learnable_nucleus.pt \
   --data hhar \
   --n_samples 5
 
-
-
-  
+  python pretraining_eval/visualize_gyro_only.py \
+  --original_model saved/pretrain_base_blind_user_20_120/limu_v1.pt \
+  --learnable_model saved/pretrain_base_blind_user_20_120/limu_v1_learnable.pt \
+  --learnable_nucleus_model saved/pretrain_base_blind_user_20_120/limu_v1_learnable_nucleus.pt \
+  --data blind_user \
+  --n_samples 5
 """
 
 import sys
@@ -36,13 +36,21 @@ from utils import Preprocess4Mask, Preprocess4Normalization
 from features import detect_nucleus, compute_energy, calculate_significant_axis
 
 
+def generate_nucleus_mask(seq_len, batch_nucleus_points):
+    """Generate binary mask for nucleus regions"""
+    batch_size = len(batch_nucleus_points)
+    nucleus_mask = torch.zeros((batch_size, seq_len), dtype=torch.long)
+    for i, nucleus_points in enumerate(batch_nucleus_points):
+        if len(nucleus_points) == 2:
+            start, end = nucleus_points
+            nucleus_mask[i, start:end] = 1
+    return nucleus_mask
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--original_embed', type=str, required=True)
     parser.add_argument('--original_model', type=str, required=True)
-    parser.add_argument('--learnable_embed', type=str, required=True)
     parser.add_argument('--learnable_model', type=str, required=True)
-    parser.add_argument('--learnable_nucleus_embed', type=str, required=True)
     parser.add_argument('--learnable_nucleus_model', type=str, required=True)
     parser.add_argument('--data', type=str, default='hhar')
     parser.add_argument('--version', type=str, default='20_120')
@@ -56,16 +64,8 @@ def main():
     device = torch.device(f'cuda:{args.gpu}' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
     
-    # Load embeddings
-    print("\nLoading embeddings...")
-    original_embeddings = np.load(args.original_embed)
-    learnable_embeddings = np.load(args.learnable_embed)
-    learnable_nucleus_embeddings = np.load(args.learnable_nucleus_embed)
-    print(f"  Original: {original_embeddings.shape}")
-    print(f"  Learnable: {learnable_embeddings.shape}")
-    print(f"  Learnable Nucleus: {learnable_nucleus_embeddings.shape}")
-    
     # Load data
+    print("\nLoading dataset...")
     data_path = f"dataset/{args.data}/data_{args.version}.npy"
     data = np.load(data_path).astype(np.float32)
     print(f"  Data: {data.shape}")
@@ -85,24 +85,24 @@ def main():
     learnable_model_path = args.learnable_model if args.learnable_model.endswith('.pt') else f"{args.learnable_model}.pt"
     learnable_nucleus_model_path = args.learnable_nucleus_model if args.learnable_nucleus_model.endswith('.pt') else f"{args.learnable_nucleus_model}.pt"
     
-    original_model = LIMUBertModel4Pretrain(model_cfg)
+    original_model = LIMUBertModel4Pretrain(model_cfg, output_embed=True)
     original_model.load_state_dict(torch.load(original_model_path, map_location=device))
     original_model.to(device)
     original_model.eval()
     
-    learnable_model = LIMUBertModel4Pretrain(model_cfg)
+    learnable_model = LIMUBertModel4Pretrain(model_cfg, output_embed=True)
     learnable_model.load_state_dict(torch.load(learnable_model_path, map_location=device))
     learnable_model.to(device)
     learnable_model.eval()
     
-    learnable_nucleus_model = LIMUBertModel4Pretrain(model_cfg)
+    learnable_nucleus_model = LIMUBertModel4Pretrain(model_cfg, output_embed=True)
     learnable_nucleus_model.load_state_dict(torch.load(learnable_nucleus_model_path, map_location=device))
     learnable_nucleus_model.to(device)
     learnable_nucleus_model.eval()
     
     # Select random samples
     np.random.seed(args.seed)
-    n_total = min(len(data), len(learnable_embeddings))
+    n_total = len(data)
     random_indices = np.random.choice(n_total, args.n_samples, replace=False)
     print(f"\nSelected {args.n_samples} random samples: {random_indices}")
     
@@ -135,17 +135,40 @@ def main():
     with torch.no_grad():
         for plot_idx, sample_idx in enumerate(random_indices):
             ground_truth = data[sample_idx]
-            original_embed = torch.from_numpy(original_embeddings[sample_idx:sample_idx+1]).float().to(device)
-            learnable_embed = torch.from_numpy(learnable_embeddings[sample_idx:sample_idx+1]).float().to(device)
-            learnable_nucleus_embed = torch.from_numpy(learnable_nucleus_embeddings[sample_idx:sample_idx+1]).float().to(device)
+            ground_truth_norm = preprocess_norm(ground_truth.copy())
+            
+            # Prepare input tensor
+            seq_tensor = torch.from_numpy(ground_truth_norm).unsqueeze(0).float().to(device)
+            
+            # Compute energy and detect nucleus for this sample
+            energy = compute_energy(seq_tensor)
+            batch_nucleus_points = detect_nucleus(energy)
+            nucleus_mask = generate_nucleus_mask(seq_tensor.size(1), batch_nucleus_points).to(device)
+            
+            # Calculate significant axis mask
+            sig_axis = calculate_significant_axis(seq_tensor)
+            sig_axis_mask = (seq_tensor.argmax(dim=-1) == sig_axis[:, None]).long()
+            
+            # Generate embeddings on-the-fly
+            original_embed = original_model(seq_tensor, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
+            learnable_embed = learnable_model(seq_tensor, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
+            learnable_nucleus_embed = learnable_nucleus_model(seq_tensor, nucleus_mask=nucleus_mask, sig_axis_mask=sig_axis_mask)
+            
             masked_pos = masked_positions_list[plot_idx]
             
-            # Reconstruct FULL sequence (all timesteps) using decoder directly
-            # NOTE: During training, only masked positions are reconstructed
-            # But for visualization, we show full reconstruction capability
-            original_recon_full = original_model.decoder(original_embed).cpu().numpy()[0]
-            learnable_recon_full = learnable_model.decoder(learnable_embed).cpu().numpy()[0]
-            learnable_nucleus_recon_full = learnable_nucleus_model.decoder(learnable_nucleus_embed).cpu().numpy()[0]
+            # Reconstruct FULL sequence (all timesteps) using proper reconstruction path
+            # Apply activ -> linear -> norm -> decoder (matches pretraining)
+            h_orig = original_model.activ(original_model.linear(original_embed))
+            h_orig = original_model.norm(h_orig)
+            original_recon_full = original_model.decoder(h_orig).cpu().numpy()[0]
+            
+            h_learn = learnable_model.activ(learnable_model.linear(learnable_embed))
+            h_learn = learnable_model.norm(h_learn)
+            learnable_recon_full = learnable_model.decoder(h_learn).cpu().numpy()[0]
+            
+            h_nucleus = learnable_nucleus_model.activ(learnable_nucleus_model.linear(learnable_nucleus_embed))
+            h_nucleus = learnable_nucleus_model.norm(h_nucleus)
+            learnable_nucleus_recon_full = learnable_nucleus_model.decoder(h_nucleus).cpu().numpy()[0]
             
             # Create hybrid sequences: GT for unmasked, reconstruction for masked
             # This shows what the actual training sees
@@ -190,112 +213,90 @@ def main():
             gyro_learn_sig = normalize_to_range(gyro_learn_sig_raw)
             gyro_nucleus_sig = normalize_to_range(gyro_nucleus_sig_raw)
             
-            # Group consecutive masked positions into segments
-            masked_pos_sorted = sorted(masked_pos)
-            segments = []
-            if masked_pos_sorted:
-                current_segment = [masked_pos_sorted[0]]
-                for pos in masked_pos_sorted[1:]:
-                    if pos - current_segment[-1] <= 3:  # Within 3 timesteps, consider same segment
-                        current_segment.append(pos)
-                    else:
-                        segments.append(current_segment)
-                        current_segment = [pos]
-                segments.append(current_segment)
-            
             sig_axis_name = gyro_names[sig_axis_local]
             sig_axis_color = gyro_colors[sig_axis_local]
             
-            # For each segment, show zoomed view with context
-            context = 5  # Show 5 timesteps before and after
+            # Plot full signal (all 120 timestamps)
+            view_range = np.arange(120)
             
-            # Plot only the first major segment (or combine if multiple small ones)
-            if segments:
-                # Take the largest segment
-                main_segment = max(segments, key=len)
-                start_idx = max(0, main_segment[0] - context)
-                end_idx = min(120, main_segment[-1] + context + 1)
-                
-                view_range = np.arange(start_idx, end_idx)
-                
-                # Set fixed y-axis limits for normalized data
-                y_min = -1.1
-                y_max = 1.1
-                
-                # Plot 1: Original Model
-                ax1 = axes[plot_idx, 0] if args.n_samples > 1 else axes[0]
-                
-                # Highlight masked regions within view
-                for pos in main_segment:
-                    if start_idx <= pos < end_idx:
-                        ax1.axvspan(pos-0.5, pos+0.5, alpha=0.2, color='gray', zorder=0)
-                
-                ax1.plot(view_range, gyro_gt_sig[start_idx:end_idx], 
-                        linestyle=':', linewidth=3, alpha=0.9, marker='o', markersize=4,
-                        color=sig_axis_color, label='GT')
-                ax1.plot(view_range, gyro_orig_sig[start_idx:end_idx], 
-                        linestyle='-', linewidth=2.5, alpha=0.9, marker='s', markersize=3,
-                        color=sig_axis_color, label='Recon')
-                
-                ax1.set_xlabel('Time Step', fontsize=10, fontweight='bold')
-                ax1.set_ylabel(f'{sig_axis_name}', fontsize=10, fontweight='bold')
-                ax1.set_title(f'Sample {sample_idx}: ORIGINAL\nMSE = {original_mse:.4f}', 
-                            fontsize=11, fontweight='bold', color='#e74c3c')
-                ax1.set_ylim(y_min, y_max)
-                ax1.grid(alpha=0.3, linewidth=0.5)
-                ax1.legend(loc='best', fontsize=8, framealpha=0.9)
-                
-                # Plot 2: Learnable Model
-                ax2 = axes[plot_idx, 1] if args.n_samples > 1 else axes[1]
-                
-                for pos in main_segment:
-                    if start_idx <= pos < end_idx:
-                        ax2.axvspan(pos-0.5, pos+0.5, alpha=0.2, color='gray', zorder=0)
-                
-                ax2.plot(view_range, gyro_gt_sig[start_idx:end_idx], 
-                        linestyle=':', linewidth=3, alpha=0.9, marker='o', markersize=4,
-                        color=sig_axis_color, label='GT')
-                ax2.plot(view_range, gyro_learn_sig[start_idx:end_idx], 
-                        linestyle='-', linewidth=2.5, alpha=0.9, marker='s', markersize=3,
-                        color=sig_axis_color, label='Recon')
-                
-                learnable_improvement = ((original_mse - learnable_mse) / original_mse * 100)
-                title_color = '#27ae60' if learnable_improvement > 0 else '#e74c3c'
-                ax2.set_xlabel('Time Step', fontsize=10, fontweight='bold')
-                ax2.set_ylabel(f'{sig_axis_name}', fontsize=10, fontweight='bold')
-                ax2.set_title(f'Sample {sample_idx}: LEARNABLE\nMSE = {learnable_mse:.4f} ({learnable_improvement:+.1f}%)', 
-                            fontsize=11, fontweight='bold', color=title_color)
-                ax2.set_ylim(y_min, y_max)
-                ax2.grid(alpha=0.3, linewidth=0.5)
-                ax2.legend(loc='best', fontsize=8, framealpha=0.9)
-                
-                # Plot 3: Learnable+Nucleus Model
-                ax3 = axes[plot_idx, 2] if args.n_samples > 1 else axes[2]
-                
-                for pos in main_segment:
-                    if start_idx <= pos < end_idx:
-                        ax3.axvspan(pos-0.5, pos+0.5, alpha=0.2, color='gray', zorder=0)
-                
-                ax3.plot(view_range, gyro_gt_sig[start_idx:end_idx], 
-                        linestyle=':', linewidth=3, alpha=0.9, marker='o', markersize=4,
-                        color=sig_axis_color, label='GT')
-                ax3.plot(view_range, gyro_nucleus_sig[start_idx:end_idx], 
-                        linestyle='-', linewidth=2.5, alpha=0.9, marker='s', markersize=3,
-                        color=sig_axis_color, label='Recon')
-                
-                nucleus_improvement = ((original_mse - learnable_nucleus_mse) / original_mse * 100)
-                title_color = '#27ae60' if nucleus_improvement > 0 else '#e74c3c'
-                ax3.set_xlabel('Time Step', fontsize=10, fontweight='bold')
-                ax3.set_ylabel(f'{sig_axis_name}', fontsize=10, fontweight='bold')
-                ax3.set_title(f'Sample {sample_idx}: LEARNABLE+NUCLEUS\nMSE = {learnable_nucleus_mse:.4f} ({nucleus_improvement:+.1f}%)', 
-                            fontsize=11, fontweight='bold', color=title_color)
-                ax3.set_ylim(y_min, y_max)
-                ax3.grid(alpha=0.3, linewidth=0.5)
-                ax3.legend(loc='best', fontsize=8, framealpha=0.9)
+            # Set fixed y-axis limits for normalized data
+            y_min = -1.1
+            y_max = 1.1
+            
+            # Plot 1: Original Model
+            ax1 = axes[plot_idx, 0] if args.n_samples > 1 else axes[0]
+            
+            # Highlight all masked regions
+            for pos in masked_pos:
+                ax1.axvspan(pos-0.5, pos+0.5, alpha=0.15, color='yellow', zorder=0)
+            
+            ax1.plot(view_range, gyro_gt_sig, 
+                    linestyle='-', linewidth=2, alpha=0.8,
+                    color='black', label='GT')
+            ax1.plot(view_range, gyro_orig_sig, 
+                    linestyle='--', linewidth=1.5, alpha=0.9,
+                    color=sig_axis_color, label='Recon')
+            
+            ax1.set_xlabel('Time Step', fontsize=10, fontweight='bold')
+            ax1.set_ylabel(f'{sig_axis_name}', fontsize=10, fontweight='bold')
+            ax1.set_title(f'Sample {sample_idx}: ORIGINAL\nMSE = {original_mse:.4f}', 
+                        fontsize=11, fontweight='bold', color='#e74c3c')
+            ax1.set_ylim(y_min, y_max)
+            ax1.set_xlim(0, 119)
+            ax1.grid(alpha=0.3, linewidth=0.5)
+            ax1.legend(loc='best', fontsize=8, framealpha=0.9)
+            
+            # Plot 2: Learnable Model
+            ax2 = axes[plot_idx, 1] if args.n_samples > 1 else axes[1]
+            
+            for pos in masked_pos:
+                ax2.axvspan(pos-0.5, pos+0.5, alpha=0.15, color='yellow', zorder=0)
+            
+            ax2.plot(view_range, gyro_gt_sig, 
+                    linestyle='-', linewidth=2, alpha=0.8,
+                    color='black', label='GT')
+            ax2.plot(view_range, gyro_learn_sig, 
+                    linestyle='--', linewidth=1.5, alpha=0.9,
+                    color=sig_axis_color, label='Recon')
+            
+            learnable_improvement = ((original_mse - learnable_mse) / original_mse * 100)
+            title_color = '#27ae60' if learnable_improvement > 0 else '#e74c3c'
+            ax2.set_xlabel('Time Step', fontsize=10, fontweight='bold')
+            ax2.set_ylabel(f'{sig_axis_name}', fontsize=10, fontweight='bold')
+            ax2.set_title(f'Sample {sample_idx}: LEARNABLE\nMSE = {learnable_mse:.4f} ({learnable_improvement:+.1f}%)', 
+                        fontsize=11, fontweight='bold', color=title_color)
+            ax2.set_ylim(y_min, y_max)
+            ax2.set_xlim(0, 119)
+            ax2.grid(alpha=0.3, linewidth=0.5)
+            ax2.legend(loc='best', fontsize=8, framealpha=0.9)
+            
+            # Plot 3: Learnable+Nucleus Model
+            ax3 = axes[plot_idx, 2] if args.n_samples > 1 else axes[2]
+            
+            for pos in masked_pos:
+                ax3.axvspan(pos-0.5, pos+0.5, alpha=0.15, color='yellow', zorder=0)
+            
+            ax3.plot(view_range, gyro_gt_sig, 
+                    linestyle='-', linewidth=2, alpha=0.8,
+                    color='black', label='GT')
+            ax3.plot(view_range, gyro_nucleus_sig, 
+                    linestyle='--', linewidth=1.5, alpha=0.9,
+                    color=sig_axis_color, label='Recon')
+            
+            nucleus_improvement = ((original_mse - learnable_nucleus_mse) / original_mse * 100)
+            title_color = '#27ae60' if nucleus_improvement > 0 else '#e74c3c'
+            ax3.set_xlabel('Time Step', fontsize=10, fontweight='bold')
+            ax3.set_ylabel(f'{sig_axis_name}', fontsize=10, fontweight='bold')
+            ax3.set_title(f'Sample {sample_idx}: LEARNABLE+NUCLEUS\nMSE = {learnable_nucleus_mse:.4f} ({nucleus_improvement:+.1f}%)', 
+                        fontsize=11, fontweight='bold', color=title_color)
+            ax3.set_ylim(y_min, y_max)
+            ax3.set_xlim(0, 119)
+            ax3.grid(alpha=0.3, linewidth=0.5)
+            ax3.legend(loc='best', fontsize=8, framealpha=0.9)
             
             print(f"  Sample {sample_idx} ({sig_axis_name}): Orig={original_mse:.4f}, Learn={learnable_mse:.4f} ({learnable_improvement:+.1f}%), Nucleus={learnable_nucleus_mse:.4f} ({nucleus_improvement:+.1f}%)")
     
-    plt.suptitle('Zoomed Masked Region Reconstruction (Significant Gyro Axis)\nDotted+Circle = Ground Truth, Solid+Square = Model Reconstruction | Red Shading = Masked Positions', 
+    plt.suptitle('Full Signal Reconstruction (All 120 Timestamps - Significant Gyro Axis)\nSolid = Ground Truth, Dashed = Model Reconstruction | Yellow Shading = Masked Positions', 
                  fontsize=13, fontweight='bold', y=0.995)
     plt.tight_layout(rect=[0, 0, 1, 0.99])
     
