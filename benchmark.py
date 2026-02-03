@@ -22,6 +22,9 @@ from utils import get_device, handle_argv, IMUDataset, load_classifier_data_conf
 
 def classify_benchmark(args, label_index, training_rate, label_rate, balance=True, method=None):
     data, labels, train_cfg, model_cfg, dataset_cfg = load_classifier_data_config(args)
+    model = fetch_classifier(method, model_cfg, input=model_cfg.input, output=4)
+    # print input and output size of the model
+    print(model)
     label_names, label_num = load_dataset_label_names(dataset_cfg, label_index)
     data_train, label_train, data_vali, label_vali, data_test, label_test \
         = prepare_classifier_dataset(data, labels, label_index=label_index, training_rate=training_rate
@@ -42,7 +45,8 @@ def classify_benchmark(args, label_index, training_rate, label_rate, balance=Tru
 
     criterion = nn.CrossEntropyLoss()
     # criterion = FocalLoss()
-    model = fetch_classifier(method, model_cfg, input=model_cfg.input, output=label_num)
+    
+
     optimizer = torch.optim.Adam(params=model.parameters(), lr=train_cfg.lr)  # , weight_decay=0.95
     trainer = train.Trainer(train_cfg, model, optimizer, args.save_path, get_device(args.gpu))
 

@@ -100,8 +100,7 @@ class SemanticEmbedder:
 if __name__ == "__main__":
     # Example descriptions
 
-    descriptions = [
-            
+    descriptions = [            
             "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
             "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
             "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",

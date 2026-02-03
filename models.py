@@ -608,6 +608,7 @@ class BenchmarkTPNClassifier(nn.Module):
 
 
 def fetch_classifier(method, model_cfg, input=None, output=None, feats=False):
+    print("method: ", method, "input: ", input, "output: ", output)
     if 'lstm' in method:
         model = ClassifierLSTM(model_cfg, input=input, output=output)
     elif 'gru' in method:

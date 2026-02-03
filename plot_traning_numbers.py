@@ -95,4 +95,4 @@ def plot_metrics(log_file):
         
 
 # Run the function with the log file path
-plot_metrics('saved/classifier_contrastive_gru_earbud_filtered_20_120/loss_acc_2025-03-10_04-49-16.txt')
+plot_metrics('saved/classifier_contrastive_gru_blind_user_filtered_20_120/loss_acc_2025-03-11_21-51-58.txt')

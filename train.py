@@ -374,8 +374,8 @@ class Trainer(object):
             # round the  val accuracy to 2 decimal places
             #vali_acc = round(vali_acc, 2) # for use for har, and smartwatch
 
-            #combined_score = (0.6 * vali_acc) + (0.3 * vali_f1) + (0.1 * min(train_f1, 0.99)) #for hand blind user
-            combined_score = combined_score_cal(train_acc, vali_acc, vali_f1, train_f1) # for earbud user
+            combined_score = (0.6 * vali_acc) + (0.3 * vali_f1) + (0.1 * min(train_f1, 0.99)) #for hand blind user
+            #combined_score = combined_score_cal(train_acc, vali_acc, vali_f1, train_f1) # for earbud user
 
             if combined_score >= combined_score_best:
                 combined_score_best = combined_score
