@@ -27,6 +27,7 @@
         "user_label_size": 24,
         "size": 4534
     },
+
     "uci_20_120": {
         "sr": 20,
         "seq_len": 120,
@@ -331,6 +332,161 @@
             "a S-curve rightward tracing gesture with properties: primary type: shape, direction: right, complexity: complex",
             "a Wave-like leftward motion gesture with properties: primary type: shape, direction: left, complexity: complex",
             "a Wave-like rightward motion gesture with properties: primary type: shape, direction: right, complexity: complex"
+        ]
+    },
+
+    "HGAG_DATA_20_120": {
+        "sr": 20,
+        "seq_len": 120,
+        "dimension": 6,
+        "activity_label_index": 1,
+        "activity_label_size": 11,
+        "activity_label": [
+            "Clap", "Coin Flip", "Finger Snap", "Make Fist", "Wrist Extend Horizontal",
+            "Index Flick", "Index-Thumb Tap", "Shoot", "Thumb Up", "Wrist Extension", "Wrist Flexion"
+        ],
+        "user_label_index": 0,
+        "user_label_size": 43,
+        "size": 23648,
+        "descriptions": [
+            "a Clapping gesture with properties: primary type: rhythmic, direction: bilateral, complexity: simple",
+            "a Coin flipping gesture with properties: primary type: dexterous, direction: finger-centric, complexity: moderate",
+            "a Finger snapping gesture with properties: primary type: impulsive, direction: direct, complexity: simple",
+            "a Fist making gesture with properties: primary type: grasping, direction: inward, complexity: simple",
+            "a Horizontal wrist extension gesture with properties: primary type: directional, direction: horizontal, complexity: moderate",
+            "a Index finger flick gesture with properties: primary type: flick, direction: forward, complexity: simple",
+            "a Index thumb tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
+            "a Shooting gesture with properties: primary type: symbolic, direction: forward, complexity: moderate",
+            "a Thumb up gesture with properties: primary type: symbolic, direction: upward, complexity: simple",
+            "a Wrist extension gesture with properties: primary type: rotational, direction: extension, complexity: moderate",
+            "a Wrist flexion gesture with properties: primary type: rotational, direction: flexion, complexity: moderate"
+        ]
+    },
+
+    "UTD_MHAD_20_120": {
+        "sr": 20,
+        "seq_len": 120,
+        "dimension": 6,
+        "activity_label_index": 1,
+        "activity_label_size": 27,
+        "activity_label": [
+            "Swipe Left", "Swipe Right", "Wave", "Front Clap", "Throw", "Cross Arms", "Basketball Shot", "Draw X", "Draw Circle CW", "Draw Circle CCW", "Draw Triangle", "Bowl", "Front Boxing", "Baseball Swing", "Tennis Forehand", "Arm Curl", "Tennis Serve", "Two-Hand Push", "Knock", "Catch Object", "Pick and Throw", "Jog In Place", "Walk In Place", "Sit to Stand", "Stand to Sit", "Forward Lunge", "Squat"
+        ],
+        "user_label_index": 0,
+        "user_label_size": 8,
+        "size": 861,
+        "descriptions": [
+            "a Right-arm leftward swipe gesture with properties: primary type: directional, direction: left, complexity: simple",
+            "a Right-arm rightward swipe gesture with properties: primary type: directional, direction: right, complexity: simple",
+            "a Right-hand waving gesture with properties: primary type: periodic, direction: lateral, complexity: simple",
+            "a Two-hand front clap gesture with properties: primary type: rhythmic, direction: frontal, complexity: simple",
+            "a Right-arm throw gesture with properties: primary type: ballistic, direction: forward, complexity: moderate",
+            "a Cross-arms-on-chest gesture with properties: primary type: postural, direction: inward, complexity: simple",
+            "a Basketball shooting gesture with properties: primary type: sport-specific, direction: upward, complexity: moderate",
+            "a Right-hand X drawing gesture with properties: primary type: shape, direction: crossed, complexity: moderate",
+            "a Right-hand clockwise circle drawing gesture with properties: primary type: shape, direction: clockwise, complexity: moderate",
+            "a Right-hand counter-clockwise circle drawing gesture with properties: primary type: shape, direction: counter-clockwise, complexity: moderate",
+            "a Triangle drawing gesture with properties: primary type: shape, direction: cyclic, complexity: moderate",
+            "a Right-hand bowling gesture with properties: primary type: sport-specific, direction: forward, complexity: moderate",
+            "a Front boxing gesture with properties: primary type: striking, direction: forward, complexity: moderate",
+            "a Right-side baseball swing gesture with properties: primary type: sport-specific, direction: arc, complexity: complex",
+            "a Right-hand tennis forehand swing gesture with properties: primary type: sport-specific, direction: forward-arc, complexity: complex",
+            "a Two-arm curl gesture with properties: primary type: lifting, direction: upward, complexity: moderate",
+            "a Tennis serve gesture with properties: primary type: sport-specific, direction: overhead, complexity: complex",
+            "a Two-hand push gesture with properties: primary type: forceful, direction: forward, complexity: simple",
+            "a Right-hand door-knock gesture with properties: primary type: repetitive, direction: forward, complexity: simple",
+            "a Right-hand object-catching gesture with properties: primary type: grasping, direction: inward, complexity: moderate",
+            "a Right-hand pick-up-and-throw gesture with properties: primary type: compound, direction: mixed, complexity: complex",
+            "a Jogging-in-place gesture with properties: primary type: locomotion, direction: cyclic, complexity: moderate",
+            "a Walking-in-place gesture with properties: primary type: locomotion, direction: cyclic, complexity: simple",
+            "a Sit-to-stand transition gesture with properties: primary type: transition, direction: upward, complexity: moderate",
+            "a Stand-to-sit transition gesture with properties: primary type: transition, direction: downward, complexity: moderate",
+            "a Forward lunge gesture with properties: primary type: lower-body, direction: forward, complexity: moderate",
+            "a Two-arm squat gesture with properties: primary type: lower-body, direction: downward-upward, complexity: moderate"
+        ]
+    },
+
+    "umahand_20_120": {
+        "sr": 20,
+        "seq_len": 120,
+        "dimension": 6,
+        "activity_label_index": 1,
+        "activity_label_size": 29,
+        "activity_label": [
+            "Brush Teeth (Manual)", "Brush Teeth (Electric)", "Wash Hands", "Eat Soup", "Cut Food", "Peel Fruit", "Clap", "Comb Hair", "Wipe Surface", "Sweep", "Write with Pen", "Type Keyboard", "Text on Phone", "Fold Paper", "Dial and Hold Phone", "Pick Up from Floor", "Open Bottle Cap", "Drink Water", "Pour Water", "Wear Glasses", "Wear Jacket", "Remove Jacket", "Wear Shoe and Tie", "Wave Goodbye", "Blow Nose", "Turn Doorknob", "Button Shirt", "Zip Up/Down", "Screw"
+        ],
+        "user_label_index": 0,
+        "user_label_size": 25,
+        "size": 752,
+        "descriptions": [
+            "a Manual tooth-brushing gesture with properties: primary type: repetitive, direction: oral, complexity: moderate",
+            "an Electric tooth-brushing gesture with properties: primary type: repetitive, direction: oral, complexity: moderate",
+            "a Hand-washing gesture with properties: primary type: repetitive, direction: mixed, complexity: moderate",
+            "a Spoon-to-mouth eating gesture with properties: primary type: utensil-use, direction: upward, complexity: moderate",
+            "a Knife-and-fork food-cutting gesture with properties: primary type: bimanual, direction: mixed, complexity: complex",
+            "a Fruit-peeling gesture with properties: primary type: utensil-use, direction: circular, complexity: complex",
+            "an Applauding gesture with properties: primary type: rhythmic, direction: bilateral, complexity: simple",
+            "a Hair-combing gesture with properties: primary type: grooming, direction: directional, complexity: simple",
+            "a Surface-wiping gesture with properties: primary type: cleaning, direction: planar, complexity: moderate",
+            "a Broom-sweeping gesture with properties: primary type: cleaning, direction: lateral, complexity: moderate",
+            "a Pen-writing gesture with properties: primary type: fine-motor, direction: planar, complexity: moderate",
+            "a Keyboard-typing gesture with properties: primary type: fine-motor, direction: direct, complexity: moderate",
+            "a Mobile texting gesture with properties: primary type: fine-motor, direction: direct, complexity: moderate",
+            "a Paper-folding gesture with properties: primary type: bimanual, direction: inward, complexity: moderate",
+            "a Phone-dial-and-ear gesture with properties: primary type: compound, direction: mixed, complexity: complex",
+            "a Floor pick-up-to-chest gesture with properties: primary type: lifting, direction: upward, complexity: complex",
+            "a Bottle-cap opening gesture with properties: primary type: rotational, direction: twist, complexity: moderate",
+            "a Glass-drinking gesture with properties: primary type: object-use, direction: upward, complexity: simple",
+            "a Water-pouring gesture with properties: primary type: object-use, direction: tilt, complexity: moderate",
+            "a Put-on-glasses gesture with properties: primary type: dressing, direction: facial, complexity: simple",
+            "a Put-on-jacket gesture with properties: primary type: dressing, direction: bilateral, complexity: complex",
+            "a Remove-jacket gesture with properties: primary type: dressing, direction: bilateral, complexity: complex",
+            "a Shoe-tying gesture with properties: primary type: dressing, direction: downward, complexity: complex",
+            "a Goodbye waving gesture with properties: primary type: symbolic, direction: lateral, complexity: simple",
+            "a Nose-blowing gesture with properties: primary type: grooming, direction: facial, complexity: simple",
+            "a Doorknob open-close gesture with properties: primary type: rotational, direction: twist, complexity: moderate",
+            "a Shirt-buttoning gesture with properties: primary type: fine-motor, direction: direct, complexity: complex",
+            "a Zipper raise-lower gesture with properties: primary type: linear, direction: vertical, complexity: moderate",
+            "a Screw-tightening gesture with properties: primary type: rotational, direction: clockwise-counterclockwise, complexity: moderate"
+        ]
+    },
+
+    "INF2018_20_120": {
+        "sr": 20,
+        "seq_len": 120,
+        "dimension": 6,
+        "activity_label_index": 1,
+        "activity_label_size": 23,
+        "activity_label": [
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "O", "Q", "R", "S", "T", "U", "V", "W", "X", "Null"
+        ],
+        "user_label_index": 0,
+        "user_label_size": 32,
+        "size": 520,
+        "descriptions": [
+            "a Static LSF letter A handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+            "a Static LSF letter B handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+            "a Static LSF letter C handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+            "a Static LSF letter D handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+            "a Static LSF letter E handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+            "a Static LSF letter F handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter G handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter H handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter I handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+            "a Static LSF letter K handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter L handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter M handshape with properties: primary type: alphabetic, direction: static, complexity: complex",
+            "a Static LSF letter N handshape with properties: primary type: alphabetic, direction: static, complexity: complex",
+            "a Static LSF letter O handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+            "a Static LSF letter Q handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter R handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter S handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+            "a Static LSF letter T handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter U handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter V handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter W handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Static LSF letter X handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+            "a Null or background class with properties: primary type: none, direction: none, complexity: none"
         ]
     },
 
