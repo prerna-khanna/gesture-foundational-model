@@ -283,7 +283,7 @@ if __name__ == "__main__":
     
     # Updated scenario and system names
     scenario_names = ['Watch Hand Gesture (SU)', 'Earbud Hand Gesture (SU)', 'Blind User Hand Gesture (BU)']
-    system_names = ['Deep-\nSense', 'LIMU-\nBERT', 'UniHAR', 'Contrast-\nSense', 'GestureLens']  # Added ContraSense
+    system_names = ['Deep-\nSense', 'LIMU-\nBERT', 'UniHAR', 'Contrast-\nSense', 'UniMotion']  # Added ContraSense
     
     # Create and show the plot
     fig = create_bar_plot(file_paths, scenario_names, system_names, output_file='paper_figs/new_bar_plot_test_server.pdf')

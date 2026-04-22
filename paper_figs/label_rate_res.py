@@ -171,7 +171,7 @@ def create_accuracy_subplots():
     }
     
     # Define systems - Added ContraSense to the list
-    systems = ['DeepSense', 'LIMU-BERT', 'UniHAR', 'ContrastSense', 'GestureLens']
+    systems = ['DeepSense', 'LIMU-BERT', 'UniHAR', 'ContrastSense', 'UniMotion']
     system_keys = ['deepsense', 'limu_bert', 'unihar', 'contrasense', 'your_system']
     
     # Define label rates
@@ -182,7 +182,7 @@ def create_accuracy_subplots():
               '#9b59b6',  # Purple (LIMU-BERT)
               '#e74c3c',  # Red (UniHAR)
               '#f39c12',  # Orange (ContraSense)
-              'green']    # Green (GestureLens)
+              'green']    # Green (UniMotion)
     
     # Define scenario names for titles
     scenario_names = {
@@ -262,7 +262,7 @@ def create_accuracy_subplots():
                                 'LIMU-BERT': 0.68,
                                 'UniHAR': 0.65,
                                 'ContraSense': 0.67,  # Added base value for ContraSense
-                                'GestureLens': 0.75
+                                'UniMotion': 0.75
                             }
                             acc = base_values.get(system, 0.7)
                             std_dev = 0.03
@@ -287,7 +287,7 @@ def create_accuracy_subplots():
                             'LIMU-BERT': 0.68,
                             'UniHAR': 0.65,
                             'ContraSense': 0.67,  # Added base value for ContraSense
-                            'GestureLens': 0.75
+                            'UniMotion': 0.75
                         }
                         acc = base_values.get(system, 0.7)
                         std_dev = 0.03
@@ -341,7 +341,7 @@ def create_accuracy_subplots():
     os.makedirs('paper_figs', exist_ok=True)
     
     # Save figure
-    output_file = 'paper_figs/accuracy_plot_label_rate.pdf'
+    output_file = 'paper_figs/accuracy_plot_label_rate_arch.pdf'
     plt.savefig(output_file, bbox_inches='tight')
     print(f"\nPlot saved to '{output_file}'")
     
