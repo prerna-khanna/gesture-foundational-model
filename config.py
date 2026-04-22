@@ -82,6 +82,8 @@ class TrainConfig(NamedTuple): # vanilla training configuration class
     seed: int = 0  # random seed
     batch_size: int = 0
     lr: int = 0  # learning rate
+    weight_decay: float = 0.0
+    grad_clip_norm: float = 1.0
     n_epochs: int = 0  # the number of epoch
     # `warm up` period = warmup(0.1)*total_steps
     # linearly increasing learning rate from zero to the specified value(5e-5)

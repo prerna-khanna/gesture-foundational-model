@@ -312,6 +312,7 @@ class Trainer(object):
         combined_score_best = 0.0
         best_stat = None
         model_best = self.model.state_dict()
+        grad_clip_norm = getattr(self.cfg, 'grad_clip_norm', 1.0)
 
         for e in range(self.cfg.n_epochs):
             # Track all loss components separately
@@ -335,6 +336,8 @@ class Trainer(object):
                     epoch_losses[key] += batch_losses[key]
                 
                 total_loss.backward()
+                if grad_clip_norm and grad_clip_norm > 0:
+                    torch.nn.utils.clip_grad_norm_(self.model.parameters(), grad_clip_norm)
                 self.optimizer.step()
                 global_step += 1
 
@@ -374,8 +377,7 @@ class Trainer(object):
             # round the  val accuracy to 2 decimal places
             #vali_acc = round(vali_acc, 2) # for use for har, and smartwatch
 
-            combined_score = (0.6 * vali_acc) + (0.3 * vali_f1) + (0.1 * min(train_f1, 0.99)) #for hand blind user
-            #combined_score = combined_score_cal(train_acc, vali_acc, vali_f1, train_f1) # for earbud user
+            combined_score = (0.7 * vali_acc) + (0.3 * vali_f1)
 
             if combined_score >= combined_score_best:
                 combined_score_best = combined_score

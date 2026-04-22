@@ -46,7 +46,9 @@ def create_config_with_params(original_cfg, params):
         'total_steps': original_cfg.total_steps,
         'lambda1': original_cfg.lambda1,
         'lambda2': params.get('lambda2', original_cfg.lambda2),
-        'pooling': getattr(original_cfg, 'pooling', 'mean')  # Default to 'mean' if not present
+        'pooling': params.get('pooling', getattr(original_cfg, 'pooling', 'mean')),
+        'weight_decay': params.get('weight_decay', getattr(original_cfg, 'weight_decay', 0.0)),
+        'grad_clip_norm': params.get('grad_clip_norm', getattr(original_cfg, 'grad_clip_norm', 1.0))
     }
     return type(original_cfg)(**config_dict)
 
@@ -120,8 +122,15 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         )"""
         
         # Setup optimizer and trainer
-        optimizer = torch.optim.Adam(params=model.parameters(), lr=train_cfg.lr)
-        print(f"Optimizer initialized with learning rate: {train_cfg.lr}")
+        optimizer = torch.optim.AdamW(
+            params=model.parameters(),
+            lr=train_cfg.lr,
+            weight_decay=getattr(train_cfg, 'weight_decay', 0.0)
+        )
+        print(
+            f"Optimizer initialized with learning rate: {train_cfg.lr}, "
+            f"weight decay: {getattr(train_cfg, 'weight_decay', 0.0)}"
+        )
         
         # Create a unique save path for this parameter configuration if doing grid search
         save_path = args.save_path

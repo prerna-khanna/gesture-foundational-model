@@ -2,6 +2,8 @@
     "seed": 3431,
     "batch_size": 64,
     "lr": 0.001,
+    "weight_decay": 0.0001,
+    "grad_clip_norm": 1.0,
     "n_epochs": 200,
     "warmup": 0.1,
     "save_steps": 100,
