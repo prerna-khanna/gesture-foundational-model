@@ -289,7 +289,7 @@ def run_grid_search(args, embedding, labels, label_index, training_rate, label_r
 
 if __name__ == "__main__":
     try:
-        training_rate = 0.8
+        training_rate = 0.7
         label_rate = 1
         balance = True
         

@@ -1,0 +1,177 @@
+{
+  "dataset": "Alexandra",
+  "version": "20_120",
+  "method": "real_classifier",
+  "quick_epochs": 30,
+  "overall_accuracy": 1.0,
+  "per_gesture_stats": {
+    "1": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1,
+      "correct": 1,
+      "total": 1,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
+    },
+    "2": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 3,
+      "correct": 3,
+      "total": 3,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
+    },
+    "3": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2,
+      "correct": 2,
+      "total": 2,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
+    },
+    "4": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0,
+      "correct": 0,
+      "total": 0,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
+    },
+    "5": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2,
+      "correct": 2,
+      "total": 2,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
+    },
+    "6": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 3,
+      "correct": 3,
+      "total": 3,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
+    },
+    "7": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2,
+      "correct": 2,
+      "total": 2,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
+    },
+    "8": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 3,
+      "correct": 3,
+      "total": 3,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
+    },
+    "9": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 3,
+      "correct": 3,
+      "total": 3,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
+    },
+    "10": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2,
+      "correct": 2,
+      "total": 2,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
+    }
+  },
+  "quality_report": {
+    "1": {
+      "name": "Gesture 2",
+      "quality": "GOOD",
+      "issues": []
+    },
+    "2": {
+      "name": "Gesture 3",
+      "quality": "GOOD",
+      "issues": []
+    },
+    "3": {
+      "name": "Gesture 4",
+      "quality": "GOOD",
+      "issues": []
+    },
+    "4": {
+      "name": "Gesture 5",
+      "quality": "PROBLEMATIC",
+      "issues": [
+        "Low recall: 0.0% (misses 100% of samples)"
+      ]
+    },
+    "5": {
+      "name": "Gesture 6",
+      "quality": "GOOD",
+      "issues": []
+    },
+    "6": {
+      "name": "Gesture 7",
+      "quality": "GOOD",
+      "issues": []
+    },
+    "7": {
+      "name": "Gesture 8",
+      "quality": "GOOD",
+      "issues": []
+    },
+    "8": {
+      "name": "Gesture 9",
+      "quality": "GOOD",
+      "issues": []
+    },
+    "9": {
+      "name": "Gesture 10",
+      "quality": "GOOD",
+      "issues": []
+    },
+    "10": {
+      "name": "Gesture 10",
+      "quality": "GOOD",
+      "issues": []
+    }
+  },
+  "problematic_gestures": [
+    4
+  ],
+  "good_gestures": [
+    1,
+    2,
+    3,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ]
+}

@@ -270,107 +270,267 @@
         ]
     },
 
-        "Alexandra_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 15,
-        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and left", "flick wrist and right", "square", "circle", "triangle", "question mark", "infinity"],
-        "user_label_index": 1,
-        "user_label_size": 8,
-        "size": 219,
-        "descriptions": [
-            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
-            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
-            "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
-            "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
-            
-            "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
-            "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
-            
-            
-            "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
-            "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
-            "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
-            "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
-            
-           
-            "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
-            "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
-        ]
-    },
+  "Alexandra_20_120": {
+    "sr": 20,
+    "seq_len": 120,
+    "dimension": 6,
+    "activity_label_index": 0,
+    "activity_label_size": 10,
+    "activity_label": [
+      "moving hand up","wrist left","wrist right","wrist down","tap wrist on surface","rotate wrist","swipe up","swipe down","push hand in air","touch both hands"
+    ],
+    "user_label_index": 1,
+    "user_label_size": 1,
+    "size": 10,
+    "descriptions": [
+      "a Upward hand movement gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Leftward wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: simple",
+      "a Rightward wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: simple",
+      "a Downward wrist motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Wrist tapping on surface gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Continuous wrist rotation gesture with properties: primary type: rotational, direction: cyclic, complexity: complex",
+      "a Upward swiping gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Downward swiping gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Forward pushing hand gesture with properties: primary type: directional, direction: forward, complexity: simple",
+      "a Two hand touch gesture with properties: primary type: tap, direction: none, complexity: complex"
+    ]
+  },
 
-        "Turiya_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 15,
-        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and left", "flick wrist and right", "square", "circle", "triangle", "question mark", "infinity"],
-        "user_label_index": 1,
-        "user_label_size": 8,
-        "size": 219,
-        "descriptions": [
-            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
-            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
-            "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
-            "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
-            
-            "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
-            "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
-            
-            
-            "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
-            "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
-            "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
-            "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
-            
-           
-            "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
-            "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
-        ]
-    },
+  "Rahkiya_20_120": {
+    "sr": 20,
+    "seq_len": 120,
+    "dimension": 6,
+    "activity_label_index": 0,
+    "activity_label_size": 10,
+    "activity_label": [
+      "scroll down","swipe up","flick","double flick","push away","push towards","tap other hand","triple tap on a surface","fold towards my side","swipe right"
+    ],
+    "user_label_index": 1,
+    "user_label_size": 1,
+    "size": 10,
+    "descriptions": [
+      "a Downward scrolling gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Upward swiping gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Quick flick gesture with properties: primary type: complex, direction: none, complexity: simple",
+      "a Double flick gesture with properties: primary type: complex, direction: none, complexity: complex",
+      "a Forward pushing gesture with properties: primary type: directional, direction: forward, complexity: simple",
+      "a Backward pulling gesture with properties: primary type: directional, direction: backward, complexity: simple",
+      "a Tapping other hand gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Triple tapping on surface gesture with properties: primary type: tap, direction: none, complexity: complex",
+      "a Folding hand toward body gesture with properties: primary type: directional, direction: inward, complexity: complex",
+      "a Rightward swiping gesture with properties: primary type: directional, direction: right, complexity: simple"
+    ]
+  },
 
-    "Julius_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 15,
-        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and left", "flick wrist and right", "square", "circle", "triangle", "question mark", "infinity"],
-        "user_label_index": 1,
-        "user_label_size": 8,
-        "size": 219,
-        "descriptions": [
-            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
-            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
-            "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
-            "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
-            
-            "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
-            "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
-            
-            
-            "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
-            "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
-            "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
-            "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
-            
-           
-            "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
-            "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
-        ]
-    },
+  "Nihal_20_120": {
+    "sr": 20,
+    "seq_len": 120,
+    "dimension": 6,
+    "activity_label_index": 0,
+    "activity_label_size": 12,
+    "activity_label": [
+      "tap on surface","double tap on surface","triple tap on surface","clenching and opening wrist","clenching twice","swiping up on surface","swiping down on the surface","swipe left","swipe right","pinching thumb and index","clenching wrist thrice","scratch with knuckle"
+    ],
+    "user_label_index": 1,
+    "user_label_size": 1,
+    "size": 12,
+    "descriptions": [
+      "a Surface tapping gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Double tapping on surface gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Triple tapping on surface gesture with properties: primary type: tap, direction: none, complexity: complex",
+      "a Wrist clenching and opening gesture with properties: primary type: complex, direction: none, complexity: complex",
+      "a Double clenching gesture with properties: primary type: complex, direction: none, complexity: complex",
+      "a Upward swiping on surface gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Downward swiping on surface gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Leftward swiping gesture with properties: primary type: directional, direction: left, complexity: simple",
+      "a Rightward swiping gesture with properties: primary type: directional, direction: right, complexity: simple",
+      "a Pinching gesture with properties: primary type: complex, direction: none, complexity: simple",
+      "a Triple clenching wrist gesture with properties: primary type: complex, direction: none, complexity: complex",
+      "a Knuckle scratching gesture with properties: primary type: complex, direction: none, complexity: simple"
+    ]
+  },
+
+  "Angel_20_120": {
+    "sr": 20,
+    "seq_len": 120,
+    "dimension": 6,
+    "activity_label_index": 0,
+    "activity_label_size": 11,
+    "activity_label": [
+      "clench wrist","flick wrist inwards","forearm left","double tap on other hand","fist and sideways tap","right side circle","fist and clap","tap on ear/shoulder","pinch with middle and ring finger","move hand to ear","swipe downwards on other arm"
+    ],
+    "user_label_index": 1,
+    "user_label_size": 1,
+    "size": 11,
+    "descriptions": [
+      "a Wrist clenching gesture with properties: primary type: complex, direction: none, complexity: simple",
+      "a Inward wrist flick gesture with properties: primary type: directional, direction: inward, complexity: simple",
+      "a Leftward forearm movement gesture with properties: primary type: directional, direction: left, complexity: simple",
+      "a Double tapping on other hand gesture with properties: primary type: tap, direction: none, complexity: complex",
+      "a Fist sideways tapping gesture with properties: primary type: tap, direction: lateral, complexity: complex",
+      "a Rightward circular motion gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
+      "a Fist clap gesture with properties: primary type: tap, direction: none, complexity: complex",
+      "a Tapping ear or shoulder gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Pinch with middle and ring finger gesture with properties: primary type: complex, direction: none, complexity: complex",
+      "a Hand moving to ear gesture with properties: primary type: directional, direction: upward, complexity: simple",
+      "a Downward swipe on other arm gesture with properties: primary type: directional, direction: down, complexity: complex"
+    ]
+  },
+
+  "Julius_20_120": {
+    "sr": 20,
+    "seq_len": 120,
+    "dimension": 6,
+    "activity_label_index": 0,
+    "activity_label_size": 10,
+    "activity_label": [
+      "swipe up on surface","swipe down on surface","swipe left on surface","swipe right on surface","swipe up with four fingers","swipe down with four fingers","double tap on surface","tap and hold on surface","swipe right with four fingers","diagonal swipe"
+    ],
+    "user_label_index": 1,
+    "user_label_size": 1,
+    "size": 10,
+    "descriptions": [
+      "a Upward swiping on surface gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Downward swiping on surface gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Leftward swiping on surface gesture with properties: primary type: directional, direction: left, complexity: simple",
+      "a Rightward swiping on surface gesture with properties: primary type: directional, direction: right, complexity: simple",
+      "a Four finger upward swipe gesture with properties: primary type: directional, direction: up, complexity: complex",
+      "a Four finger downward swipe gesture with properties: primary type: directional, direction: down, complexity: complex",
+      "a Double tapping on surface gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Tap and hold gesture with properties: primary type: tap, direction: none, complexity: complex",
+      "a Four finger right swipe gesture with properties: primary type: directional, direction: right, complexity: complex",
+      "a Diagonal swiping gesture with properties: primary type: directional, direction: mixed, complexity: complex"
+    ]
+  },
+
+  "Turiya_20_120": {
+    "sr": 20,
+    "seq_len": 120,
+    "dimension": 6,
+    "activity_label_index": 0,
+    "activity_label_size": 10,
+    "activity_label": [
+      "double tap surface","move forearm left","move forearm right","fist up","fist down","move hand up surface","move hand down surface","fist circle","double flick down","triple flick down"
+    ],
+    "user_label_index": 1,
+    "user_label_size": 1,
+    "size": 10,
+    "descriptions": [
+      "a Double tapping on surface gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Leftward forearm movement gesture with properties: primary type: directional, direction: left, complexity: simple",
+      "a Rightward forearm movement gesture with properties: primary type: directional, direction: right, complexity: simple",
+      "a Upward fist movement gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Downward fist movement gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Upward hand movement on surface gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Downward hand movement on surface gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Circular fist motion gesture with properties: primary type: rotational, direction: cyclic, complexity: complex",
+      "a Double downward flick gesture with properties: primary type: complex, direction: down, complexity: complex",
+      "a Triple downward flick gesture with properties: primary type: complex, direction: down, complexity: complex"
+    ]
+  },
+
+  "John_20_120": {
+    "sr": 20,
+    "seq_len": 120,
+    "dimension": 6,
+    "activity_label_index": 0,
+    "activity_label_size": 10,
+    "activity_label": [
+      "forearm up","forearm down","fist","fist open","scissor","tap chest","swipe air","turn knob","circle counterclockwise"," "
+    ],
+    "user_label_index": 1,
+    "user_label_size": 1,
+    "size": 9,
+    "descriptions": [
+      "a Upward forearm movement gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Downward forearm movement gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Fist making gesture with properties: primary type: complex, direction: none, complexity: simple",
+      "a Fist opening gesture with properties: primary type: complex, direction: none, complexity: simple",
+      "a Scissor cutting motion gesture with properties: primary type: complex, direction: cyclic, complexity: simple",
+      "a Chest tapping gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Horizontal air swiping gesture with properties: primary type: directional, direction: lateral, complexity: simple",
+      "a Knob turning gesture with properties: primary type: rotational, direction: cyclic, complexity: complex",
+      "a Counterclockwise circular motion gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex"
+    ]
+  },
+
+  "Kerry_20_120": {
+    "sr": 20,
+    "seq_len": 120,
+    "dimension": 6,
+    "activity_label_index": 0,
+    "activity_label_size": 10,
+    "activity_label": [
+      "flick thumb up","index left","index right","index down","tap surface","double tap surface","flick wrist","rotate knob","forearm up","flick towards face"
+    ],
+    "user_label_index": 1,
+    "user_label_size": 1,
+    "size": 10,
+    "descriptions": [
+      "a Thumb upward flick gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Index finger left swipe gesture with properties: primary type: directional, direction: left, complexity: simple",
+      "a Index finger right swipe gesture with properties: primary type: directional, direction: right, complexity: simple",
+      "a Index finger downward swipe gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Surface tapping gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Double tapping on surface gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Wrist flick gesture with properties: primary type: complex, direction: none, complexity: simple",
+      "a Rotational knob gesture with properties: primary type: rotational, direction: cyclic, complexity: complex",
+      "a Upward forearm movement gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Flick towards face gesture with properties: primary type: directional, direction: inward, complexity: simple"
+    ]
+  },
+
+  "Roafel_20_120": {
+    "sr": 20,
+    "seq_len": 120,
+    "dimension": 6,
+    "activity_label_index": 0,
+    "activity_label_size": 10,
+    "activity_label": [
+      "flick twice","clench thrice","tap other hand","swipe left","swipe right","swipe up surface","swipe down surface","wrist flick outward","double tap surface","wrist rotation"
+    ],
+    "user_label_index": 1,
+    "user_label_size": 1,
+    "size": 10,
+    "descriptions": [
+      "a Double flick gesture with properties: primary type: complex, direction: none, complexity: complex",
+      "a Triple clenching gesture with properties: primary type: complex, direction: none, complexity: complex",
+      "a Tapping other hand gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Leftward swiping gesture with properties: primary type: directional, direction: left, complexity: simple",
+      "a Rightward swiping gesture with properties: primary type: directional, direction: right, complexity: simple",
+      "a Upward swiping on surface gesture with properties: primary type: directional, direction: up, complexity: simple",
+      "a Downward swiping on surface gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Outward wrist flick gesture with properties: primary type: directional, direction: outward, complexity: simple",
+      "a Double tapping on surface gesture with properties: primary type: tap, direction: none, complexity: simple",
+      "a Wrist rotation gesture with properties: primary type: rotational, direction: cyclic, complexity: complex"
+    ]
+  },
+
+  "Edery_20_120": {
+    "sr": 20,
+    "seq_len": 120,
+    "dimension": 6,
+    "activity_label_index": 0,
+    "activity_label_size": 10,
+    "activity_label": [
+      "flick down","wrist left","wrist right","double flick up","double flick down","draw backward L","draw L","circle","draw T","turn knob"
+    ],
+    "user_label_index": 1,
+    "user_label_size": 1,
+    "size": 10,
+    "descriptions": [
+      "a Downward flick gesture with properties: primary type: directional, direction: down, complexity: simple",
+      "a Leftward wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: simple",
+      "a Rightward wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: simple",
+      "a Double upward flick gesture with properties: primary type: complex, direction: up, complexity: complex",
+      "a Double downward flick gesture with properties: primary type: complex, direction: down, complexity: complex",
+      "a Backward L shape tracing gesture with properties: primary type: shape, direction: mixed, complexity: complex",
+      "a L shape tracing gesture with properties: primary type: shape, direction: mixed, complexity: complex",
+      "a Circular motion gesture with properties: primary type: rotational, direction: cyclic, complexity: complex",
+      "a T shape tracing gesture with properties: primary type: shape, direction: mixed, complexity: complex",
+      "a Knob turning gesture with properties: primary type: rotational, direction: cyclic, complexity: complex"
+    ]
+  },
 
 
 
