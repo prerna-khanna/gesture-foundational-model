@@ -539,10 +539,12 @@ class FFTDataset(Dataset):
 
 class LIBERTDataset4Pretrain(Dataset):
     """ Load sentence pair (sequential or random order) from corpus """
-    def __init__(self, data, pipeline=[]):
+    def __init__(self, data, pipeline=[], use_nucleus=True, use_sig_axis=True):
         super().__init__()
         self.pipeline = pipeline
         self.data = data
+        self.use_nucleus = use_nucleus
+        self.use_sig_axis = use_sig_axis
 
     def __getitem__(self, index):
         from features import compute_energy, detect_nucleus, calculate_significant_axis
@@ -583,11 +585,31 @@ class LIBERTDataset4Pretrain(Dataset):
         # sig_axis_mask: 1 where the max value is on the significant axis, 0 otherwise
         sig_axis_mask = (original_tensor.argmax(dim=-1).squeeze(0) == sig_axis[0]).long().numpy()
         
-        return (torch.from_numpy(mask_seq), 
-                torch.from_numpy(masked_pos).long(), 
-                torch.from_numpy(seq),
-                torch.from_numpy(nucleus_mask).long(),
-                torch.from_numpy(sig_axis_mask).long())
+        # Return tuple based on what embeddings are used
+        if self.use_nucleus and self.use_sig_axis:
+            # Both embeddings
+            return (torch.from_numpy(mask_seq), 
+                    torch.from_numpy(masked_pos).long(), 
+                    torch.from_numpy(seq),
+                    torch.from_numpy(nucleus_mask).long(),
+                    torch.from_numpy(sig_axis_mask).long())
+        elif self.use_nucleus:
+            # Only nucleus
+            return (torch.from_numpy(mask_seq), 
+                    torch.from_numpy(masked_pos).long(), 
+                    torch.from_numpy(seq),
+                    torch.from_numpy(nucleus_mask).long())
+        elif self.use_sig_axis:
+            # Only sig_axis
+            return (torch.from_numpy(mask_seq), 
+                    torch.from_numpy(masked_pos).long(), 
+                    torch.from_numpy(seq),
+                    torch.from_numpy(sig_axis_mask).long())
+        else:
+            # Neither (baseline BERT)
+            return (torch.from_numpy(mask_seq), 
+                    torch.from_numpy(masked_pos).long(), 
+                    torch.from_numpy(seq))
 
     def __len__(self):
         return len(self.data)

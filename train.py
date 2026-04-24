@@ -77,6 +77,7 @@ class Trainer(object):
             loss_sum = 0. # the sum of iteration losses to get average loss in every epoch
             time_sum = 0.0
             self.model.train()
+            print(f'\n[Epoch {e+1}/{self.cfg.n_epochs}] Starting training...')
             for i, batch in enumerate(data_loader_train):
                 batch = [t.to(self.device) for t in batch]
                 start_time = time.time()
@@ -90,6 +91,11 @@ class Trainer(object):
                 global_step += 1
                 loss_sum += loss.item()
 
+                # Print batch-level progress every 10 batches
+                if (i + 1) % 10 == 0:
+                    avg_loss = loss_sum / (i + 1)
+                    print(f'  Batch {i+1}/{len(data_loader_train)}: Avg Loss {avg_loss:.4f}')
+
                 # if global_step % self.cfg.save_steps == 0: # save
                 #     self.save(global_step)
 
@@ -99,8 +105,8 @@ class Trainer(object):
                 # print(i)
 
             loss_eva = self.run(func_forward, func_evaluate, data_loader_test)
-            print('Epoch %d/%d : Average Loss %5.4f. Test Loss %5.4f'
-                    % (e + 1, self.cfg.n_epochs, loss_sum / len(data_loader_train), loss_eva))
+            avg_train_loss = loss_sum / len(data_loader_train)
+            print(f'[Epoch {e + 1}/{self.cfg.n_epochs}] Train Loss: {avg_train_loss:.4f} | Test Loss: {loss_eva:.4f}')
             # print("Train execution time: %.5f seconds" % (time_sum / len(self.data_loader)))
             if loss_eva < best_loss:
                 best_loss = loss_eva

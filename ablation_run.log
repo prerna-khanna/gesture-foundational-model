@@ -1,0 +1,385 @@
+===== ABLATION TEST: 4 MODELS x 10 EPOCHS =====
+
+Using 10-epoch config: config/pretrain_10epochs.json
+
+[1/4] Training: Both (nucleus + sig_axis)
+name is  hhar_20_120
+Train Size: 7332, Vali Size: 916, Test Size: 918
+Using device: cuda:0 (1 GPUs available)
+Log file will be saved to: saved/pretrain_base_hhar_20_120/loss_acc_2026-04-23_19-30-42.txt
+
+[Epoch 1/10] Starting training...
+  Batch 10/58: Avg Loss 0.2769
+  Batch 20/58: Avg Loss 0.2037
+  Batch 30/58: Avg Loss 0.1760
+  Batch 40/58: Avg Loss 0.1611
+  Batch 50/58: Avg Loss 0.1510
+[Epoch 1/10] Train Loss: 0.1469 | Test Loss: 0.1059
+
+[Epoch 2/10] Starting training...
+  Batch 10/58: Avg Loss 0.1076
+  Batch 20/58: Avg Loss 0.1117
+  Batch 30/58: Avg Loss 0.1103
+  Batch 40/58: Avg Loss 0.1075
+  Batch 50/58: Avg Loss 0.1059
+[Epoch 2/10] Train Loss: 0.1057 | Test Loss: 0.0992
+
+[Epoch 3/10] Starting training...
+  Batch 10/58: Avg Loss 0.1090
+  Batch 20/58: Avg Loss 0.1034
+  Batch 30/58: Avg Loss 0.1018
+  Batch 40/58: Avg Loss 0.1011
+  Batch 50/58: Avg Loss 0.1011
+[Epoch 3/10] Train Loss: 0.1006 | Test Loss: 0.0963
+
+[Epoch 4/10] Starting training...
+  Batch 10/58: Avg Loss 0.1036
+  Batch 20/58: Avg Loss 0.0997
+  Batch 30/58: Avg Loss 0.0992
+  Batch 40/58: Avg Loss 0.0990
+  Batch 50/58: Avg Loss 0.1006
+[Epoch 4/10] Train Loss: 0.0999 | Test Loss: 0.0948
+
+[Epoch 5/10] Starting training...
+  Batch 10/58: Avg Loss 0.1033
+  Batch 20/58: Avg Loss 0.1019
+  Batch 30/58: Avg Loss 0.1002
+  Batch 40/58: Avg Loss 0.0996
+  Batch 50/58: Avg Loss 0.0991
+[Epoch 5/10] Train Loss: 0.0998 | Test Loss: 0.0954
+
+[Epoch 6/10] Starting training...
+  Batch 10/58: Avg Loss 0.0994
+  Batch 20/58: Avg Loss 0.1008
+  Batch 30/58: Avg Loss 0.0980
+  Batch 40/58: Avg Loss 0.0975
+  Batch 50/58: Avg Loss 0.0977
+[Epoch 6/10] Train Loss: 0.0973 | Test Loss: 0.0916
+
+[Epoch 7/10] Starting training...
+  Batch 10/58: Avg Loss 0.0936
+  Batch 20/58: Avg Loss 0.1000
+  Batch 30/58: Avg Loss 0.0980
+  Batch 40/58: Avg Loss 0.0972
+  Batch 50/58: Avg Loss 0.0978
+[Epoch 7/10] Train Loss: 0.0977 | Test Loss: 0.0930
+
+[Epoch 8/10] Starting training...
+  Batch 10/58: Avg Loss 0.0958
+  Batch 20/58: Avg Loss 0.0961
+  Batch 30/58: Avg Loss 0.0959
+  Batch 40/58: Avg Loss 0.0971
+  Batch 50/58: Avg Loss 0.0967
+[Epoch 8/10] Train Loss: 0.0974 | Test Loss: 0.0911
+
+[Epoch 9/10] Starting training...
+  Batch 10/58: Avg Loss 0.0937
+  Batch 20/58: Avg Loss 0.0953
+  Batch 30/58: Avg Loss 0.0983
+  Batch 40/58: Avg Loss 0.0973
+  Batch 50/58: Avg Loss 0.0969
+[Epoch 9/10] Train Loss: 0.0969 | Test Loss: 0.0911
+
+[Epoch 10/10] Starting training...
+  Batch 10/58: Avg Loss 0.1011
+  Batch 20/58: Avg Loss 0.0985
+  Batch 30/58: Avg Loss 0.0960
+  Batch 40/58: Avg Loss 0.0954
+  Batch 50/58: Avg Loss 0.0951
+[Epoch 10/10] Train Loss: 0.0974 | Test Loss: 0.0919
+The Total Epoch have been reached.
+
+[1/4] Generating embeddings for Both...
+name is  hhar_20_120
+Using device: cuda:0 (1 GPUs available)
+Log file will be saved to: saved/pretrain_base_hhar_20_120/loss_acc_2026-04-23_19-31-11.txt
+Loading the model from saved/pretrain_base_hhar_20_120/limu_v1_ablation_both
+
+
+[2/4] Training: Nucleus only
+name is  hhar_20_120
+Train Size: 7332, Vali Size: 916, Test Size: 918
+Using device: cuda:0 (1 GPUs available)
+Log file will be saved to: saved/pretrain_base_hhar_20_120/loss_acc_2026-04-23_19-31-16.txt
+
+[Epoch 1/10] Starting training...
+  Batch 10/58: Avg Loss 0.2769
+  Batch 20/58: Avg Loss 0.2037
+  Batch 30/58: Avg Loss 0.1760
+  Batch 40/58: Avg Loss 0.1611
+  Batch 50/58: Avg Loss 0.1510
+[Epoch 1/10] Train Loss: 0.1469 | Test Loss: 0.1059
+
+[Epoch 2/10] Starting training...
+  Batch 10/58: Avg Loss 0.1076
+  Batch 20/58: Avg Loss 0.1117
+  Batch 30/58: Avg Loss 0.1103
+  Batch 40/58: Avg Loss 0.1075
+  Batch 50/58: Avg Loss 0.1059
+[Epoch 2/10] Train Loss: 0.1057 | Test Loss: 0.0992
+
+[Epoch 3/10] Starting training...
+  Batch 10/58: Avg Loss 0.1090
+  Batch 20/58: Avg Loss 0.1034
+  Batch 30/58: Avg Loss 0.1018
+  Batch 40/58: Avg Loss 0.1011
+  Batch 50/58: Avg Loss 0.1011
+[Epoch 3/10] Train Loss: 0.1006 | Test Loss: 0.0963
+
+[Epoch 4/10] Starting training...
+  Batch 10/58: Avg Loss 0.1036
+  Batch 20/58: Avg Loss 0.0997
+  Batch 30/58: Avg Loss 0.0992
+  Batch 40/58: Avg Loss 0.0990
+  Batch 50/58: Avg Loss 0.1006
+[Epoch 4/10] Train Loss: 0.0999 | Test Loss: 0.0948
+
+[Epoch 5/10] Starting training...
+  Batch 10/58: Avg Loss 0.1033
+  Batch 20/58: Avg Loss 0.1019
+  Batch 30/58: Avg Loss 0.1002
+  Batch 40/58: Avg Loss 0.0996
+  Batch 50/58: Avg Loss 0.0991
+[Epoch 5/10] Train Loss: 0.0998 | Test Loss: 0.0954
+
+[Epoch 6/10] Starting training...
+  Batch 10/58: Avg Loss 0.0994
+  Batch 20/58: Avg Loss 0.1008
+  Batch 30/58: Avg Loss 0.0980
+  Batch 40/58: Avg Loss 0.0975
+  Batch 50/58: Avg Loss 0.0977
+[Epoch 6/10] Train Loss: 0.0973 | Test Loss: 0.0916
+
+[Epoch 7/10] Starting training...
+  Batch 10/58: Avg Loss 0.0936
+  Batch 20/58: Avg Loss 0.1000
+  Batch 30/58: Avg Loss 0.0980
+  Batch 40/58: Avg Loss 0.0972
+  Batch 50/58: Avg Loss 0.0978
+[Epoch 7/10] Train Loss: 0.0977 | Test Loss: 0.0930
+
+[Epoch 8/10] Starting training...
+  Batch 10/58: Avg Loss 0.0958
+  Batch 20/58: Avg Loss 0.0961
+  Batch 30/58: Avg Loss 0.0959
+  Batch 40/58: Avg Loss 0.0971
+  Batch 50/58: Avg Loss 0.0967
+[Epoch 8/10] Train Loss: 0.0974 | Test Loss: 0.0911
+
+[Epoch 9/10] Starting training...
+  Batch 10/58: Avg Loss 0.0937
+  Batch 20/58: Avg Loss 0.0953
+  Batch 30/58: Avg Loss 0.0983
+  Batch 40/58: Avg Loss 0.0973
+  Batch 50/58: Avg Loss 0.0969
+[Epoch 9/10] Train Loss: 0.0969 | Test Loss: 0.0911
+
+[Epoch 10/10] Starting training...
+  Batch 10/58: Avg Loss 0.1011
+  Batch 20/58: Avg Loss 0.0985
+  Batch 30/58: Avg Loss 0.0960
+  Batch 40/58: Avg Loss 0.0954
+  Batch 50/58: Avg Loss 0.0951
+[Epoch 10/10] Train Loss: 0.0974 | Test Loss: 0.0919
+The Total Epoch have been reached.
+
+[2/4] Generating embeddings for Nucleus-only...
+name is  hhar_20_120
+Using device: cuda:0 (1 GPUs available)
+Log file will be saved to: saved/pretrain_base_hhar_20_120/loss_acc_2026-04-23_19-31-45.txt
+Loading the model from saved/pretrain_base_hhar_20_120/limu_v1_ablation_nucleus_only
+
+
+[3/4] Training: Sig_axis only
+name is  hhar_20_120
+Train Size: 7332, Vali Size: 916, Test Size: 918
+Using device: cuda:0 (1 GPUs available)
+Log file will be saved to: saved/pretrain_base_hhar_20_120/loss_acc_2026-04-23_19-31-50.txt
+
+[Epoch 1/10] Starting training...
+  Batch 10/58: Avg Loss 0.2769
+  Batch 20/58: Avg Loss 0.2037
+  Batch 30/58: Avg Loss 0.1760
+  Batch 40/58: Avg Loss 0.1611
+  Batch 50/58: Avg Loss 0.1510
+[Epoch 1/10] Train Loss: 0.1469 | Test Loss: 0.1059
+
+[Epoch 2/10] Starting training...
+  Batch 10/58: Avg Loss 0.1076
+  Batch 20/58: Avg Loss 0.1117
+  Batch 30/58: Avg Loss 0.1103
+  Batch 40/58: Avg Loss 0.1075
+  Batch 50/58: Avg Loss 0.1059
+[Epoch 2/10] Train Loss: 0.1057 | Test Loss: 0.0992
+
+[Epoch 3/10] Starting training...
+  Batch 10/58: Avg Loss 0.1090
+  Batch 20/58: Avg Loss 0.1034
+  Batch 30/58: Avg Loss 0.1018
+  Batch 40/58: Avg Loss 0.1011
+  Batch 50/58: Avg Loss 0.1011
+[Epoch 3/10] Train Loss: 0.1006 | Test Loss: 0.0963
+
+[Epoch 4/10] Starting training...
+  Batch 10/58: Avg Loss 0.1036
+  Batch 20/58: Avg Loss 0.0997
+  Batch 30/58: Avg Loss 0.0992
+  Batch 40/58: Avg Loss 0.0990
+  Batch 50/58: Avg Loss 0.1006
+[Epoch 4/10] Train Loss: 0.0999 | Test Loss: 0.0948
+
+[Epoch 5/10] Starting training...
+  Batch 10/58: Avg Loss 0.1033
+  Batch 20/58: Avg Loss 0.1019
+  Batch 30/58: Avg Loss 0.1002
+  Batch 40/58: Avg Loss 0.0996
+  Batch 50/58: Avg Loss 0.0991
+[Epoch 5/10] Train Loss: 0.0998 | Test Loss: 0.0954
+
+[Epoch 6/10] Starting training...
+  Batch 10/58: Avg Loss 0.0994
+  Batch 20/58: Avg Loss 0.1008
+  Batch 30/58: Avg Loss 0.0980
+  Batch 40/58: Avg Loss 0.0975
+  Batch 50/58: Avg Loss 0.0977
+[Epoch 6/10] Train Loss: 0.0973 | Test Loss: 0.0916
+
+[Epoch 7/10] Starting training...
+  Batch 10/58: Avg Loss 0.0936
+  Batch 20/58: Avg Loss 0.1000
+  Batch 30/58: Avg Loss 0.0980
+  Batch 40/58: Avg Loss 0.0972
+  Batch 50/58: Avg Loss 0.0978
+[Epoch 7/10] Train Loss: 0.0977 | Test Loss: 0.0930
+
+[Epoch 8/10] Starting training...
+  Batch 10/58: Avg Loss 0.0958
+  Batch 20/58: Avg Loss 0.0961
+  Batch 30/58: Avg Loss 0.0959
+  Batch 40/58: Avg Loss 0.0971
+  Batch 50/58: Avg Loss 0.0967
+[Epoch 8/10] Train Loss: 0.0974 | Test Loss: 0.0911
+
+[Epoch 9/10] Starting training...
+  Batch 10/58: Avg Loss 0.0937
+  Batch 20/58: Avg Loss 0.0953
+  Batch 30/58: Avg Loss 0.0983
+  Batch 40/58: Avg Loss 0.0973
+  Batch 50/58: Avg Loss 0.0969
+[Epoch 9/10] Train Loss: 0.0969 | Test Loss: 0.0911
+
+[Epoch 10/10] Starting training...
+  Batch 10/58: Avg Loss 0.1011
+  Batch 20/58: Avg Loss 0.0985
+  Batch 30/58: Avg Loss 0.0960
+  Batch 40/58: Avg Loss 0.0954
+  Batch 50/58: Avg Loss 0.0951
+[Epoch 10/10] Train Loss: 0.0974 | Test Loss: 0.0919
+The Total Epoch have been reached.
+
+[3/4] Generating embeddings for Sig_axis-only...
+name is  hhar_20_120
+Using device: cuda:0 (1 GPUs available)
+Log file will be saved to: saved/pretrain_base_hhar_20_120/loss_acc_2026-04-23_19-32-19.txt
+Loading the model from saved/pretrain_base_hhar_20_120/limu_v1_ablation_sig_axis_only
+
+
+[4/4] Training: Baseline (neither)
+name is  hhar_20_120
+Train Size: 7332, Vali Size: 916, Test Size: 918
+Using device: cuda:0 (1 GPUs available)
+Log file will be saved to: saved/pretrain_base_hhar_20_120/loss_acc_2026-04-23_19-32-24.txt
+
+[Epoch 1/10] Starting training...
+  Batch 10/58: Avg Loss 0.2769
+  Batch 20/58: Avg Loss 0.2037
+  Batch 30/58: Avg Loss 0.1760
+  Batch 40/58: Avg Loss 0.1611
+  Batch 50/58: Avg Loss 0.1510
+[Epoch 1/10] Train Loss: 0.1469 | Test Loss: 0.1059
+
+[Epoch 2/10] Starting training...
+  Batch 10/58: Avg Loss 0.1076
+  Batch 20/58: Avg Loss 0.1117
+  Batch 30/58: Avg Loss 0.1103
+  Batch 40/58: Avg Loss 0.1075
+  Batch 50/58: Avg Loss 0.1059
+[Epoch 2/10] Train Loss: 0.1057 | Test Loss: 0.0992
+
+[Epoch 3/10] Starting training...
+  Batch 10/58: Avg Loss 0.1090
+  Batch 20/58: Avg Loss 0.1034
+  Batch 30/58: Avg Loss 0.1018
+  Batch 40/58: Avg Loss 0.1011
+  Batch 50/58: Avg Loss 0.1011
+[Epoch 3/10] Train Loss: 0.1006 | Test Loss: 0.0963
+
+[Epoch 4/10] Starting training...
+  Batch 10/58: Avg Loss 0.1036
+  Batch 20/58: Avg Loss 0.0997
+  Batch 30/58: Avg Loss 0.0992
+  Batch 40/58: Avg Loss 0.0990
+  Batch 50/58: Avg Loss 0.1006
+[Epoch 4/10] Train Loss: 0.0999 | Test Loss: 0.0948
+
+[Epoch 5/10] Starting training...
+  Batch 10/58: Avg Loss 0.1033
+  Batch 20/58: Avg Loss 0.1019
+  Batch 30/58: Avg Loss 0.1002
+  Batch 40/58: Avg Loss 0.0996
+  Batch 50/58: Avg Loss 0.0991
+[Epoch 5/10] Train Loss: 0.0998 | Test Loss: 0.0954
+
+[Epoch 6/10] Starting training...
+  Batch 10/58: Avg Loss 0.0994
+  Batch 20/58: Avg Loss 0.1008
+  Batch 30/58: Avg Loss 0.0980
+  Batch 40/58: Avg Loss 0.0975
+  Batch 50/58: Avg Loss 0.0977
+[Epoch 6/10] Train Loss: 0.0973 | Test Loss: 0.0916
+
+[Epoch 7/10] Starting training...
+  Batch 10/58: Avg Loss 0.0936
+  Batch 20/58: Avg Loss 0.1000
+  Batch 30/58: Avg Loss 0.0980
+  Batch 40/58: Avg Loss 0.0972
+  Batch 50/58: Avg Loss 0.0978
+[Epoch 7/10] Train Loss: 0.0977 | Test Loss: 0.0930
+
+[Epoch 8/10] Starting training...
+  Batch 10/58: Avg Loss 0.0958
+  Batch 20/58: Avg Loss 0.0961
+  Batch 30/58: Avg Loss 0.0959
+  Batch 40/58: Avg Loss 0.0971
+  Batch 50/58: Avg Loss 0.0967
+[Epoch 8/10] Train Loss: 0.0974 | Test Loss: 0.0911
+
+[Epoch 9/10] Starting training...
+  Batch 10/58: Avg Loss 0.0937
+  Batch 20/58: Avg Loss 0.0953
+  Batch 30/58: Avg Loss 0.0983
+  Batch 40/58: Avg Loss 0.0973
+  Batch 50/58: Avg Loss 0.0969
+[Epoch 9/10] Train Loss: 0.0969 | Test Loss: 0.0911
+
+[Epoch 10/10] Starting training...
+  Batch 10/58: Avg Loss 0.1011
+  Batch 20/58: Avg Loss 0.0985
+  Batch 30/58: Avg Loss 0.0960
+  Batch 40/58: Avg Loss 0.0954
+  Batch 50/58: Avg Loss 0.0951
+[Epoch 10/10] Train Loss: 0.0974 | Test Loss: 0.0919
+The Total Epoch have been reached.
+
+[4/4] Generating embeddings for Baseline...
+name is  hhar_20_120
+Using device: cuda:0 (1 GPUs available)
+Log file will be saved to: saved/pretrain_base_hhar_20_120/loss_acc_2026-04-23_19-32-53.txt
+Loading the model from saved/pretrain_base_hhar_20_120/limu_v1_ablation_baseline
+
+
+===== ABLATION TEST COMPLETE =====
+-rw-rw-r-- 1 prerna prerna 257K Apr 23 19:32 saved/pretrain_base_hhar_20_120/limu_v1_ablation_baseline.pt
+-rw-rw-r-- 1 prerna prerna 257K Apr 23 19:31 saved/pretrain_base_hhar_20_120/limu_v1_ablation_both.pt
+-rw-rw-r-- 1 prerna prerna 257K Apr 23 19:31 saved/pretrain_base_hhar_20_120/limu_v1_ablation_nucleus_only.pt
+-rw-rw-r-- 1 prerna prerna 257K Apr 23 19:32 saved/pretrain_base_hhar_20_120/limu_v1_ablation_sig_axis_only.pt

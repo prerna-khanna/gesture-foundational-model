@@ -23,11 +23,11 @@ from utils import set_seeds, get_device \
     prepare_pretrain_dataset, Preprocess4Normalization,  Preprocess4Mask
 
 
-def main(args, training_rate):
+def main(args, training_rate, nucleus_prob=0.8):
     data, labels, train_cfg, model_cfg, mask_cfg, dataset_cfg = load_pretrain_data_config(args)
 
-    # Use nucleus-aware masking with 80% probability
-    pipeline = [Preprocess4Normalization(model_cfg.feature_num), Preprocess4Mask(mask_cfg, nucleus_aware=True, nucleus_prob=0.8)]
+    # Use nucleus-aware masking with specified nucleus probability
+    pipeline = [Preprocess4Normalization(model_cfg.feature_num), Preprocess4Mask(mask_cfg, nucleus_aware=True, nucleus_prob=nucleus_prob)]
     # pipeline = [Preprocess4Mask(mask_cfg)]
     data_train, label_train, data_test, label_test = prepare_pretrain_dataset(data, labels, training_rate, seed=train_cfg.seed)
 
@@ -68,7 +68,21 @@ def main(args, training_rate):
         trainer.pretrain(func_loss, func_forward, func_evaluate, data_loader_train, data_loader_test, model_file=None)
 
 if __name__ == "__main__":
+    import sys
     mode = "base"
     args = handle_argv('pretrain_' + mode, 'pretrain.json', mode)
     training_rate = 0.8
-    main(args, training_rate)
+    
+    # Check if nucleus_prob is provided as command-line argument
+    nucleus_prob = 0.8  # Default value
+    if len(sys.argv) > 1:
+        # Try to extract nucleus_prob from save model name
+        # Format: python pretrain.py v1 hhar 20_120 -s limu_v1_nucleus_0.8
+        for i, arg in enumerate(sys.argv):
+            if 'nucleus_' in arg:
+                try:
+                    nucleus_prob = float(arg.split('nucleus_')[-1])
+                except:
+                    nucleus_prob = 0.8
+    
+    main(args, training_rate, nucleus_prob=nucleus_prob)

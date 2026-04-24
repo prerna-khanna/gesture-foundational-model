@@ -13,7 +13,7 @@ from utils import set_seeds, get_device, LIBERTDataset4Pretrain, \
     prepare_pretrain_dataset, Preprocess4Normalization, Preprocess4Mask
 from combined_dataset import load_combined_datasets
 
-def main(args, training_rate):
+def main(args, training_rate, nucleus_prob=0.8):
     # Load the combined dataset
     data, labels = load_combined_datasets(dataset_version='20_120', seed=42)
     
@@ -22,10 +22,10 @@ def main(args, training_rate):
     mask_cfg = MaskConfig.from_json(args.mask_cfg)
     model_cfg = args.model_cfg
     
-    # Prepare the dataset
+    # Prepare the dataset with nucleus-aware masking
     pipeline = [
         Preprocess4Normalization(model_cfg.feature_num), 
-        Preprocess4Mask(mask_cfg)
+        Preprocess4Mask(mask_cfg, nucleus_aware=True, nucleus_prob=nucleus_prob)
     ]
     
     data_train, label_train, data_test, label_test = prepare_pretrain_dataset(
@@ -84,9 +84,22 @@ def main(args, training_rate):
         )
 
 if __name__ == "__main__":
+    import sys
     from utils import handle_argv
     
     mode = "base"
     args = handle_argv('pretrain_' + mode, 'pretrain.json', mode)
     training_rate = 0.8
-    main(args, training_rate)
+    
+    # Check if nucleus_prob is provided as command-line argument
+    nucleus_prob = 0.8  # Default value
+    if len(sys.argv) > 1:
+        # Try to extract nucleus_prob from save model name
+        for i, arg in enumerate(sys.argv):
+            if 'nucleus_' in arg:
+                try:
+                    nucleus_prob = float(arg.split('nucleus_')[-1])
+                except:
+                    nucleus_prob = 0.8
+    
+    main(args, training_rate, nucleus_prob=nucleus_prob)

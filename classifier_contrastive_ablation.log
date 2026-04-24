@@ -1,0 +1,345 @@
+Running contrastive classifier on HHAR ablation embeddings...
+==================================================
+
+Running classifier for: limu_v1_ablation_both
+Save model: limu_v1_ablation_both_gru_v2
+---
+Traceback (most recent call last):
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 163, in classify_embeddings
+    trainer.train(func_loss, func_forward, func_evaluate,
+  File "/home/prerna/LIMU-BERT-blind-users/train.py", line 337, in train
+    total_loss, batch_losses = func_loss(self.model, batch, current_epoch=e)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 141, in func_loss
+    total_loss, loss_dict = criterion(
+                            ^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/losses.py", line 46, in forward
+    semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/semantic_loss.py", line 99, in forward
+    sem_sim = self.semantic_sims[labels[i], labels[j]]
+              ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 7 is out of bounds for dimension 1 with size 6
+Traceback (most recent call last):
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 376, in <module>
+    label_test, label_estimate_test, acc, f1 = classify_embeddings(
+                                               ^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 180, in classify_embeddings
+    raise e
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 163, in classify_embeddings
+    trainer.train(func_loss, func_forward, func_evaluate,
+  File "/home/prerna/LIMU-BERT-blind-users/train.py", line 337, in train
+    total_loss, batch_losses = func_loss(self.model, batch, current_epoch=e)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 141, in func_loss
+    total_loss, loss_dict = criterion(
+                            ^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/losses.py", line 46, in forward
+    semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/semantic_loss.py", line 99, in forward
+    sem_sim = self.semantic_sims[labels[i], labels[j]]
+              ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 7 is out of bounds for dimension 1 with size 6
+
+name is  hhar_20_120
+Data dimensions: (9166, 120, 72) Label dimensions: (9166, 120, 3)
+Running normal training...
+Using device: cuda:0 (1 GPUs available)
+Number of classes: 9
+Label names: None
+Descriptions available: True
+Train Size: 43992, Vali Size: 5496, Test Size: 5508
+Balance Label Size: 4392, Unlabel Size: 39600; Real Label Rate: 0.100
+Model architecture initialized with hidden dimension: 128
+description is  ['a Biking activity with properties: primary type: locomotion, intensity: moderate, complexity: moderate', 'a Sitting activity with properties: primary type: stationary, intensity: low, complexity: simple', 'a Downstairs activity with properties: primary type: locomotion, intensity: high, complexity: moderate', 'a Upstairs activity with properties: primary type: locomotion, intensity: high, complexity: moderate', 'a Standing activity with properties: primary type: stationary, intensity: low, complexity: simple', 'a Walking activity with properties: primary type: locomotion, intensity: moderate, complexity: simple']
+Pooling criterion used: cls
+Optimizer initialized with learning rate: 0.001
+Log file will be saved to: saved/classifier_contrastive_gru_hhar_20_120/loss_acc_2026-04-23_19-46-59.txt
+Error in classify_embeddings: index 7 is out of bounds for dimension 1 with size 6
+Error type: <class 'IndexError'>
+Error in main: index 7 is out of bounds for dimension 1 with size 6
+
+Completed: limu_v1_ablation_both
+
+Running classifier for: limu_v1_ablation_nucleus_only
+Save model: limu_v1_ablation_nucleus_only_gru_v2
+---
+Traceback (most recent call last):
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 163, in classify_embeddings
+    trainer.train(func_loss, func_forward, func_evaluate,
+  File "/home/prerna/LIMU-BERT-blind-users/train.py", line 337, in train
+    total_loss, batch_losses = func_loss(self.model, batch, current_epoch=e)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 141, in func_loss
+    total_loss, loss_dict = criterion(
+                            ^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/losses.py", line 46, in forward
+    semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/semantic_loss.py", line 99, in forward
+    sem_sim = self.semantic_sims[labels[i], labels[j]]
+              ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 7 is out of bounds for dimension 1 with size 6
+Traceback (most recent call last):
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 376, in <module>
+    label_test, label_estimate_test, acc, f1 = classify_embeddings(
+                                               ^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 180, in classify_embeddings
+    raise e
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 163, in classify_embeddings
+    trainer.train(func_loss, func_forward, func_evaluate,
+  File "/home/prerna/LIMU-BERT-blind-users/train.py", line 337, in train
+    total_loss, batch_losses = func_loss(self.model, batch, current_epoch=e)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 141, in func_loss
+    total_loss, loss_dict = criterion(
+                            ^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/losses.py", line 46, in forward
+    semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/semantic_loss.py", line 99, in forward
+    sem_sim = self.semantic_sims[labels[i], labels[j]]
+              ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 7 is out of bounds for dimension 1 with size 6
+
+name is  hhar_20_120
+Data dimensions: (9166, 120, 72) Label dimensions: (9166, 120, 3)
+Running normal training...
+Using device: cuda:0 (1 GPUs available)
+Number of classes: 9
+Label names: None
+Descriptions available: True
+Train Size: 43992, Vali Size: 5496, Test Size: 5508
+Balance Label Size: 4392, Unlabel Size: 39600; Real Label Rate: 0.100
+Model architecture initialized with hidden dimension: 128
+description is  ['a Biking activity with properties: primary type: locomotion, intensity: moderate, complexity: moderate', 'a Sitting activity with properties: primary type: stationary, intensity: low, complexity: simple', 'a Downstairs activity with properties: primary type: locomotion, intensity: high, complexity: moderate', 'a Upstairs activity with properties: primary type: locomotion, intensity: high, complexity: moderate', 'a Standing activity with properties: primary type: stationary, intensity: low, complexity: simple', 'a Walking activity with properties: primary type: locomotion, intensity: moderate, complexity: simple']
+Pooling criterion used: cls
+Optimizer initialized with learning rate: 0.001
+Log file will be saved to: saved/classifier_contrastive_gru_hhar_20_120/loss_acc_2026-04-23_19-47-03.txt
+Error in classify_embeddings: index 7 is out of bounds for dimension 1 with size 6
+Error type: <class 'IndexError'>
+Error in main: index 7 is out of bounds for dimension 1 with size 6
+
+Completed: limu_v1_ablation_nucleus_only
+
+Running classifier for: limu_v1_ablation_sig_axis_only
+Save model: limu_v1_ablation_sig_axis_only_gru_v2
+---
+Traceback (most recent call last):
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 163, in classify_embeddings
+    trainer.train(func_loss, func_forward, func_evaluate,
+  File "/home/prerna/LIMU-BERT-blind-users/train.py", line 337, in train
+    total_loss, batch_losses = func_loss(self.model, batch, current_epoch=e)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 141, in func_loss
+    total_loss, loss_dict = criterion(
+                            ^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/losses.py", line 46, in forward
+    semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/semantic_loss.py", line 99, in forward
+    sem_sim = self.semantic_sims[labels[i], labels[j]]
+              ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 7 is out of bounds for dimension 1 with size 6
+Traceback (most recent call last):
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 376, in <module>
+    label_test, label_estimate_test, acc, f1 = classify_embeddings(
+                                               ^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 180, in classify_embeddings
+    raise e
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 163, in classify_embeddings
+    trainer.train(func_loss, func_forward, func_evaluate,
+  File "/home/prerna/LIMU-BERT-blind-users/train.py", line 337, in train
+    total_loss, batch_losses = func_loss(self.model, batch, current_epoch=e)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 141, in func_loss
+    total_loss, loss_dict = criterion(
+                            ^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/losses.py", line 46, in forward
+    semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/semantic_loss.py", line 99, in forward
+    sem_sim = self.semantic_sims[labels[i], labels[j]]
+              ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 7 is out of bounds for dimension 1 with size 6
+
+name is  hhar_20_120
+Data dimensions: (9166, 120, 72) Label dimensions: (9166, 120, 3)
+Running normal training...
+Using device: cuda:0 (1 GPUs available)
+Number of classes: 9
+Label names: None
+Descriptions available: True
+Train Size: 43992, Vali Size: 5496, Test Size: 5508
+Balance Label Size: 4392, Unlabel Size: 39600; Real Label Rate: 0.100
+Model architecture initialized with hidden dimension: 128
+description is  ['a Biking activity with properties: primary type: locomotion, intensity: moderate, complexity: moderate', 'a Sitting activity with properties: primary type: stationary, intensity: low, complexity: simple', 'a Downstairs activity with properties: primary type: locomotion, intensity: high, complexity: moderate', 'a Upstairs activity with properties: primary type: locomotion, intensity: high, complexity: moderate', 'a Standing activity with properties: primary type: stationary, intensity: low, complexity: simple', 'a Walking activity with properties: primary type: locomotion, intensity: moderate, complexity: simple']
+Pooling criterion used: cls
+Optimizer initialized with learning rate: 0.001
+Log file will be saved to: saved/classifier_contrastive_gru_hhar_20_120/loss_acc_2026-04-23_19-47-07.txt
+Error in classify_embeddings: index 7 is out of bounds for dimension 1 with size 6
+Error type: <class 'IndexError'>
+Error in main: index 7 is out of bounds for dimension 1 with size 6
+
+Completed: limu_v1_ablation_sig_axis_only
+
+Running classifier for: limu_v1_ablation_baseline
+Save model: limu_v1_ablation_baseline_gru_v2
+---
+Traceback (most recent call last):
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 163, in classify_embeddings
+    trainer.train(func_loss, func_forward, func_evaluate,
+  File "/home/prerna/LIMU-BERT-blind-users/train.py", line 337, in train
+    total_loss, batch_losses = func_loss(self.model, batch, current_epoch=e)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 141, in func_loss
+    total_loss, loss_dict = criterion(
+                            ^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/losses.py", line 46, in forward
+    semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/semantic_loss.py", line 99, in forward
+    sem_sim = self.semantic_sims[labels[i], labels[j]]
+              ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 7 is out of bounds for dimension 1 with size 6
+Traceback (most recent call last):
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 376, in <module>
+    label_test, label_estimate_test, acc, f1 = classify_embeddings(
+                                               ^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 180, in classify_embeddings
+    raise e
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 163, in classify_embeddings
+    trainer.train(func_loss, func_forward, func_evaluate,
+  File "/home/prerna/LIMU-BERT-blind-users/train.py", line 337, in train
+    total_loss, batch_losses = func_loss(self.model, batch, current_epoch=e)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/classifier_with_contrastive.py", line 141, in func_loss
+    total_loss, loss_dict = criterion(
+                            ^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/losses.py", line 46, in forward
+    semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/miniconda3/envs/limu-bert-env/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prerna/LIMU-BERT-blind-users/contrastive/semantic_loss.py", line 99, in forward
+    sem_sim = self.semantic_sims[labels[i], labels[j]]
+              ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 7 is out of bounds for dimension 1 with size 6
+
+name is  hhar_20_120
+Data dimensions: (9166, 120, 72) Label dimensions: (9166, 120, 3)
+Running normal training...
+Using device: cuda:0 (1 GPUs available)
+Number of classes: 9
+Label names: None
+Descriptions available: True
+Train Size: 43992, Vali Size: 5496, Test Size: 5508
+Balance Label Size: 4392, Unlabel Size: 39600; Real Label Rate: 0.100
+Model architecture initialized with hidden dimension: 128
+description is  ['a Biking activity with properties: primary type: locomotion, intensity: moderate, complexity: moderate', 'a Sitting activity with properties: primary type: stationary, intensity: low, complexity: simple', 'a Downstairs activity with properties: primary type: locomotion, intensity: high, complexity: moderate', 'a Upstairs activity with properties: primary type: locomotion, intensity: high, complexity: moderate', 'a Standing activity with properties: primary type: stationary, intensity: low, complexity: simple', 'a Walking activity with properties: primary type: locomotion, intensity: moderate, complexity: simple']
+Pooling criterion used: cls
+Optimizer initialized with learning rate: 0.001
+Log file will be saved to: saved/classifier_contrastive_gru_hhar_20_120/loss_acc_2026-04-23_19-47-12.txt
+Error in classify_embeddings: index 7 is out of bounds for dimension 1 with size 6
+Error type: <class 'IndexError'>
+Error in main: index 7 is out of bounds for dimension 1 with size 6
+
+Completed: limu_v1_ablation_baseline
+
+==================================================
+All classifier evaluations completed!
