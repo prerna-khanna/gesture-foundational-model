@@ -189,7 +189,7 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         raise e
 
 
-def run_grid_search(args, embedding, labels, label_index, training_rate, label_rate, balance=True, method="gru", param_grid=None):
+def run_grid_search(args, embedding, labels, label_index, training_rate, label_rate, balance=True, method="gru", param_grid=None, dry_run=False, dry_run_epochs=None):
     """
     Run grid search over the parameter grid to find the best hyperparameters.
     
@@ -203,6 +203,8 @@ def run_grid_search(args, embedding, labels, label_index, training_rate, label_r
         balance: Whether to balance classes
         method: Method to use (e.g., "gru")
         param_grid: Dictionary of parameter grids to search over
+        dry_run: If True, run with reduced epochs and data for quick validation
+        dry_run_epochs: Number of epochs to run for dry run
     
     Returns:
         best_params: Best parameters found
@@ -240,6 +242,8 @@ def run_grid_search(args, embedding, labels, label_index, training_rate, label_r
     for i, params in enumerate(grid):
         print(f"\n\n===== Running parameter combination {i+1}/{len(grid)} =====")
         print(f"Parameters: {params}")
+        if dry_run:
+            print(f"[DRY RUN MODE] - Limited epochs and data")
         
         try:
             # Modify args to create a unique save path for this run
@@ -247,10 +251,16 @@ def run_grid_search(args, embedding, labels, label_index, training_rate, label_r
             run_args = copy.deepcopy(args)
             run_args.save_model = f"{args.save_model}_{param_str}"
             
+            # Apply dry run modifications if needed
+            modified_params = copy.deepcopy(params)
+            if dry_run and dry_run_epochs:
+                modified_params['n_epochs'] = dry_run_epochs
+                print(f"[DRY RUN] Modified n_epochs to {dry_run_epochs} for quick check")
+            
             # Run training with these parameters
             _, _, acc, f1 = classify_embeddings(
                 run_args, embedding, labels, label_index, 
-                training_rate, label_rate, balance, method, params
+                training_rate, label_rate, balance, method, modified_params
             )
             
             # Track results

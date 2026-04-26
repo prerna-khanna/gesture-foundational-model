@@ -1,0 +1,100 @@
+{
+  "best_params": {
+    "grad_clip_norm": 0.5,
+    "lambda2": 0.001,
+    "lr": 0.0003,
+    "weight_decay": 0.0001
+  },
+  "best_accuracy": 0.10223132969034608,
+  "best_f1": 0.06483025191747346,
+  "all_results": [
+    {
+      "grad_clip_norm": 0.5,
+      "lambda2": 0.001,
+      "lr": 0.0001,
+      "weight_decay": 0.0001,
+      "accuracy": 0.05487249544626594,
+      "f1_score": 0.01863697897679826
+    },
+    {
+      "grad_clip_norm": 0.5,
+      "lambda2": 0.001,
+      "lr": 0.0001,
+      "weight_decay": 0.0005,
+      "accuracy": 0.05487249544626594,
+      "f1_score": 0.01863697897679826
+    },
+    {
+      "grad_clip_norm": 0.5,
+      "lambda2": 0.001,
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "accuracy": 0.10223132969034608,
+      "f1_score": 0.06483025191747346
+    },
+    {
+      "grad_clip_norm": 0.5,
+      "lambda2": 0.001,
+      "lr": 0.0003,
+      "weight_decay": 0.0005,
+      "accuracy": 0.10223132969034608,
+      "f1_score": 0.06483025191747346
+    },
+    {
+      "grad_clip_norm": 0.5,
+      "lambda2": 0.005,
+      "lr": 0.0001,
+      "weight_decay": 0.0001,
+      "accuracy": 0.05487249544626594,
+      "f1_score": 0.01863697897679826
+    },
+    {
+      "grad_clip_norm": 0.5,
+      "lambda2": 0.005,
+      "lr": 0.0001,
+      "weight_decay": 0.0005,
+      "accuracy": 0.05487249544626594,
+      "f1_score": 0.01863697897679826
+    },
+    {
+      "grad_clip_norm": 0.5,
+      "lambda2": 0.005,
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "accuracy": 0.10223132969034608,
+      "f1_score": 0.06483025191747346
+    },
+    {
+      "grad_clip_norm": 1.0,
+      "lambda2": 0.001,
+      "lr": 0.0001,
+      "weight_decay": 0.0001,
+      "accuracy": 0.05487249544626594,
+      "f1_score": 0.01863697897679826
+    },
+    {
+      "grad_clip_norm": 1.0,
+      "lambda2": 0.001,
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "accuracy": 0.10223132969034608,
+      "f1_score": 0.06483025191747346
+    },
+    {
+      "grad_clip_norm": 1.0,
+      "lambda2": 0.005,
+      "lr": 0.0001,
+      "weight_decay": 0.0001,
+      "accuracy": 0.05487249544626594,
+      "f1_score": 0.01863697897679826
+    },
+    {
+      "grad_clip_norm": 1.0,
+      "lambda2": 0.005,
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "accuracy": 0.10223132969034608,
+      "f1_score": 0.06483025191747346
+    }
+  ]
+}

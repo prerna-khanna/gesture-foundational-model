@@ -313,8 +313,14 @@ class Trainer(object):
         best_stat = None
         model_best = self.model.state_dict()
         grad_clip_norm = getattr(self.cfg, 'grad_clip_norm', 1.0)
+        
+        # Initialize epoch timing tracking
+        epoch_times = []
+        training_start_time = time.time()
 
         for e in range(self.cfg.n_epochs):
+            epoch_start_time = time.time()
+            
             # Track all loss components separately
             epoch_losses = {
                 'classification_loss': 0.0,
@@ -350,6 +356,17 @@ class Trainer(object):
             test_acc, test_f1 = self.run(func_forward, func_evaluate, data_loader_test)
             vali_acc, vali_f1 = self.run(func_forward, func_evaluate, data_loader_vali)
 
+            # Calculate epoch timing
+            epoch_end_time = time.time()
+            epoch_elapsed = epoch_end_time - epoch_start_time
+            epoch_times.append(epoch_elapsed)
+            
+            # Calculate time estimates
+            avg_epoch_time = sum(epoch_times) / len(epoch_times)
+            remaining_epochs = self.cfg.n_epochs - (e + 1)
+            estimated_remaining_mins = (remaining_epochs * avg_epoch_time) / 60.0
+            total_elapsed_mins = (epoch_end_time - training_start_time) / 60.0
+
             # Print detailed epoch results
             print(f'\nEpoch {e+1}/{self.cfg.n_epochs}:')
             print('Loss Components:')
@@ -357,6 +374,7 @@ class Trainer(object):
                 print(f'  {loss_name}: {loss_val:.4f}')
             print(f'Accuracies: Train={train_acc:.3f}, Val={vali_acc:.3f}, Test={test_acc:.3f}')
             print(f'F1 Scores: Train={train_f1:.3f}, Val={vali_f1:.3f}, Test={test_f1:.3f}')
+            print(f'[TIMING] Epoch time: {epoch_elapsed:.1f}s | Total elapsed: {total_elapsed_mins:.1f}m | Remaining: {estimated_remaining_mins:.1f}m')
 
             # save the loss and accuracy on validation set and the test set as text file as a new file
             """run_id = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -370,7 +388,8 @@ class Trainer(object):
                 for loss_name, loss_val in avg_losses.items():
                     f.write(f'  {loss_name}: {loss_val:.4f}\n')
                 f.write(f'Accuracies: Train={train_acc:.3f}, Val={vali_acc:.3f}, Test={test_acc:.3f}\n')
-                f.write(f'F1 Scores: Train={train_f1:.3f}, Val={vali_f1:.3f}, Test={test_f1:.3f}\n\n')
+                f.write(f'F1 Scores: Train={train_f1:.3f}, Val={vali_f1:.3f}, Test={test_f1:.3f}\n')
+                f.write(f'[TIMING] Epoch time: {epoch_elapsed:.1f}s | Total elapsed: {total_elapsed_mins:.1f}m | Remaining: {estimated_remaining_mins:.1f}m\n\n')
 
 
             # Save best model based on validation accuracy
@@ -385,8 +404,10 @@ class Trainer(object):
                 model_best = copy.deepcopy(self.model.state_dict())
                 self.save(0)
 
+        training_total_time = time.time() - training_start_time
         self.model.load_state_dict(model_best)
         print('\nTraining completed.')
+        print(f'Total Training Time: {training_total_time/60.0:.1f} minutes')
         print(f'Best Performance:')
         print(f'Accuracy: Train={best_stat[0]:.3f}, Val={best_stat[1]:.3f}, Test={best_stat[2]:.3f}')
         print(f'F1 Score: Train={best_stat[3]:.3f}, Val={best_stat[4]:.3f}, Test={best_stat[5]:.3f}')
