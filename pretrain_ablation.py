@@ -3,6 +3,10 @@
 # Ablation study version of pretrain.py
 # Allows toggling nucleus and sig_axis embeddings
 
+"""
+python pretrain_ablation.py v1 hhar 20_120 -s limu_v1 --use_nucleus true --use_sig_axis true --nucleus_prob 0.8
+"""
+
 import argparse
 import sys
 
@@ -95,27 +99,30 @@ def main(args, training_rate, nucleus_prob=0.8, use_nucleus=True, use_sig_axis=T
 
 if __name__ == "__main__":
     mode = "base"
-    args = handle_argv('pretrain_' + mode, 'pretrain.json', mode)
     training_rate = 0.8
     
-    # Parse additional ablation parameters
+    # Parse additional ablation parameters BEFORE handle_argv
     nucleus_prob = 0.8
     use_nucleus = True
     use_sig_axis = True
     
     # Check command line arguments for ablation settings
-    parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument('--nucleus_prob', type=float, default=0.8)
-    parser.add_argument('--use_nucleus', type=lambda x: x.lower() in ('true', '1', 't', 'yes'), default=True)
-    parser.add_argument('--use_sig_axis', type=lambda x: x.lower() in ('true', '1', 't', 'yes'), default=True)
+    ablation_parser = argparse.ArgumentParser(add_help=False)
+    ablation_parser.add_argument('--nucleus_prob', type=float, default=0.8)
+    ablation_parser.add_argument('--use_nucleus', type=lambda x: x.lower() in ('true', '1', 't', 'yes'), default=True)
+    ablation_parser.add_argument('--use_sig_axis', type=lambda x: x.lower() in ('true', '1', 't', 'yes'), default=True)
     
     try:
-        ablation_args, _ = parser.parse_known_args()
+        ablation_args, remaining_args = ablation_parser.parse_known_args()
         nucleus_prob = ablation_args.nucleus_prob
         use_nucleus = ablation_args.use_nucleus
         use_sig_axis = ablation_args.use_sig_axis
+        # Replace sys.argv with remaining args for handle_argv
+        sys.argv = [sys.argv[0]] + remaining_args
     except:
         pass
+    
+    args = handle_argv('pretrain_' + mode, 'pretrain.json', mode)
     
     print(f"\n{'='*80}")
     print("ABLATION CONFIGURATION")
