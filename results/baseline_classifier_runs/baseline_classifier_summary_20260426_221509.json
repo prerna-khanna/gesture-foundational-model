@@ -1,0 +1,53 @@
+{
+  "run_timestamp": "2026-04-26T22:15:09.120701",
+  "total_elapsed_time": 0.019614219665527344,
+  "dry_run": false,
+  "successful_datasets": 0,
+  "failed_datasets": 4,
+  "datasets": [
+    {
+      "dataset": "UTD_MHAD",
+      "status": "failed",
+      "start_time": 1777256109.0980852,
+      "end_time": 1777256109.1058712,
+      "elapsed_time": 0.0077860355377197266,
+      "best_params": null,
+      "best_accuracy": null,
+      "best_f1": null,
+      "error_message": "[Errno 2] No such file or directory: 'embed\\\\embed_limu_v1_UTD_MHAD_20_120.npy'"
+    },
+    {
+      "dataset": "HGAG_DATA",
+      "status": "failed",
+      "start_time": 1777256109.1085644,
+      "end_time": 1777256109.1095843,
+      "elapsed_time": 0.0010199546813964844,
+      "best_params": null,
+      "best_accuracy": null,
+      "best_f1": null,
+      "error_message": "[Errno 2] No such file or directory: 'embed\\\\embed_limu_v1_HGAG_DATA_20_120.npy'"
+    },
+    {
+      "dataset": "INF2018",
+      "status": "failed",
+      "start_time": 1777256109.1114683,
+      "end_time": 1777256109.1134896,
+      "elapsed_time": 0.002021312713623047,
+      "best_params": null,
+      "best_accuracy": null,
+      "best_f1": null,
+      "error_message": "[Errno 2] No such file or directory: 'embed\\\\embed_limu_v1_INF2018_20_120.npy'"
+    },
+    {
+      "dataset": "umahand",
+      "status": "failed",
+      "start_time": 1777256109.1157,
+      "end_time": 1777256109.1176994,
+      "elapsed_time": 0.001999378204345703,
+      "best_params": null,
+      "best_accuracy": null,
+      "best_f1": null,
+      "error_message": "[Errno 2] No such file or directory: 'embed\\\\embed_limu_v1_umahand_20_120.npy'"
+    }
+  ]
+}

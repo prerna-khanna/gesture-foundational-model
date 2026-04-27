@@ -46,9 +46,7 @@ def create_config_with_params(original_cfg, params):
         'total_steps': original_cfg.total_steps,
         'lambda1': original_cfg.lambda1,
         'lambda2': params.get('lambda2', original_cfg.lambda2),
-        'pooling': params.get('pooling', getattr(original_cfg, 'pooling', 'mean')),
-        'weight_decay': params.get('weight_decay', getattr(original_cfg, 'weight_decay', 0.0)),
-        'grad_clip_norm': params.get('grad_clip_norm', getattr(original_cfg, 'grad_clip_norm', 1.0))
+        'pooling': getattr(original_cfg, 'pooling', 'mean')  # Default to 'mean' if not present
     }
     return type(original_cfg)(**config_dict)
 
@@ -122,15 +120,8 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         )"""
         
         # Setup optimizer and trainer
-        optimizer = torch.optim.AdamW(
-            params=model.parameters(),
-            lr=train_cfg.lr,
-            weight_decay=getattr(train_cfg, 'weight_decay', 0.0)
-        )
-        print(
-            f"Optimizer initialized with learning rate: {train_cfg.lr}, "
-            f"weight decay: {getattr(train_cfg, 'weight_decay', 0.0)}"
-        )
+        optimizer = torch.optim.Adam(params=model.parameters(), lr=train_cfg.lr)
+        print(f"Optimizer initialized with learning rate: {train_cfg.lr}")
         
         # Create a unique save path for this parameter configuration if doing grid search
         save_path = args.save_path
@@ -189,7 +180,7 @@ def classify_embeddings(args, data, labels, label_index, training_rate, label_ra
         raise e
 
 
-def run_grid_search(args, embedding, labels, label_index, training_rate, label_rate, balance=True, method="gru", param_grid=None, dry_run=False, dry_run_epochs=None):
+def run_grid_search(args, embedding, labels, label_index, training_rate, label_rate, balance=True, method="gru", param_grid=None):
     """
     Run grid search over the parameter grid to find the best hyperparameters.
     
@@ -203,8 +194,6 @@ def run_grid_search(args, embedding, labels, label_index, training_rate, label_r
         balance: Whether to balance classes
         method: Method to use (e.g., "gru")
         param_grid: Dictionary of parameter grids to search over
-        dry_run: If True, run with reduced epochs and data for quick validation
-        dry_run_epochs: Number of epochs to run for dry run
     
     Returns:
         best_params: Best parameters found
@@ -242,8 +231,6 @@ def run_grid_search(args, embedding, labels, label_index, training_rate, label_r
     for i, params in enumerate(grid):
         print(f"\n\n===== Running parameter combination {i+1}/{len(grid)} =====")
         print(f"Parameters: {params}")
-        if dry_run:
-            print(f"[DRY RUN MODE] - Limited epochs and data")
         
         try:
             # Modify args to create a unique save path for this run
@@ -251,16 +238,10 @@ def run_grid_search(args, embedding, labels, label_index, training_rate, label_r
             run_args = copy.deepcopy(args)
             run_args.save_model = f"{args.save_model}_{param_str}"
             
-            # Apply dry run modifications if needed
-            modified_params = copy.deepcopy(params)
-            if dry_run and dry_run_epochs:
-                modified_params['n_epochs'] = dry_run_epochs
-                print(f"[DRY RUN] Modified n_epochs to {dry_run_epochs} for quick check")
-            
             # Run training with these parameters
             _, _, acc, f1 = classify_embeddings(
                 run_args, embedding, labels, label_index, 
-                training_rate, label_rate, balance, method, modified_params
+                training_rate, label_rate, balance, method, params
             )
             
             # Track results
@@ -308,8 +289,8 @@ def run_grid_search(args, embedding, labels, label_index, training_rate, label_r
 
 if __name__ == "__main__":
     try:
-        training_rate = 0.8
-        label_rate = 0.2
+        training_rate = 0.7
+        label_rate = 1
         balance = True
         
         mode = "contrastive"

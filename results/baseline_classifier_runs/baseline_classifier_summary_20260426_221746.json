@@ -1,0 +1,53 @@
+{
+  "run_timestamp": "2026-04-26T22:17:46.504224",
+  "total_elapsed_time": 0.5922777652740479,
+  "dry_run": false,
+  "successful_datasets": 0,
+  "failed_datasets": 4,
+  "datasets": [
+    {
+      "dataset": "UTD_MHAD",
+      "status": "failed",
+      "start_time": 1777256265.9128659,
+      "end_time": 1777256265.938079,
+      "elapsed_time": 0.025213241577148438,
+      "best_params": null,
+      "best_accuracy": null,
+      "best_f1": null,
+      "error_message": "run_grid_search() got an unexpected keyword argument 'dry_run'"
+    },
+    {
+      "dataset": "HGAG_DATA",
+      "status": "failed",
+      "start_time": 1777256265.938079,
+      "end_time": 1777256266.4225304,
+      "elapsed_time": 0.4844512939453125,
+      "best_params": null,
+      "best_accuracy": null,
+      "best_f1": null,
+      "error_message": "run_grid_search() got an unexpected keyword argument 'dry_run'"
+    },
+    {
+      "dataset": "INF2018",
+      "status": "failed",
+      "start_time": 1777256266.455502,
+      "end_time": 1777256266.4781,
+      "elapsed_time": 0.0225980281829834,
+      "best_params": null,
+      "best_accuracy": null,
+      "best_f1": null,
+      "error_message": "run_grid_search() got an unexpected keyword argument 'dry_run'"
+    },
+    {
+      "dataset": "umahand",
+      "status": "failed",
+      "start_time": 1777256266.4807649,
+      "end_time": 1777256266.5042245,
+      "elapsed_time": 0.023459672927856445,
+      "best_params": null,
+      "best_accuracy": null,
+      "best_f1": null,
+      "error_message": "run_grid_search() got an unexpected keyword argument 'dry_run'"
+    }
+  ]
+}
