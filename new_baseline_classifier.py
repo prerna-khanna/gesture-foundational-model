@@ -137,8 +137,6 @@ class DatasetRunner:
                 balance=balance,
                 method=self.prefix,
                 param_grid=param_grid,
-                dry_run=dry_run,
-                dry_run_epochs=DRY_RUN_EPOCHS if dry_run else None,
             )
 
             self.end_time = time.time()
