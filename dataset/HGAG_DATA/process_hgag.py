@@ -102,11 +102,11 @@ for bp in base_paths:
 all_data = np.array(all_data, dtype=np.float32)
 all_labels = np.array(all_labels, dtype=np.float32)
 
-np.save('HGAG_DATA/data_20_120.npy', all_data)
-np.save('HGAG_DATA/label_20_120.npy', all_labels)
+np.save('dataset/HGAG_DATA/data_20_120.npy', all_data)
+np.save('dataset/HGAG_DATA/label_20_120.npy', all_labels)
 
 df_map = pd.DataFrame({'activity_label': range(len(GESTURES)), 'gesture_name': GESTURES})
-df_map.to_csv('HGAG_DATA/activity_mapping.csv', index=False)
+df_map.to_csv('dataset/HGAG_DATA/activity_mapping.csv', index=False)
 
 print(f"\nFinal Summary:")
 print(f"N samples: {len(all_data)}")
