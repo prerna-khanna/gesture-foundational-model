@@ -39,9 +39,9 @@ def parse_args():
     
     # Hyperparameter grids (comma-separated values)
     parser.add_argument('--lr', type=str, default='1e-4,3e-4', help='Learning rates to search (comma-separated)')
-    parser.add_argument('--weight-decay', type=str, default='1e-4,5e-4', help='Weight decay values (comma-separated)')
+    parser.add_argument('--weight-decay', type=str, default='1e-4', help='Weight decay values (comma-separated)')
     parser.add_argument('--lambda2', type=str, default='0.001,0.005', help='Lambda2 values (comma-separated)')
-    parser.add_argument('--grad-clip-norm', type=str, default='0.5,1.0', help='Gradient clip norm values (comma-separated)')
+    parser.add_argument('--grad-clip-norm', type=str, default='0.5', help='Gradient clip norm values (comma-separated)')
     
     return parser.parse_args()
 
