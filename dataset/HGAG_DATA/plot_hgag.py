@@ -187,13 +187,13 @@ def plot_activity_mean_std(data, labels, activity_names, output_dir, sample_size
                 std_values = std_signal[:, channel_idx]
 
                 ax.plot(time_steps, mean_values, color='black', linewidth=2)
-                ax.fill_between(
-                    time_steps,
-                    mean_values - std_values,
-                    mean_values + std_values,
-                    color='gray',
-                    alpha=0.25,
-                )
+                # ax.fill_between(
+                #     time_steps,
+                #     mean_values - std_values,
+                #     mean_values + std_values,
+                #     color='gray',
+                #     alpha=0.25,
+                # )
                 ax.set_title(f'{sensor_name} - {axis_name}', fontsize=11)
                 ax.grid(True, alpha=0.25)
                 if row_idx == 2:
