@@ -22,7 +22,7 @@ def save_predictions_to_csv(y_true, y_pred, save_file_test_size=0.1):
     })
     
     # Save to CSV
-    base_filename = 'results/contrasense_results/sony_watch_.csv'
+    base_filename = 'results/contrasense_results/umahand.csv'
     print("save_file_test_size", save_file_test_size)
     # add save_file_test_size to the filename just before the extension
     filename = base_filename.replace('.csv', f'{int(100-(save_file_test_size*100))}.csv')
@@ -117,12 +117,12 @@ def generate_embeddings(model, data):
     return embeddings
 
 # 4. Extract labels and split data
-def prepare_train_test_split(embeddings, labels_file, test_size=0.9, random_state=42):
+def prepare_train_test_split(embeddings, labels_file, test_size=0.9, random_state=42, label_index=0):
     # Load the labels file
     labels_data = np.load(labels_file)
     
     # Extract the first column of the k dimension
-    labels = labels_data[:, 0, 0]
+    labels = labels_data[:, 0, label_index]
     
     # Important: Ensure labels are consecutive integers starting from 0
     from sklearn.preprocessing import LabelEncoder
@@ -476,7 +476,7 @@ def prepare_data_and_train_lstm(imu_data_path, labels_path, resume_from=None, mo
                 test_specific_resume = resume_from
         
         X_train, X_test, y_train, y_test, label_encoder = prepare_train_test_split(
-            embeddings, labels_path, test_size=test_size
+            embeddings, labels_path, test_size=test_size, label_index=1
         )
 
         print(f"Train shape: {X_train.shape}, Test shape: {X_test.shape}")
@@ -534,9 +534,9 @@ def prepare_data_and_train_lstm(imu_data_path, labels_path, resume_from=None, mo
 
 if __name__ == "__main__":
     # Update these paths to your actual file locations
-    imu_data_path = 'dataset/sony_watch/data_20_120.npy'
-    label_file_path = 'dataset/sony_watch/label_20_120.npy'
-    
+    imu_data_path = 'dataset/umahand_filtered/data_20_120.npy'
+    label_file_path = 'dataset/umahand_filtered/label_20_120.npy'
+
     # Path to your existing model_best.pth file
     pretrained_model_path = 'model_best.pth'
     
