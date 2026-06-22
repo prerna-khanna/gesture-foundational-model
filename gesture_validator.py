@@ -15,8 +15,8 @@ This system:
 
 Usage:
     python gesture_validator.py \
-        --candidate_data gesture_samples.npy \
-        --candidate_labels gesture_labels.npy \
+        --candidate_data data_20_120.npy \
+        --candidate_labels label_20_120.npy \
         --dataset Alexandra \
         --version 20_120 \
         --embedding_model limu_v1 \
@@ -291,10 +291,20 @@ def main():
         help='Path to candidate gesture embedding file (.npy) in embed folder'
     )
     parser.add_argument(
+        '--candidate_data',
+        type=str,
+        help='Alias: raw candidate embedding/data file (will be used as candidate_embedding if provided)'
+    )
+    parser.add_argument(
+        '--candidate_labels',
+        type=str,
+        help='Optional: candidate labels file (used to infer candidate_name if --candidate_name not given)'
+    )
+    parser.add_argument(
         '--candidate_name',
         type=str,
-        required=True,
-        help='Name of the candidate gesture'
+        required=False,
+        help='Name of the candidate gesture (inferred from candidate_data if omitted)'
     )
     parser.add_argument(
         '--dataset',
@@ -340,15 +350,35 @@ def main():
     )
     
     args = parser.parse_args()
+    # Accept candidate_data as fallback for candidate_embedding
+    if not args.candidate_embedding and args.candidate_data:
+        args.candidate_embedding = args.candidate_data
+    
+    # Infer candidate_name if not provided
+    if not args.candidate_name:
+        if args.candidate_labels and os.path.exists(args.candidate_labels):
+            try:
+                lbls = np.load(args.candidate_labels)
+                uniq = np.unique(lbls)
+                # use single unique label or fallback to filename
+                if len(uniq) == 1:
+                    args.candidate_name = f"NewGesture_{int(uniq[0])}"
+                else:
+                    args.candidate_name = os.path.splitext(os.path.basename(args.candidate_data or args.candidate_embedding))[0]
+            except Exception:
+                args.candidate_name = os.path.splitext(os.path.basename(args.candidate_data or args.candidate_embedding))[0]
+        elif args.candidate_data:
+            args.candidate_name = os.path.splitext(os.path.basename(args.candidate_data))[0]
     
     # Validate input file
     if not args.candidate_embedding:
-        print(f"Error: --candidate_embedding is required")
-        print(f"Usage: python gesture_validator.py \\")
-        print(f"  --candidate_embedding embed/embed_limu_v1_NewGesture_20_120.npy \\")
-        print(f"  --candidate_name 'my_gesture' \\")
-        print(f"  --dataset Alexandra \\")
-        print(f"  --version 20_120")
+        print(f"Error: --candidate_embedding (or --candidate_data) is required")
+        print(f"Example:")
+        print(f"  python gesture_validator.py \\")
+        print(f"    --candidate_embedding embed/embed_limu_v1_NewGesture_20_120.npy \\")
+        print(f"    --candidate_name 'my_gesture' \\")
+        print(f"    --dataset Alexandra \\")
+        print(f"    --version 20_120")
         return
     
     if not os.path.exists(args.candidate_embedding):

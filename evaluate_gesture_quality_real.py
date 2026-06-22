@@ -16,7 +16,7 @@ This is NOT cheating because:
 4. Training happens within this evaluation (not using pre-trained classifier)
 
 Usage:
-    python evaluate_gesture_quality_real.py --dataset Alexandra --version 20_120 \
+    python evaluate_gesture_quality_real.py --dataset Julius --version 20_120 \
         --embedding_model limu_v1 --quick_epochs 30
 """
 
@@ -138,11 +138,18 @@ def train_real_classifier_and_evaluate(embeddings, raw_data, labels, dataset, n_
             return len(self.raw_data)
         
         def __getitem__(self, idx):
+            # Normalize idx to plain Python int to handle numpy scalars/ndarrays
+            try:
+                idx = int(idx)
+            except Exception:
+                # fallback: try to extract scalar from numpy types
+                idx = int(np.asarray(idx).item())
+            
             data = self.raw_data[idx].copy()
             if self.augment:
                 data = self.augmenter.augment(data)
-            label = torch.tensor(self.gesture_labels[idx], dtype=torch.long)
-            is_labeled = torch.tensor(self.labeled_mask[idx], dtype=torch.bool)
+            label = torch.tensor(int(self.gesture_labels[idx]), dtype=torch.long)
+            is_labeled = torch.tensor(bool(self.labeled_mask[idx]), dtype=torch.bool)
             return torch.from_numpy(data).float(), label, is_labeled
     
     # Apply label_rate for semi-supervised learning (split training data into labeled/unlabeled)
@@ -401,9 +408,17 @@ def main():
     try:
         dataset_cfg = None
         label_names, _, _ = load_dataset_label_names(dataset_cfg, label_index=0, dataset=args.dataset)
-        gesture_names = {i: name for i, name in enumerate(label_names)}
-    except:
-        gesture_names = {i: f"Gesture {i+1}" for i in range(len(unique_gestures))}
+        # Map label names to the actual gesture IDs present in the dataset.
+        # Use unique_sorted (actual gesture IDs) to avoid off-by-one or gaps.
+        unique_sorted = np.sort(unique_gestures)
+        if len(label_names) >= len(unique_sorted):
+            gesture_names = {int(g): (label_names[i] if i < len(label_names) else f"Gesture {int(g)}")
+                             for i, g in enumerate(unique_sorted)}
+        else:
+            # fallback: label_names shorter than IDs → name by ID
+            gesture_names = {int(g): f"Gesture {int(g)}" for g in unique_sorted}
+    except Exception:
+        gesture_names = {int(g): f"Gesture {int(g)}" for g in unique_gestures}
     
     # Train and evaluate
     print(f"\nTraining classifier and evaluating gestures...")
