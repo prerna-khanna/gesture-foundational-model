@@ -16,7 +16,7 @@ This is NOT cheating because:
 4. Training happens within this evaluation (not using pre-trained classifier)
 
 Usage:
-    python evaluate_gesture_quality_real.py --dataset Julius --version 20_120 \
+    python evaluate_gesture_quality_real.py --dataset Edery --version 20_120 \
         --embedding_model limu_v1 --quick_epochs 30
 """
 

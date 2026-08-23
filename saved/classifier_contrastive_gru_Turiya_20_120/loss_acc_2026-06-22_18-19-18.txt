@@ -1,0 +1,1575 @@
+Epoch 1/200:
+Loss Components:
+  classification_loss: 2.0775
+  semantic_loss: 0.6766
+  contrastive_loss: 2.8349
+  total_loss: 2.4286
+Accuracies: Train=0.716, Val=0.556, Test=0.526
+F1 Scores: Train=0.717, Val=0.350, Test=0.626
+
+Epoch 2/200:
+Loss Components:
+  classification_loss: 0.8620
+  semantic_loss: 0.4386
+  contrastive_loss: 2.2537
+  total_loss: 1.1312
+Accuracies: Train=0.907, Val=0.778, Test=0.737
+F1 Scores: Train=0.902, Val=0.638, Test=0.789
+
+Epoch 3/200:
+Loss Components:
+  classification_loss: 0.4156
+  semantic_loss: 0.3628
+  contrastive_loss: 2.0906
+  total_loss: 0.6610
+Accuracies: Train=0.944, Val=0.667, Test=0.737
+F1 Scores: Train=0.944, Val=0.595, Test=0.767
+
+Epoch 4/200:
+Loss Components:
+  classification_loss: 0.2979
+  semantic_loss: 0.3571
+  contrastive_loss: 2.0021
+  total_loss: 0.5338
+Accuracies: Train=0.963, Val=0.667, Test=0.737
+F1 Scores: Train=0.962, Val=0.595, Test=0.778
+
+Epoch 5/200:
+Loss Components:
+  classification_loss: 0.2237
+  semantic_loss: 0.3586
+  contrastive_loss: 1.8609
+  total_loss: 0.4529
+Accuracies: Train=0.957, Val=0.889, Test=0.842
+F1 Scores: Train=0.955, Val=0.800, Test=0.852
+
+Epoch 6/200:
+Loss Components:
+  classification_loss: 0.1845
+  semantic_loss: 0.3373
+  contrastive_loss: 1.7732
+  total_loss: 0.4567
+Accuracies: Train=0.957, Val=0.556, Test=0.842
+F1 Scores: Train=0.955, Val=0.524, Test=0.852
+
+Epoch 7/200:
+Loss Components:
+  classification_loss: 0.1102
+  semantic_loss: 0.3341
+  contrastive_loss: 1.7649
+  total_loss: 0.4351
+Accuracies: Train=0.944, Val=0.444, Test=0.737
+F1 Scores: Train=0.941, Val=0.429, Test=0.778
+
+Epoch 8/200:
+Loss Components:
+  classification_loss: 0.1193
+  semantic_loss: 0.3370
+  contrastive_loss: 1.7522
+  total_loss: 0.4967
+Accuracies: Train=0.988, Val=0.778, Test=0.825
+F1 Scores: Train=0.988, Val=0.638, Test=0.862
+
+Epoch 9/200:
+Loss Components:
+  classification_loss: 0.0838
+  semantic_loss: 0.3354
+  contrastive_loss: 1.7274
+  total_loss: 0.5098
+Accuracies: Train=1.000, Val=0.667, Test=0.737
+F1 Scores: Train=1.000, Val=0.595, Test=0.778
+
+Epoch 10/200:
+Loss Components:
+  classification_loss: 0.0671
+  semantic_loss: 0.3242
+  contrastive_loss: 1.6820
+  total_loss: 0.5331
+Accuracies: Train=0.994, Val=0.667, Test=0.842
+F1 Scores: Train=0.994, Val=0.595, Test=0.860
+
+Epoch 11/200:
+Loss Components:
+  classification_loss: 0.0615
+  semantic_loss: 0.3235
+  contrastive_loss: 1.6363
+  total_loss: 0.5677
+Accuracies: Train=0.994, Val=0.667, Test=0.842
+F1 Scores: Train=0.994, Val=0.595, Test=0.860
+
+Epoch 12/200:
+Loss Components:
+  classification_loss: 0.0375
+  semantic_loss: 0.3273
+  contrastive_loss: 1.6684
+  total_loss: 0.5945
+Accuracies: Train=0.963, Val=0.556, Test=0.737
+F1 Scores: Train=0.962, Val=0.500, Test=0.778
+
+Epoch 13/200:
+Loss Components:
+  classification_loss: 0.0463
+  semantic_loss: 0.3235
+  contrastive_loss: 1.6656
+  total_loss: 0.6430
+Accuracies: Train=0.988, Val=0.778, Test=0.789
+F1 Scores: Train=0.988, Val=0.750, Test=0.796
+
+Epoch 14/200:
+Loss Components:
+  classification_loss: 0.0455
+  semantic_loss: 0.3230
+  contrastive_loss: 1.6339
+  total_loss: 0.6734
+Accuracies: Train=0.994, Val=0.667, Test=0.789
+F1 Scores: Train=0.994, Val=0.595, Test=0.822
+
+Epoch 15/200:
+Loss Components:
+  classification_loss: 0.0220
+  semantic_loss: 0.3284
+  contrastive_loss: 1.6491
+  total_loss: 0.6977
+Accuracies: Train=1.000, Val=0.556, Test=0.737
+F1 Scores: Train=1.000, Val=0.500, Test=0.778
+
+Epoch 16/200:
+Loss Components:
+  classification_loss: 0.0142
+  semantic_loss: 0.3218
+  contrastive_loss: 1.5849
+  total_loss: 0.7051
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 17/200:
+Loss Components:
+  classification_loss: 0.0121
+  semantic_loss: 0.3347
+  contrastive_loss: 1.6994
+  total_loss: 0.7922
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 18/200:
+Loss Components:
+  classification_loss: 0.0099
+  semantic_loss: 0.3236
+  contrastive_loss: 1.6303
+  total_loss: 0.7998
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 19/200:
+Loss Components:
+  classification_loss: 0.0095
+  semantic_loss: 0.3273
+  contrastive_loss: 1.6601
+  total_loss: 0.8547
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 20/200:
+Loss Components:
+  classification_loss: 0.0085
+  semantic_loss: 0.3197
+  contrastive_loss: 1.6130
+  total_loss: 0.8706
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 21/200:
+Loss Components:
+  classification_loss: 0.0082
+  semantic_loss: 0.3205
+  contrastive_loss: 1.6073
+  total_loss: 0.9080
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 22/200:
+Loss Components:
+  classification_loss: 0.0074
+  semantic_loss: 0.3196
+  contrastive_loss: 1.5897
+  total_loss: 0.8981
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 23/200:
+Loss Components:
+  classification_loss: 0.0070
+  semantic_loss: 0.3270
+  contrastive_loss: 1.6466
+  total_loss: 0.9285
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 24/200:
+Loss Components:
+  classification_loss: 0.0065
+  semantic_loss: 0.3153
+  contrastive_loss: 1.5708
+  total_loss: 0.8865
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 25/200:
+Loss Components:
+  classification_loss: 0.0062
+  semantic_loss: 0.3205
+  contrastive_loss: 1.6234
+  total_loss: 0.9140
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 26/200:
+Loss Components:
+  classification_loss: 0.0059
+  semantic_loss: 0.3223
+  contrastive_loss: 1.6175
+  total_loss: 0.9113
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 27/200:
+Loss Components:
+  classification_loss: 0.0057
+  semantic_loss: 0.3230
+  contrastive_loss: 1.6207
+  total_loss: 0.9130
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 28/200:
+Loss Components:
+  classification_loss: 0.0055
+  semantic_loss: 0.3144
+  contrastive_loss: 1.5627
+  total_loss: 0.8812
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 29/200:
+Loss Components:
+  classification_loss: 0.0053
+  semantic_loss: 0.3338
+  contrastive_loss: 1.6954
+  total_loss: 0.9531
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 30/200:
+Loss Components:
+  classification_loss: 0.0051
+  semantic_loss: 0.3177
+  contrastive_loss: 1.5818
+  total_loss: 0.8913
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 31/200:
+Loss Components:
+  classification_loss: 0.0050
+  semantic_loss: 0.3238
+  contrastive_loss: 1.6419
+  total_loss: 0.9231
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 32/200:
+Loss Components:
+  classification_loss: 0.0049
+  semantic_loss: 0.3176
+  contrastive_loss: 1.5814
+  total_loss: 0.8908
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 33/200:
+Loss Components:
+  classification_loss: 0.0047
+  semantic_loss: 0.3177
+  contrastive_loss: 1.5827
+  total_loss: 0.8914
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 34/200:
+Loss Components:
+  classification_loss: 0.0046
+  semantic_loss: 0.3222
+  contrastive_loss: 1.6237
+  total_loss: 0.9131
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 35/200:
+Loss Components:
+  classification_loss: 0.0045
+  semantic_loss: 0.3199
+  contrastive_loss: 1.5950
+  total_loss: 0.8980
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 36/200:
+Loss Components:
+  classification_loss: 0.0044
+  semantic_loss: 0.3183
+  contrastive_loss: 1.5825
+  total_loss: 0.8912
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 37/200:
+Loss Components:
+  classification_loss: 0.0044
+  semantic_loss: 0.3190
+  contrastive_loss: 1.6090
+  total_loss: 0.9046
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 38/200:
+Loss Components:
+  classification_loss: 0.0042
+  semantic_loss: 0.3257
+  contrastive_loss: 1.6721
+  total_loss: 0.9380
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 39/200:
+Loss Components:
+  classification_loss: 0.0042
+  semantic_loss: 0.3194
+  contrastive_loss: 1.6166
+  total_loss: 0.9083
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 40/200:
+Loss Components:
+  classification_loss: 0.0041
+  semantic_loss: 0.3209
+  contrastive_loss: 1.6273
+  total_loss: 0.9140
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 41/200:
+Loss Components:
+  classification_loss: 0.0040
+  semantic_loss: 0.3210
+  contrastive_loss: 1.6295
+  total_loss: 0.9150
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 42/200:
+Loss Components:
+  classification_loss: 0.0039
+  semantic_loss: 0.3197
+  contrastive_loss: 1.6327
+  total_loss: 0.9162
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 43/200:
+Loss Components:
+  classification_loss: 0.0038
+  semantic_loss: 0.3196
+  contrastive_loss: 1.6228
+  total_loss: 0.9111
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 44/200:
+Loss Components:
+  classification_loss: 0.0038
+  semantic_loss: 0.3236
+  contrastive_loss: 1.6212
+  total_loss: 0.9115
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 45/200:
+Loss Components:
+  classification_loss: 0.0037
+  semantic_loss: 0.3134
+  contrastive_loss: 1.5773
+  total_loss: 0.8864
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 46/200:
+Loss Components:
+  classification_loss: 0.0036
+  semantic_loss: 0.3181
+  contrastive_loss: 1.5948
+  total_loss: 0.8964
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 47/200:
+Loss Components:
+  classification_loss: 0.0035
+  semantic_loss: 0.3187
+  contrastive_loss: 1.6192
+  total_loss: 0.9087
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 48/200:
+Loss Components:
+  classification_loss: 0.0035
+  semantic_loss: 0.3179
+  contrastive_loss: 1.6170
+  total_loss: 0.9074
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 49/200:
+Loss Components:
+  classification_loss: 0.0035
+  semantic_loss: 0.3169
+  contrastive_loss: 1.5921
+  total_loss: 0.8946
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 50/200:
+Loss Components:
+  classification_loss: 0.0034
+  semantic_loss: 0.3137
+  contrastive_loss: 1.5759
+  total_loss: 0.8855
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 51/200:
+Loss Components:
+  classification_loss: 0.0034
+  semantic_loss: 0.3185
+  contrastive_loss: 1.6002
+  total_loss: 0.8991
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 52/200:
+Loss Components:
+  classification_loss: 0.0033
+  semantic_loss: 0.3204
+  contrastive_loss: 1.6534
+  total_loss: 0.9261
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 53/200:
+Loss Components:
+  classification_loss: 0.0033
+  semantic_loss: 0.3168
+  contrastive_loss: 1.6316
+  total_loss: 0.9141
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 54/200:
+Loss Components:
+  classification_loss: 0.0032
+  semantic_loss: 0.3154
+  contrastive_loss: 1.5872
+  total_loss: 0.8915
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 55/200:
+Loss Components:
+  classification_loss: 0.0031
+  semantic_loss: 0.3170
+  contrastive_loss: 1.6172
+  total_loss: 0.9068
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 56/200:
+Loss Components:
+  classification_loss: 0.0031
+  semantic_loss: 0.3167
+  contrastive_loss: 1.6153
+  total_loss: 0.9058
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 57/200:
+Loss Components:
+  classification_loss: 0.0031
+  semantic_loss: 0.3164
+  contrastive_loss: 1.6140
+  total_loss: 0.9050
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 58/200:
+Loss Components:
+  classification_loss: 0.0031
+  semantic_loss: 0.3173
+  contrastive_loss: 1.6105
+  total_loss: 0.9035
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 59/200:
+Loss Components:
+  classification_loss: 0.0030
+  semantic_loss: 0.3120
+  contrastive_loss: 1.5806
+  total_loss: 0.8869
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 60/200:
+Loss Components:
+  classification_loss: 0.0030
+  semantic_loss: 0.3232
+  contrastive_loss: 1.6506
+  total_loss: 0.9252
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 61/200:
+Loss Components:
+  classification_loss: 0.0029
+  semantic_loss: 0.3148
+  contrastive_loss: 1.5941
+  total_loss: 0.8944
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 62/200:
+Loss Components:
+  classification_loss: 0.0029
+  semantic_loss: 0.3153
+  contrastive_loss: 1.6129
+  total_loss: 0.9039
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 63/200:
+Loss Components:
+  classification_loss: 0.0028
+  semantic_loss: 0.3181
+  contrastive_loss: 1.6320
+  total_loss: 0.9143
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 64/200:
+Loss Components:
+  classification_loss: 0.0028
+  semantic_loss: 0.3150
+  contrastive_loss: 1.6280
+  total_loss: 0.9113
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 65/200:
+Loss Components:
+  classification_loss: 0.0028
+  semantic_loss: 0.3117
+  contrastive_loss: 1.5929
+  total_loss: 0.8928
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 66/200:
+Loss Components:
+  classification_loss: 0.0028
+  semantic_loss: 0.3126
+  contrastive_loss: 1.5778
+  total_loss: 0.8854
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 67/200:
+Loss Components:
+  classification_loss: 0.0027
+  semantic_loss: 0.3138
+  contrastive_loss: 1.5989
+  total_loss: 0.8963
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 68/200:
+Loss Components:
+  classification_loss: 0.0027
+  semantic_loss: 0.3138
+  contrastive_loss: 1.6310
+  total_loss: 0.9123
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 69/200:
+Loss Components:
+  classification_loss: 0.0027
+  semantic_loss: 0.3099
+  contrastive_loss: 1.5811
+  total_loss: 0.8863
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 70/200:
+Loss Components:
+  classification_loss: 0.0027
+  semantic_loss: 0.3137
+  contrastive_loss: 1.6224
+  total_loss: 0.9080
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 71/200:
+Loss Components:
+  classification_loss: 0.0026
+  semantic_loss: 0.3087
+  contrastive_loss: 1.5864
+  total_loss: 0.8884
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 72/200:
+Loss Components:
+  classification_loss: 0.0025
+  semantic_loss: 0.3120
+  contrastive_loss: 1.6077
+  total_loss: 0.9000
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 73/200:
+Loss Components:
+  classification_loss: 0.0025
+  semantic_loss: 0.3122
+  contrastive_loss: 1.6253
+  total_loss: 0.9089
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 74/200:
+Loss Components:
+  classification_loss: 0.0026
+  semantic_loss: 0.3176
+  contrastive_loss: 1.6276
+  total_loss: 0.9116
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 75/200:
+Loss Components:
+  classification_loss: 0.0025
+  semantic_loss: 0.3073
+  contrastive_loss: 1.5720
+  total_loss: 0.8807
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 76/200:
+Loss Components:
+  classification_loss: 0.0024
+  semantic_loss: 0.3131
+  contrastive_loss: 1.6344
+  total_loss: 0.9136
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 77/200:
+Loss Components:
+  classification_loss: 0.0024
+  semantic_loss: 0.3110
+  contrastive_loss: 1.5864
+  total_loss: 0.8889
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 78/200:
+Loss Components:
+  classification_loss: 0.0025
+  semantic_loss: 0.3251
+  contrastive_loss: 1.6672
+  total_loss: 0.9336
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 79/200:
+Loss Components:
+  classification_loss: 0.0024
+  semantic_loss: 0.3180
+  contrastive_loss: 1.6636
+  total_loss: 0.9296
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 80/200:
+Loss Components:
+  classification_loss: 0.0024
+  semantic_loss: 0.3096
+  contrastive_loss: 1.5967
+  total_loss: 0.8936
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 81/200:
+Loss Components:
+  classification_loss: 0.0023
+  semantic_loss: 0.3144
+  contrastive_loss: 1.6354
+  total_loss: 0.9143
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 82/200:
+Loss Components:
+  classification_loss: 0.0022
+  semantic_loss: 0.3144
+  contrastive_loss: 1.6148
+  total_loss: 0.9039
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 83/200:
+Loss Components:
+  classification_loss: 0.0022
+  semantic_loss: 0.3075
+  contrastive_loss: 1.5653
+  total_loss: 0.8771
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 84/200:
+Loss Components:
+  classification_loss: 0.0021
+  semantic_loss: 0.3164
+  contrastive_loss: 1.6715
+  total_loss: 0.9328
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 85/200:
+Loss Components:
+  classification_loss: 0.0022
+  semantic_loss: 0.3124
+  contrastive_loss: 1.5989
+  total_loss: 0.8953
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 86/200:
+Loss Components:
+  classification_loss: 0.0021
+  semantic_loss: 0.3128
+  contrastive_loss: 1.6378
+  total_loss: 0.9148
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 87/200:
+Loss Components:
+  classification_loss: 0.0021
+  semantic_loss: 0.3065
+  contrastive_loss: 1.5993
+  total_loss: 0.8937
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 88/200:
+Loss Components:
+  classification_loss: 0.0021
+  semantic_loss: 0.3182
+  contrastive_loss: 1.6779
+  total_loss: 0.9365
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 89/200:
+Loss Components:
+  classification_loss: 0.0021
+  semantic_loss: 0.3122
+  contrastive_loss: 1.6232
+  total_loss: 0.9073
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 90/200:
+Loss Components:
+  classification_loss: 0.0021
+  semantic_loss: 0.3091
+  contrastive_loss: 1.5849
+  total_loss: 0.8873
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 91/200:
+Loss Components:
+  classification_loss: 0.0021
+  semantic_loss: 0.3127
+  contrastive_loss: 1.6238
+  total_loss: 0.9078
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 92/200:
+Loss Components:
+  classification_loss: 0.0020
+  semantic_loss: 0.3055
+  contrastive_loss: 1.5854
+  total_loss: 0.8864
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 93/200:
+Loss Components:
+  classification_loss: 0.0020
+  semantic_loss: 0.3065
+  contrastive_loss: 1.5802
+  total_loss: 0.8841
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 94/200:
+Loss Components:
+  classification_loss: 0.0020
+  semantic_loss: 0.3158
+  contrastive_loss: 1.6373
+  total_loss: 0.9154
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 95/200:
+Loss Components:
+  classification_loss: 0.0020
+  semantic_loss: 0.3106
+  contrastive_loss: 1.5733
+  total_loss: 0.8818
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 96/200:
+Loss Components:
+  classification_loss: 0.0019
+  semantic_loss: 0.3071
+  contrastive_loss: 1.5649
+  total_loss: 0.8765
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 97/200:
+Loss Components:
+  classification_loss: 0.0018
+  semantic_loss: 0.3060
+  contrastive_loss: 1.5765
+  total_loss: 0.8819
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 98/200:
+Loss Components:
+  classification_loss: 0.0018
+  semantic_loss: 0.3032
+  contrastive_loss: 1.5721
+  total_loss: 0.8788
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 99/200:
+Loss Components:
+  classification_loss: 0.0018
+  semantic_loss: 0.3073
+  contrastive_loss: 1.6020
+  total_loss: 0.8950
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 100/200:
+Loss Components:
+  classification_loss: 0.0018
+  semantic_loss: 0.3062
+  contrastive_loss: 1.5756
+  total_loss: 0.8814
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 101/200:
+Loss Components:
+  classification_loss: 0.0017
+  semantic_loss: 0.3078
+  contrastive_loss: 1.6023
+  total_loss: 0.8952
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 102/200:
+Loss Components:
+  classification_loss: 0.0017
+  semantic_loss: 0.3062
+  contrastive_loss: 1.5809
+  total_loss: 0.8841
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 103/200:
+Loss Components:
+  classification_loss: 0.0017
+  semantic_loss: 0.3131
+  contrastive_loss: 1.6472
+  total_loss: 0.9193
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 104/200:
+Loss Components:
+  classification_loss: 0.0017
+  semantic_loss: 0.3098
+  contrastive_loss: 1.6372
+  total_loss: 0.9133
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 105/200:
+Loss Components:
+  classification_loss: 0.0017
+  semantic_loss: 0.3097
+  contrastive_loss: 1.6514
+  total_loss: 0.9203
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 106/200:
+Loss Components:
+  classification_loss: 0.0017
+  semantic_loss: 0.3081
+  contrastive_loss: 1.6328
+  total_loss: 0.9105
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 107/200:
+Loss Components:
+  classification_loss: 0.0017
+  semantic_loss: 0.3062
+  contrastive_loss: 1.5961
+  total_loss: 0.8916
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 108/200:
+Loss Components:
+  classification_loss: 0.0017
+  semantic_loss: 0.3050
+  contrastive_loss: 1.5821
+  total_loss: 0.8842
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 109/200:
+Loss Components:
+  classification_loss: 0.0017
+  semantic_loss: 0.3162
+  contrastive_loss: 1.6564
+  total_loss: 0.9247
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 110/200:
+Loss Components:
+  classification_loss: 0.0016
+  semantic_loss: 0.3090
+  contrastive_loss: 1.6386
+  total_loss: 0.9136
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 111/200:
+Loss Components:
+  classification_loss: 0.0016
+  semantic_loss: 0.3066
+  contrastive_loss: 1.6389
+  total_loss: 0.9131
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 112/200:
+Loss Components:
+  classification_loss: 0.0016
+  semantic_loss: 0.3077
+  contrastive_loss: 1.6182
+  total_loss: 0.9031
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 113/200:
+Loss Components:
+  classification_loss: 0.0016
+  semantic_loss: 0.3093
+  contrastive_loss: 1.6376
+  total_loss: 0.9132
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 114/200:
+Loss Components:
+  classification_loss: 0.0016
+  semantic_loss: 0.3083
+  contrastive_loss: 1.6007
+  total_loss: 0.8944
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 115/200:
+Loss Components:
+  classification_loss: 0.0016
+  semantic_loss: 0.3075
+  contrastive_loss: 1.6027
+  total_loss: 0.8952
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 116/200:
+Loss Components:
+  classification_loss: 0.0016
+  semantic_loss: 0.3082
+  contrastive_loss: 1.6153
+  total_loss: 0.9017
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 117/200:
+Loss Components:
+  classification_loss: 0.0015
+  semantic_loss: 0.3064
+  contrastive_loss: 1.5664
+  total_loss: 0.8767
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 118/200:
+Loss Components:
+  classification_loss: 0.0015
+  semantic_loss: 0.3120
+  contrastive_loss: 1.6041
+  total_loss: 0.8972
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 119/200:
+Loss Components:
+  classification_loss: 0.0015
+  semantic_loss: 0.3068
+  contrastive_loss: 1.5579
+  total_loss: 0.8725
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 120/200:
+Loss Components:
+  classification_loss: 0.0014
+  semantic_loss: 0.3151
+  contrastive_loss: 1.6244
+  total_loss: 0.9082
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 121/200:
+Loss Components:
+  classification_loss: 0.0014
+  semantic_loss: 0.3089
+  contrastive_loss: 1.5932
+  total_loss: 0.8907
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 122/200:
+Loss Components:
+  classification_loss: 0.0014
+  semantic_loss: 0.3105
+  contrastive_loss: 1.6414
+  total_loss: 0.9152
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 123/200:
+Loss Components:
+  classification_loss: 0.0014
+  semantic_loss: 0.3051
+  contrastive_loss: 1.5690
+  total_loss: 0.8774
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 124/200:
+Loss Components:
+  classification_loss: 0.0014
+  semantic_loss: 0.3102
+  contrastive_loss: 1.6160
+  total_loss: 0.9024
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 125/200:
+Loss Components:
+  classification_loss: 0.0013
+  semantic_loss: 0.3090
+  contrastive_loss: 1.6139
+  total_loss: 0.9010
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 126/200:
+Loss Components:
+  classification_loss: 0.0013
+  semantic_loss: 0.3072
+  contrastive_loss: 1.5961
+  total_loss: 0.8916
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 127/200:
+Loss Components:
+  classification_loss: 0.0013
+  semantic_loss: 0.3059
+  contrastive_loss: 1.6094
+  total_loss: 0.8978
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 128/200:
+Loss Components:
+  classification_loss: 0.0013
+  semantic_loss: 0.3056
+  contrastive_loss: 1.5893
+  total_loss: 0.8876
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 129/200:
+Loss Components:
+  classification_loss: 0.0013
+  semantic_loss: 0.3036
+  contrastive_loss: 1.5790
+  total_loss: 0.8819
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 130/200:
+Loss Components:
+  classification_loss: 0.0013
+  semantic_loss: 0.3036
+  contrastive_loss: 1.5766
+  total_loss: 0.8807
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 131/200:
+Loss Components:
+  classification_loss: 0.0013
+  semantic_loss: 0.3088
+  contrastive_loss: 1.6395
+  total_loss: 0.9137
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 132/200:
+Loss Components:
+  classification_loss: 0.0013
+  semantic_loss: 0.3147
+  contrastive_loss: 1.6345
+  total_loss: 0.9130
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 133/200:
+Loss Components:
+  classification_loss: 0.0013
+  semantic_loss: 0.3077
+  contrastive_loss: 1.5786
+  total_loss: 0.8829
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 134/200:
+Loss Components:
+  classification_loss: 0.0013
+  semantic_loss: 0.3052
+  contrastive_loss: 1.6322
+  total_loss: 0.9089
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 135/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3041
+  contrastive_loss: 1.5787
+  total_loss: 0.8818
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 136/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3081
+  contrastive_loss: 1.6287
+  total_loss: 0.9080
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 137/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3032
+  contrastive_loss: 1.6144
+  total_loss: 0.8994
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 138/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3042
+  contrastive_loss: 1.5748
+  total_loss: 0.8799
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 139/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3117
+  contrastive_loss: 1.6419
+  total_loss: 0.9156
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 140/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3147
+  contrastive_loss: 1.6542
+  total_loss: 0.9227
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 141/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3072
+  contrastive_loss: 1.6279
+  total_loss: 0.9073
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 142/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3075
+  contrastive_loss: 1.6157
+  total_loss: 0.9013
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 143/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3115
+  contrastive_loss: 1.6352
+  total_loss: 0.9122
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 144/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3068
+  contrastive_loss: 1.6486
+  total_loss: 0.9175
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 145/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3045
+  contrastive_loss: 1.5730
+  total_loss: 0.8790
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 146/200:
+Loss Components:
+  classification_loss: 0.0012
+  semantic_loss: 0.3110
+  contrastive_loss: 1.6498
+  total_loss: 0.9194
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 147/200:
+Loss Components:
+  classification_loss: 0.0011
+  semantic_loss: 0.3105
+  contrastive_loss: 1.6151
+  total_loss: 0.9018
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 148/200:
+Loss Components:
+  classification_loss: 0.0011
+  semantic_loss: 0.3086
+  contrastive_loss: 1.6189
+  total_loss: 0.9031
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 149/200:
+Loss Components:
+  classification_loss: 0.0011
+  semantic_loss: 0.3078
+  contrastive_loss: 1.5898
+  total_loss: 0.8884
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 150/200:
+Loss Components:
+  classification_loss: 0.0011
+  semantic_loss: 0.3096
+  contrastive_loss: 1.6564
+  total_loss: 0.9222
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 151/200:
+Loss Components:
+  classification_loss: 0.0011
+  semantic_loss: 0.3080
+  contrastive_loss: 1.6207
+  total_loss: 0.9038
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 152/200:
+Loss Components:
+  classification_loss: 0.0011
+  semantic_loss: 0.3124
+  contrastive_loss: 1.5868
+  total_loss: 0.8882
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 153/200:
+Loss Components:
+  classification_loss: 0.0011
+  semantic_loss: 0.3108
+  contrastive_loss: 1.6571
+  total_loss: 0.9229
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 154/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3060
+  contrastive_loss: 1.6267
+  total_loss: 0.9062
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 155/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3062
+  contrastive_loss: 1.6096
+  total_loss: 0.8977
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 156/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3137
+  contrastive_loss: 1.7014
+  total_loss: 0.9458
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 157/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3041
+  contrastive_loss: 1.5849
+  total_loss: 0.8847
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 158/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3076
+  contrastive_loss: 1.6124
+  total_loss: 0.8995
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 159/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3084
+  contrastive_loss: 1.6131
+  total_loss: 0.9001
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 160/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3060
+  contrastive_loss: 1.5963
+  total_loss: 0.8910
+Accuracies: Train=1.000, Val=0.778, Test=0.842
+F1 Scores: Train=1.000, Val=0.750, Test=0.860
+
+Epoch 161/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3113
+  contrastive_loss: 1.6157
+  total_loss: 0.9023
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 162/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3053
+  contrastive_loss: 1.5659
+  total_loss: 0.8756
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 163/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3040
+  contrastive_loss: 1.6075
+  total_loss: 0.8959
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 164/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3081
+  contrastive_loss: 1.6446
+  total_loss: 0.9157
+Accuracies: Train=1.000, Val=0.778, Test=0.842
+F1 Scores: Train=1.000, Val=0.750, Test=0.860
+
+Epoch 165/200:
+Loss Components:
+  classification_loss: 0.0010
+  semantic_loss: 0.3067
+  contrastive_loss: 1.6667
+  total_loss: 0.9263
+Accuracies: Train=1.000, Val=0.778, Test=0.842
+F1 Scores: Train=1.000, Val=0.750, Test=0.860
+
+Epoch 166/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3076
+  contrastive_loss: 1.5860
+  total_loss: 0.8862
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 167/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3031
+  contrastive_loss: 1.5755
+  total_loss: 0.8796
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 168/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3034
+  contrastive_loss: 1.6110
+  total_loss: 0.8974
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 169/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3086
+  contrastive_loss: 1.6740
+  total_loss: 0.9305
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 170/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3076
+  contrastive_loss: 1.6435
+  total_loss: 0.9150
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 171/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3054
+  contrastive_loss: 1.6138
+  total_loss: 0.8995
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 172/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3077
+  contrastive_loss: 1.6338
+  total_loss: 0.9101
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 173/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3119
+  contrastive_loss: 1.5784
+  total_loss: 0.8837
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 174/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3064
+  contrastive_loss: 1.6973
+  total_loss: 0.9415
+Accuracies: Train=1.000, Val=0.667, Test=0.842
+F1 Scores: Train=1.000, Val=0.595, Test=0.860
+
+Epoch 175/200:
+Loss Components:
+  classification_loss: 0.0009
+  semantic_loss: 0.3126
+  contrastive_loss: 1.6725
+  total_loss: 0.9309
+Accuracies: Train=1.000, Val=0.778, Test=0.842
+F1 Scores: Train=1.000, Val=0.750, Test=0.860
+

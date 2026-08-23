@@ -5,7 +5,7 @@ import numpy as np
 
 """
 python scripts/filter_embeddings_by_gestures.py \
-  -f limu_v1 --dataset Angel --version 20_120 --remove 3,5
+  -f limu_v1 --dataset Edery --version 20_120 --remove 3,9
 """
 
 # ensure repo root is on sys.path so local modules (embedding, etc.) can be imported

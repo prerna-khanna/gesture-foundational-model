@@ -1,14 +1,14 @@
 {
-  "dataset": "Julius",
+  "dataset": "Kerry",
   "version": "20_120",
   "method": "real_classifier",
-  "quick_epochs": 50,
-  "overall_accuracy": 0.5714285714285714,
+  "quick_epochs": 30,
+  "overall_accuracy": 0.7619047619047619,
   "per_gesture_stats": {
     "1": {
-      "precision": 0.2,
+      "precision": 1.0,
       "recall": 1.0,
-      "f1": 0.3333333333333333,
+      "f1": 1.0,
       "support": 1,
       "correct": 1,
       "total": 1,
@@ -16,22 +16,22 @@
       "top_confusion_rate": 0.0
     },
     "2": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1": 0.0,
-      "support": 4,
-      "correct": 0,
-      "total": 4,
-      "top_confusion_gesture": 1,
-      "top_confusion_rate": 1.0
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 3,
+      "correct": 3,
+      "total": 3,
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
     },
     "3": {
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
-      "support": 1,
-      "correct": 1,
-      "total": 1,
+      "support": 2,
+      "correct": 2,
+      "total": 2,
       "top_confusion_gesture": null,
       "top_confusion_rate": 0.0
     },
@@ -49,19 +49,19 @@
       "precision": 0.0,
       "recall": 0.0,
       "f1": 0.0,
-      "support": 3,
+      "support": 2,
       "correct": 0,
-      "total": 3,
-      "top_confusion_gesture": 2,
+      "total": 2,
+      "top_confusion_gesture": 6,
       "top_confusion_rate": 1.0
     },
     "6": {
-      "precision": 1.0,
+      "precision": 0.6,
       "recall": 1.0,
-      "f1": 1.0,
-      "support": 2,
-      "correct": 2,
-      "total": 2,
+      "f1": 0.75,
+      "support": 3,
+      "correct": 3,
+      "total": 3,
       "top_confusion_gesture": null,
       "top_confusion_rate": 0.0
     },
@@ -77,28 +77,28 @@
     },
     "8": {
       "precision": 1.0,
-      "recall": 0.75,
-      "f1": 0.8571428571428571,
+      "recall": 0.25,
+      "f1": 0.4,
       "support": 4,
-      "correct": 3,
+      "correct": 1,
       "total": 4,
-      "top_confusion_gesture": 10,
-      "top_confusion_rate": 0.25
+      "top_confusion_gesture": 4,
+      "top_confusion_rate": 0.75
     },
     "9": {
       "precision": 1.0,
-      "recall": 0.5,
-      "f1": 0.6666666666666666,
+      "recall": 1.0,
+      "f1": 1.0,
       "support": 2,
-      "correct": 1,
+      "correct": 2,
       "total": 2,
-      "top_confusion_gesture": 10,
-      "top_confusion_rate": 0.5
+      "top_confusion_gesture": null,
+      "top_confusion_rate": 0.0
     },
     "10": {
-      "precision": 0.5,
+      "precision": 1.0,
       "recall": 1.0,
-      "f1": 0.6666666666666666,
+      "f1": 1.0,
       "support": 2,
       "correct": 2,
       "total": 2,
@@ -114,11 +114,8 @@
     },
     "2": {
       "name": "Gesture 2",
-      "quality": "PROBLEMATIC",
-      "issues": [
-        "Low recall: 0.0% (misses 100% of samples)",
-        "Confused with 'Gesture 1': 100.0%"
-      ]
+      "quality": "GOOD",
+      "issues": []
     },
     "3": {
       "name": "Gesture 3",
@@ -137,7 +134,7 @@
       "quality": "PROBLEMATIC",
       "issues": [
         "Low recall: 0.0% (misses 100% of samples)",
-        "Confused with 'Gesture 2': 100.0%"
+        "Confused with 'Gesture 6': 100.0%"
       ]
     },
     "6": {
@@ -152,16 +149,16 @@
     },
     "8": {
       "name": "Gesture 8",
-      "quality": "GOOD",
-      "issues": []
+      "quality": "PROBLEMATIC",
+      "issues": [
+        "Low recall: 25.0% (misses 75% of samples)",
+        "Confused with 'Gesture 4': 75.0%"
+      ]
     },
     "9": {
       "name": "Gesture 9",
-      "quality": "PROBLEMATIC",
-      "issues": [
-        "Low recall: 50.0% (misses 50% of samples)",
-        "Confused with 'Gesture 10': 50.0%"
-      ]
+      "quality": "GOOD",
+      "issues": []
     },
     "10": {
       "name": "Gesture 10",
@@ -170,17 +167,17 @@
     }
   },
   "problematic_gestures": [
-    2,
     4,
     5,
-    9
+    8
   ],
   "good_gestures": [
     1,
+    2,
     3,
     6,
     7,
-    8,
+    9,
     10
   ]
 }
