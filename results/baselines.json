@@ -1,0 +1,374 @@
+{
+  "ncm": {
+    "acc": 0.7512857823235195,
+    "n_users": 10,
+    "requires_per_user_training": false,
+    "validates": false,
+    "rows": [
+      {
+        "user": "Alexandra",
+        "baseline": "ncm",
+        "acc": 0.7857142857142857,
+        "requires_per_user_training": false,
+        "validates": false
+      },
+      {
+        "user": "Rahkiya",
+        "baseline": "ncm",
+        "acc": 0.75,
+        "requires_per_user_training": false,
+        "validates": false
+      },
+      {
+        "user": "Nihal",
+        "baseline": "ncm",
+        "acc": 0.6857142857142857,
+        "requires_per_user_training": false,
+        "validates": false
+      },
+      {
+        "user": "Angel",
+        "baseline": "ncm",
+        "acc": 0.8529411764705882,
+        "requires_per_user_training": false,
+        "validates": false
+      },
+      {
+        "user": "Julius",
+        "baseline": "ncm",
+        "acc": 0.4482758620689655,
+        "requires_per_user_training": false,
+        "validates": false
+      },
+      {
+        "user": "Turiya",
+        "baseline": "ncm",
+        "acc": 0.6666666666666666,
+        "requires_per_user_training": false,
+        "validates": false
+      },
+      {
+        "user": "John",
+        "baseline": "ncm",
+        "acc": 0.8518518518518519,
+        "requires_per_user_training": false,
+        "validates": false
+      },
+      {
+        "user": "Kerry",
+        "baseline": "ncm",
+        "acc": 0.7586206896551724,
+        "requires_per_user_training": false,
+        "validates": false
+      },
+      {
+        "user": "Roafel",
+        "baseline": "ncm",
+        "acc": 0.8709677419354839,
+        "requires_per_user_training": false,
+        "validates": false
+      },
+      {
+        "user": "Edery",
+        "baseline": "ncm",
+        "acc": 0.8421052631578947,
+        "requires_per_user_training": false,
+        "validates": false
+      }
+    ]
+  },
+  "svm": {
+    "acc": 0.8294877377344136,
+    "n_users": 10,
+    "requires_per_user_training": true,
+    "validates": false,
+    "rows": [
+      {
+        "user": "Alexandra",
+        "baseline": "svm",
+        "n_train": 7,
+        "acc": 0.8214285714285714,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Rahkiya",
+        "baseline": "svm",
+        "n_train": 7,
+        "acc": 0.9285714285714286,
+        "n_gestures": 9,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Nihal",
+        "baseline": "svm",
+        "n_train": 7,
+        "acc": 0.7428571428571429,
+        "n_gestures": 12,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Angel",
+        "baseline": "svm",
+        "n_train": 7,
+        "acc": 0.8823529411764706,
+        "n_gestures": 11,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Julius",
+        "baseline": "svm",
+        "n_train": 7,
+        "acc": 0.7241379310344828,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Turiya",
+        "baseline": "svm",
+        "n_train": 7,
+        "acc": 0.6333333333333333,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "John",
+        "baseline": "svm",
+        "n_train": 7,
+        "acc": 0.9629629629629629,
+        "n_gestures": 9,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Kerry",
+        "baseline": "svm",
+        "n_train": 7,
+        "acc": 0.8275862068965517,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Roafel",
+        "baseline": "svm",
+        "n_train": 7,
+        "acc": 0.9032258064516129,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Edery",
+        "baseline": "svm",
+        "n_train": 7,
+        "acc": 0.868421052631579,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      }
+    ]
+  },
+  "rf": {
+    "acc": 0.8020842193599333,
+    "n_users": 10,
+    "requires_per_user_training": true,
+    "validates": false,
+    "rows": [
+      {
+        "user": "Alexandra",
+        "baseline": "rf",
+        "n_train": 7,
+        "acc": 0.8214285714285714,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Rahkiya",
+        "baseline": "rf",
+        "n_train": 7,
+        "acc": 0.8928571428571429,
+        "n_gestures": 9,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Nihal",
+        "baseline": "rf",
+        "n_train": 7,
+        "acc": 0.7428571428571429,
+        "n_gestures": 12,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Angel",
+        "baseline": "rf",
+        "n_train": 7,
+        "acc": 0.8823529411764706,
+        "n_gestures": 11,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Julius",
+        "baseline": "rf",
+        "n_train": 7,
+        "acc": 0.6206896551724138,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Turiya",
+        "baseline": "rf",
+        "n_train": 7,
+        "acc": 0.6333333333333333,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "John",
+        "baseline": "rf",
+        "n_train": 7,
+        "acc": 0.8888888888888888,
+        "n_gestures": 9,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Kerry",
+        "baseline": "rf",
+        "n_train": 7,
+        "acc": 0.7931034482758621,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Roafel",
+        "baseline": "rf",
+        "n_train": 7,
+        "acc": 0.9032258064516129,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Edery",
+        "baseline": "rf",
+        "n_train": 7,
+        "acc": 0.8421052631578947,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      }
+    ]
+  },
+  "finetune": {
+    "acc": 0.8126685119598125,
+    "n_users": 10,
+    "requires_per_user_training": true,
+    "validates": false,
+    "rows": [
+      {
+        "user": "Alexandra",
+        "baseline": "finetune",
+        "n_train": 7,
+        "acc": 0.8214285714285714,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Rahkiya",
+        "baseline": "finetune",
+        "n_train": 7,
+        "acc": 0.9642857142857143,
+        "n_gestures": 9,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Nihal",
+        "baseline": "finetune",
+        "n_train": 7,
+        "acc": 0.7428571428571429,
+        "n_gestures": 12,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Angel",
+        "baseline": "finetune",
+        "n_train": 7,
+        "acc": 0.8235294117647058,
+        "n_gestures": 11,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Julius",
+        "baseline": "finetune",
+        "n_train": 7,
+        "acc": 0.4827586206896552,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Turiya",
+        "baseline": "finetune",
+        "n_train": 7,
+        "acc": 0.7666666666666667,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "John",
+        "baseline": "finetune",
+        "n_train": 7,
+        "acc": 0.9259259259259259,
+        "n_gestures": 9,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Kerry",
+        "baseline": "finetune",
+        "n_train": 7,
+        "acc": 0.8275862068965517,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Roafel",
+        "baseline": "finetune",
+        "n_train": 7,
+        "acc": 0.9032258064516129,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      },
+      {
+        "user": "Edery",
+        "baseline": "finetune",
+        "n_train": 7,
+        "acc": 0.868421052631579,
+        "n_gestures": 10,
+        "requires_per_user_training": true,
+        "validates": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+[
+  {
+    "user": "Alexandra",
+    "accepted": 8,
+    "total": 10,
+    "rejected": [
+      [
+        "g2",
+        "'g2' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g1'."
+      ],
+      [
+        "g5",
+        "Your demonstrations of this gesture differ too much from each other. Try performing it more consistently, or pick a simpler motion."
+      ]
+    ],
+    "acc_full": 0.8636363636363636,
+    "acc_open": 0.6363636363636364,
+    "acc_unfiltered": 0.7857142857142857,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 4.618769709486514,
+    "add_ms_last": 13.432017003651708,
+    "ablation": "none"
+  },
+  {
+    "user": "Nihal",
+    "accepted": 8,
+    "total": 12,
+    "rejected": [
+      [
+        "g2",
+        "'g2' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g1'."
+      ],
+      [
+        "g6",
+        "This gesture is too close to 'g3'. Try changing the direction or the shape of the motion."
+      ],
+      [
+        "g11",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g12",
+        "'g7' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g12'."
+      ]
+    ],
+    "acc_full": 0.9130434782608695,
+    "acc_open": 0.9130434782608695,
+    "acc_unfiltered": 0.7428571428571429,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 6.990137990214862,
+    "add_ms_last": 16.376988030970097,
+    "ablation": "none"
+  }
+]

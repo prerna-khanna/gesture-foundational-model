@@ -1,0 +1,310 @@
+[
+  {
+    "user": "Alexandra",
+    "accepted": 5,
+    "total": 10,
+    "rejected": [
+      [
+        "g2",
+        "'g2' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g1'."
+      ],
+      [
+        "g6",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g7",
+        "'g5' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g7'."
+      ],
+      [
+        "g8",
+        "'g5' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g8'."
+      ],
+      [
+        "g9",
+        "'g9' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g1'."
+      ]
+    ],
+    "acc_full": 0.8461538461538461,
+    "acc_open": 0.8461538461538461,
+    "acc_unfiltered": 0.7857142857142857,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 3.4058634017128497,
+    "add_ms_last": 5.289599997922778,
+    "ablation": "no_head"
+  },
+  {
+    "user": "Rahkiya",
+    "accepted": 6,
+    "total": 9,
+    "rejected": [
+      [
+        "g6",
+        "'g5' would no longer be recognized reliably (43%) after adding this gesture; it gets confused with 'g6'."
+      ],
+      [
+        "g7",
+        "This gesture is too close to 'g2'. Try changing the direction or the shape of the motion."
+      ],
+      [
+        "g8",
+        "'g1' would no longer be recognized reliably (43%) after adding this gesture; it gets confused with 'g8'."
+      ]
+    ],
+    "acc_full": 0.9444444444444444,
+    "acc_open": 0.8333333333333334,
+    "acc_unfiltered": 0.75,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 4.661096654470182,
+    "add_ms_last": 7.5564629514701664,
+    "ablation": "no_head"
+  },
+  {
+    "user": "Nihal",
+    "accepted": 7,
+    "total": 12,
+    "rejected": [
+      [
+        "g2",
+        "'g2' would no longer be recognized reliably (43%) after adding this gesture; it gets confused with 'g1'."
+      ],
+      [
+        "g3",
+        "'g3' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g1'."
+      ],
+      [
+        "g6",
+        "'g6' would no longer be recognized reliably (43%) after adding this gesture; it gets confused with 'g5'."
+      ],
+      [
+        "g9",
+        "'g7' would no longer be recognized reliably (43%) after adding this gesture; it gets confused with 'g1'."
+      ],
+      [
+        "g11",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ]
+    ],
+    "acc_full": 0.95,
+    "acc_open": 0.95,
+    "acc_unfiltered": 0.6857142857142857,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 4.3967248348053545,
+    "add_ms_last": 10.104135028086603,
+    "ablation": "no_head"
+  },
+  {
+    "user": "Angel",
+    "accepted": 5,
+    "total": 11,
+    "rejected": [
+      [
+        "g3",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g5",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g7",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g8",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g9",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g10",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ]
+    ],
+    "acc_full": 0.875,
+    "acc_open": 0.875,
+    "acc_unfiltered": 0.8529411764705882,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 3.5385970841161907,
+    "add_ms_last": 5.326240032445639,
+    "ablation": "no_head"
+  },
+  {
+    "user": "Julius",
+    "accepted": 5,
+    "total": 10,
+    "rejected": [
+      [
+        "g2",
+        "This gesture is too close to 'g1'. Try changing the direction or the shape of the motion."
+      ],
+      [
+        "g5",
+        "'g5' would no longer be recognized reliably (29%) after adding this gesture; it gets confused with 'g4'."
+      ],
+      [
+        "g7",
+        "'g7' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g1'."
+      ],
+      [
+        "g9",
+        "'g6' would no longer be recognized reliably (43%) after adding this gesture; it gets confused with 'g9'."
+      ],
+      [
+        "g10",
+        "'g10' would no longer be recognized reliably (29%) after adding this gesture; it gets confused with 'g4'."
+      ]
+    ],
+    "acc_full": 0.8,
+    "acc_open": 0.8,
+    "acc_unfiltered": 0.4482758620689655,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 3.6429423082154244,
+    "add_ms_last": 7.190643053036183,
+    "ablation": "no_head"
+  },
+  {
+    "user": "Turiya",
+    "accepted": 8,
+    "total": 10,
+    "rejected": [
+      [
+        "g5",
+        "'g5' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g4'."
+      ],
+      [
+        "g7",
+        "'g6' would no longer be recognized reliably (43%) after adding this gesture; it gets confused with 'g7'."
+      ]
+    ],
+    "acc_full": 0.7916666666666666,
+    "acc_open": 0.7916666666666666,
+    "acc_unfiltered": 0.6666666666666666,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 5.534858285682276,
+    "add_ms_last": 12.91238801786676,
+    "ablation": "no_head"
+  },
+  {
+    "user": "John",
+    "accepted": 2,
+    "total": 9,
+    "rejected": [
+      [
+        "g0",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g1",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g2",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g3",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g4",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g5",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g8",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ]
+    ],
+    "acc_full": 1.0,
+    "acc_open": 1.0,
+    "acc_unfiltered": 0.8518518518518519,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 0.5207037837761972,
+    "add_ms_last": 2.114665985573083,
+    "ablation": "no_head"
+  },
+  {
+    "user": "Kerry",
+    "accepted": 6,
+    "total": 10,
+    "rejected": [
+      [
+        "g4",
+        "'g3' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g4'."
+      ],
+      [
+        "g5",
+        "'g5' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g3'."
+      ],
+      [
+        "g6",
+        "'g3' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g6'."
+      ],
+      [
+        "g8",
+        "'g8' would no longer be recognized reliably (43%) after adding this gesture; it gets confused with 'g3'."
+      ]
+    ],
+    "acc_full": 0.8823529411764706,
+    "acc_open": 0.8823529411764706,
+    "acc_unfiltered": 0.7586206896551724,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 3.5168137052096426,
+    "add_ms_last": 7.502822030801326,
+    "ablation": "no_head"
+  },
+  {
+    "user": "Roafel",
+    "accepted": 6,
+    "total": 10,
+    "rejected": [
+      [
+        "g1",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g2",
+        "This gesture looks like ordinary hand movement, so it would trigger by accident during everyday activity. Try a more deliberate motion."
+      ],
+      [
+        "g7",
+        "'g5' would no longer be recognized reliably (57%) after adding this gesture; it gets confused with 'g7'."
+      ],
+      [
+        "g9",
+        "'g9' would no longer be recognized reliably (29%) after adding this gesture; it gets confused with 'g6'."
+      ]
+    ],
+    "acc_full": 0.8888888888888888,
+    "acc_open": 0.8888888888888888,
+    "acc_unfiltered": 0.8709677419354839,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 3.305021399864927,
+    "add_ms_last": 7.579486002214253,
+    "ablation": "no_head"
+  },
+  {
+    "user": "Edery",
+    "accepted": 9,
+    "total": 10,
+    "rejected": [
+      [
+        "g10",
+        "'g10' would no longer be recognized reliably (43%) after adding this gesture; it gets confused with 'g7'."
+      ]
+    ],
+    "acc_full": 0.8857142857142857,
+    "acc_open": 0.8857142857142857,
+    "acc_unfiltered": 0.8421052631578947,
+    "bg_fpr": 0.05,
+    "add_ms_mean": 7.896428793901578,
+    "add_ms_last": 19.463226024527103,
+    "ablation": "no_head"
+  }
+]

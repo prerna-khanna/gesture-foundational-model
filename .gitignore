@@ -5,6 +5,15 @@
 /log/
 /embed/
 #/saved/
+/saved/customization/*.npz
+/contrasense_imp/HHAR/*.npz
 .DS_Store
 __pycache__/
 __pycache__
+# Generated binary artifacts
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+*.joblib

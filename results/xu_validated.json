@@ -1,0 +1,140 @@
+{
+  "xu_validated": {
+    "acc_full": 0.6734084477808844,
+    "accepted": 9.7,
+    "total": 10.1,
+    "n_users": 10,
+    "validates": true,
+    "requires_per_user_training": true,
+    "rows": [
+      {
+        "baseline": "xu_validated",
+        "acc_full": 0.6428571428571429,
+        "accepted": 10,
+        "total": 10,
+        "rejected": [],
+        "n_train": 7,
+        "requires_per_user_training": true,
+        "validates": true,
+        "user": "Alexandra"
+      },
+      {
+        "baseline": "xu_validated",
+        "acc_full": 0.8214285714285714,
+        "accepted": 9,
+        "total": 9,
+        "rejected": [],
+        "n_train": 7,
+        "requires_per_user_training": true,
+        "validates": true,
+        "user": "Rahkiya"
+      },
+      {
+        "baseline": "xu_validated",
+        "acc_full": 0.6,
+        "accepted": 12,
+        "total": 12,
+        "rejected": [],
+        "n_train": 7,
+        "requires_per_user_training": true,
+        "validates": true,
+        "user": "Nihal"
+      },
+      {
+        "baseline": "xu_validated",
+        "acc_full": 0.8529411764705882,
+        "accepted": 11,
+        "total": 11,
+        "rejected": [],
+        "n_train": 7,
+        "requires_per_user_training": true,
+        "validates": true,
+        "user": "Angel"
+      },
+      {
+        "baseline": "xu_validated",
+        "acc_full": 0.3,
+        "accepted": 7,
+        "total": 10,
+        "rejected": [
+          [
+            5,
+            "confusing_with_daily_activity"
+          ],
+          [
+            9,
+            "confusing_with_daily_activity"
+          ],
+          [
+            10,
+            "confusing_with_daily_activity"
+          ]
+        ],
+        "n_train": 7,
+        "requires_per_user_training": true,
+        "validates": true,
+        "user": "Julius"
+      },
+      {
+        "baseline": "xu_validated",
+        "acc_full": 0.5555555555555556,
+        "accepted": 9,
+        "total": 10,
+        "rejected": [
+          [
+            8,
+            "confusing_with_daily_activity"
+          ]
+        ],
+        "n_train": 7,
+        "requires_per_user_training": true,
+        "validates": true,
+        "user": "Turiya"
+      },
+      {
+        "baseline": "xu_validated",
+        "acc_full": 1.0,
+        "accepted": 9,
+        "total": 9,
+        "rejected": [],
+        "n_train": 7,
+        "requires_per_user_training": true,
+        "validates": true,
+        "user": "John"
+      },
+      {
+        "baseline": "xu_validated",
+        "acc_full": 0.6896551724137931,
+        "accepted": 10,
+        "total": 10,
+        "rejected": [],
+        "n_train": 7,
+        "requires_per_user_training": true,
+        "validates": true,
+        "user": "Kerry"
+      },
+      {
+        "baseline": "xu_validated",
+        "acc_full": 0.9032258064516129,
+        "accepted": 10,
+        "total": 10,
+        "rejected": [],
+        "n_train": 7,
+        "requires_per_user_training": true,
+        "validates": true,
+        "user": "Roafel"
+      },
+      {
+        "baseline": "xu_validated",
+        "acc_full": 0.3684210526315789,
+        "accepted": 10,
+        "total": 10,
+        "rejected": [],
+        "n_train": 7,
+        "requires_per_user_training": true,
+        "validates": true,
+        "user": "Edery"
+      }
+    ]
+  }
+}
