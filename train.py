@@ -388,6 +388,9 @@ class Trainer(object):
         print(f'Best Performance:')
         print(f'Accuracy: Train={best_stat[0]:.3f}, Val={best_stat[1]:.3f}, Test={best_stat[2]:.3f}')
         print(f'F1 Score: Train={best_stat[3]:.3f}, Val={best_stat[4]:.3f}, Test={best_stat[5]:.3f}')
+        # (train_acc, vali_acc, test_acc, train_f1, vali_f1, test_f1) -- returned so
+        # callers can select hyperparameters on VALIDATION accuracy rather than test.
+        return best_stat
 
     def load(self, model_file, load_self=False):
         """ load saved model or pretrained transformer (a part of model) """

@@ -1,0 +1,32 @@
+{
+  "encoders": [
+    "unihar"
+  ],
+  "classifiers": [
+    "simple",
+    "full"
+  ],
+  "datasets": [
+    "sony_watch",
+    "blind_user_filtered"
+  ],
+  "seeds": [
+    3431,
+    1234,
+    2024
+  ],
+  "dataset_version": "20_120",
+  "model_version": "v2",
+  "embed_dir": "new_embed",
+  "n_epochs": null,
+  "label_rate": 0.1,
+  "gpu": null,
+  "out_dir": "results/encoder_grid/unihar_d2",
+  "encoder_descriptions": {
+    "limu_v1": "GestureLens (nucleus masking)",
+    "unihar": "UniHAR (augmentation-based SSL)",
+    "contrastsense": "ContrastSense (contrastive SSL)",
+    "yuan": "Yuan et al. (large-scale foundation)",
+    "limubert": "LIMU-BERT (random masking)"
+  }
+}

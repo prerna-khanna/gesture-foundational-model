@@ -1,0 +1,50 @@
+# Bolt config for the Tier 1 text-description ablation (ICLR revision).
+#
+# Runs the whole sweep in a single GPU task: 6 arms x 3 datasets x 3 seeds = 54
+# runs. After vectorising the semantic loss this is roughly 1.5 hours, so there
+# is no need for the parent/child submission hierarchy other repos use --
+# fewer moving parts to debug.
+#
+# Submit from a staged directory, NOT the repo root (the repo is 2.6GB and
+# `--tar .` would try to upload all of it). bolt/stage.sh builds the staging dir:
+#
+#     bash bolt/stage.sh
+#     cd /tmp/gesturelens_stage
+#     bolt task submit --tar . --config bolt/config.yaml --max-retries 2
+#
+# To split across three parallel tasks instead, append `--datasets <name>` to the
+# command below and submit once per dataset.
+
+name: gesturelens-text-ablation
+description: >
+  Tier 1 text-description controls for the semantic loss: shuffled, mismatched,
+  onehot, random, real_nodiag, none. Tests whether semantic content matters or
+  only the presence of a per-class anchor.
+
+setup_command: bash bolt/task_setup.sh
+
+# `results/text_ablation` is written incrementally (runs.csv after every cell),
+# so a task that dies partway still leaves usable artifacts behind. Classifier
+# checkpoints go to saved/ in the working dir, deliberately NOT the artifact dir,
+# to avoid syncing ~270MB of throwaway .pt files.
+command: bash bolt/run_tier1.sh
+
+resources:
+  # Moved off 1gpu because that pool was queueing. Valid GPU tiers are
+  # 1gpu / 2gpu / 4gpu / 8gpu; 2gpu is the smallest step up.
+  #
+  # Note the sweep is single-GPU by construction (run_text_ablation picks one
+  # device), so the second GPU sits idle. Going to 4gpu or 8gpu would waste
+  # more and, being scarcer, would most likely queue longer rather than shorter.
+  task_type: 2gpu
+  num_gpus: 2
+  num_cpus: 8
+  memory_gb: 32.0
+
+environment_variables:
+  # transformers/tokenizers are noisy and fork-warn under DataLoader workers.
+  TOKENIZERS_PARALLELISM: "false"
+  PYTHONUNBUFFERED: "1"
+  # statistic.py imports plot.py, which imports pyplot at module scope; force a
+  # headless backend so that import cannot fail on a node with no display.
+  MPLBACKEND: "Agg"

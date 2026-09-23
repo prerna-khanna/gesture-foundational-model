@@ -47,9 +47,16 @@ class GestureAugmenter:
     def _vary_speed(self, x):
         """Vary the speed of the gesture through interpolation"""
         seq_len, features = x.shape
+
+        # A length-1 sequence has no time axis to warp, and new_len would round
+        # down to 0, leaving np.interp with an empty grid. Encoders that pool
+        # time away (harnet/Yuan emits [1, D]) hit this.
+        if seq_len < 2:
+            return x
+
         speed_factor = 1.0 + (np.random.rand() - 0.5) * 2 * self.speed_scale
         new_len = int(seq_len * speed_factor)
-        
+
         # Ensure reasonable sequence length
         new_len = max(seq_len // 2, min(seq_len * 2, new_len))
         

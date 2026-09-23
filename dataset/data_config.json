@@ -1,528 +1,794 @@
 {
-    "hhar_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 2,
-        "activity_label_size": 6,
-        "activity_label": [
-            "bike", "sit", "downstairs", "upstairs", "stand", "walk"
-        ],
-        "user_label_index": 0,
-        "user_label_size": 9,
-        "model_label_index": 1,
-        "model_label_size": 3,
-        "size": 9166
-    },
-    "motion_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 6,
-        "activity_label": [
-            "downstairs", "upstairs", "sitting", "standing", "walking", "jogging"
-        ],
-        "user_label_index": 1,
-        "user_label_size": 24,
-        "size": 4534
-    },
-
-    "uci_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 6,
-        "activity_label": [
-            "walking", "upstairs", "downstairs", "sitting", "standing", "lying"
-        ],
-        "user_label_index": 1,
-        "user_label_size": 30,
-        "size": 2088
-    },
-
-    "earbud_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 11,
-        "activity_label": ["Tap", "Double Tap", "Swipe upwards", "Swipe downwards", "Long press", "Rotate finger", "Tap on lower end", "Tap on upper end", "Tap on top of ear", "Tap on earlobe", "Tap on jaw"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 1538,
-        "descriptions": [
-            
-            "a Single tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
-            "a Double tap gesture with properties: primary type: tap, direction: direct, complexity: complex",
-            
-            "a Upward swipe gesture with properties: primary type: directional, direction: up, complexity: simple",
-            "a Downward swipe gesture with properties: primary type: directional, direction: down, complexity: simple",
-            
-            "a Long press gesture with properties: primary type: stationary, direction: direct, complexity: simple",
-
-            "a Finger rotation gesture with properties: primary type: rotational, direction: circular, complexity: complex",
-         
-            "a Lower earbud tap gesture with properties: primary type: tap, direction: bottom, complexity: simple",
-            "a Upper earbud tap gesture with properties: primary type: tap, direction: top, complexity: simple",
-            "a Ear top tap gesture with properties: primary type: tap, direction: cartilage, complexity: simple",
-            "a Earlobe tap gesture with properties: primary type: tap, direction: lobe, complexity: simple",
-            "a Jaw tap gesture with properties: primary type: tap, direction: jaw, complexity: simple"
-        ]
-    },
-
-    "earbud_filtered_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 7,
-        "activity_label": ["Tap", "Double Tap", "Swipe upwards", "Swipe downwards", "Long press", "Rotate finger", "Tap on lower end"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 1538,
-        "descriptions": [
-            
-            "a Single tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
-            "a Double tap gesture with properties: primary type: tap, direction: direct, complexity: complex",
-            
-            "a Upward swipe gesture with properties: primary type: directional, direction: up, complexity: simple",
-            "a Downward swipe gesture with properties: primary type: directional, direction: down, complexity: simple",
-            
-            "a Long press gesture with properties: primary type: stationary, direction: direct, complexity: simple",
-
-            "a Finger rotation gesture with properties: primary type: rotational, direction: circular, complexity: complex",
-         
-            "a Lower earbud tap gesture with properties: primary type: tap, direction: bottom, complexity: simple"
-            
-        ]
-    },
-
-    "blind_user_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 15,
-        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and left", "flick wrist and right", "square", "circle", "triangle", "question mark", "infinity"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 1439,
-        "descriptions": [
-            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
-            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
-            "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
-            "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
-            
-            "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
-            "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
-            
-            
-            "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
-            "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
-            "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
-            "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
-            
-           
-            "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
-            "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
-        ]
-    },
-
-    "blind_user_filtered_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 12,
-        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and left", "flick wrist and right", "square", "circle"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 1439,
-        "descriptions": [
-            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
-            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
-            "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
-            "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
-            
-            "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
-            "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
-            
-            
-            "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
-            "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
-            "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
-            "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
-            
-            "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
-        ]
-    },
-
-    "blind_access_wear_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 5,
-        "activity_label": ["1", "2", "3", "4", "5"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 1439
-    },
-
-
-    "blind_shape_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 6,
-        "activity_label": ["6", "7", "8", "9", "10", "11"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 1439
-    },
-
-    "blind_compound_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 5,
-        "activity_label": ["11", "12", "13", "14", "15"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 1439
-    },
-
-    "augmented_data_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 15,
-        "activity_label": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 6904
-    },
-
-    "test_data_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 15,
-        "activity_label": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 576
-    },
-
-    "blind_fine_tune_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 15,
-        "activity_label": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 1439
-    },
-
-
-    "sighted_user_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 15,
-        "activity_label": ["up", "down", "left", "right", "rotate wrist and right", "rotate wrist and left", "flick wrist and up", "flick wrist and down", "flick wrist and left", "flick wrist and right", "square", "circle", "triangle", "question mark", "infinity"],
-        "user_label_index": 1,
-        "user_label_size": 8,
-        "size": 219,
-        "descriptions": [
-            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
-            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
-            "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
-            "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
-            
-            "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
-            "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
-            
-            
-            "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
-            "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
-            "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
-            "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
-            
-           
-            "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
-            "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
-            "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
-        ]
-    },
-
-
-    "smart_watch_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 1,
-        "activity_label_size": 5,
-        "activity_label": ["left", "right", "up", "down", "tap"],
-        "user_label_index": 0,
-        "user_label_size": 23,
-        "size": 1538,
-        "descriptions": [
-            "a Leftward motion gesture with properties: primary type: directional, direction: left, complexity: simple",
-            "a Rightward motion gesture with properties: primary type: directional, direction: right, complexity: simple",
-            "a Upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
-            "a Downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
-            "a Tap gesture with properties: primary type: tap, direction: direct, complexity: simple"
-        ]
-    },
-
-    "sony_watch_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 20,
-        "activity_label": [
-            "horizontal right", "horizontal left", "vertical up", "vertical down",
-            "clockwise circle", "counter-clockwise circle", "counter-clockwise square", "clockwise square",
-            "right diagonal", "left diagonal", "vertical down double", "horizontal right double",
-            "V-shape down-up", "V-shape up-down", "triangle upward", "triangle downward",
-            "S-curve leftward", "S-curve rightward", "wave leftward", "wave rightward"
-        ],
-        "user_label_index": 1,
-        "user_label_size": 8,
-        "size": 1538,
-        "descriptions": [
-            "a Horizontal rightward motion gesture with properties: primary type: directional, direction: right, complexity: simple",
-            "a Horizontal leftward motion gesture with properties: primary type: directional, direction: left, complexity: simple",
-            "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
-            "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
-            
-            "a Clockwise circular motion gesture with properties: primary type: shape, direction: clockwise, complexity: complex",
-            "a Counter-clockwise circular motion gesture with properties: primary type: shape, direction: counter-clockwise, complexity: complex",
-            "a Counter-clockwise square tracing gesture with properties: primary type: shape, direction: counter-clockwise, complexity: complex",
-            "a Clockwise square tracing gesture with properties: primary type: shape, direction: clockwise, complexity: complex",
-            
-            "a Diagonal rightward motion gesture with properties: primary type: directional, direction: right-diagonal, complexity: simple",
-            "a Diagonal leftward motion gesture with properties: primary type: directional, direction: left-diagonal, complexity: simple",
-            "a Double vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: moderate",
-            "a Double horizontal rightward motion gesture with properties: primary type: directional, direction: right, complexity: moderate",
-            
-            "a V-shaped downward then upward motion gesture with properties: primary type: shape, direction: mixed, complexity: moderate",
-            "a V-shaped upward then downward motion gesture with properties: primary type: shape, direction: mixed, complexity: moderate",
-            "a Triangle upward pointing tracing gesture with properties: primary type: shape, direction: mixed, complexity: complex",
-            "a Triangle downward pointing tracing gesture with properties: primary type: shape, direction: mixed, complexity: complex",
-            
-            "a S-curve leftward tracing gesture with properties: primary type: shape, direction: left, complexity: complex",
-            "a S-curve rightward tracing gesture with properties: primary type: shape, direction: right, complexity: complex",
-            "a Wave-like leftward motion gesture with properties: primary type: shape, direction: left, complexity: complex",
-            "a Wave-like rightward motion gesture with properties: primary type: shape, direction: right, complexity: complex"
-        ]
-    },
-
-    "HGAG_DATA_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 1,
-        "activity_label_size": 11,
-        "activity_label": [
-            "Clap", "Coin Flip", "Finger Snap", "Make Fist", "Wrist Extend Horizontal",
-            "Index Flick", "Index-Thumb Tap", "Shoot", "Thumb Up", "Wrist Extension", "Wrist Flexion"
-        ],
-        "user_label_index": 0,
-        "user_label_size": 43,
-        "size": 23648,
-        "descriptions": [
-            "a Clapping gesture with properties: primary type: rhythmic, direction: bilateral, complexity: simple",
-            "a Coin flipping gesture with properties: primary type: dexterous, direction: finger-centric, complexity: moderate",
-            "a Finger snapping gesture with properties: primary type: impulsive, direction: direct, complexity: simple",
-            "a Fist making gesture with properties: primary type: grasping, direction: inward, complexity: simple",
-            "a Horizontal wrist extension gesture with properties: primary type: directional, direction: horizontal, complexity: moderate",
-            "a Index finger flick gesture with properties: primary type: flick, direction: forward, complexity: simple",
-            "a Index thumb tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
-            "a Shooting gesture with properties: primary type: symbolic, direction: forward, complexity: moderate",
-            "a Thumb up gesture with properties: primary type: symbolic, direction: upward, complexity: simple",
-            "a Wrist extension gesture with properties: primary type: rotational, direction: extension, complexity: moderate",
-            "a Wrist flexion gesture with properties: primary type: rotational, direction: flexion, complexity: moderate"
-        ]
-    },
-
-    "UTD_MHAD_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 1,
-        "activity_label_size": 27,
-        "activity_label": [
-            "Swipe Left", "Swipe Right", "Wave", "Front Clap", "Throw", "Cross Arms", "Basketball Shot", "Draw X", "Draw Circle CW", "Draw Circle CCW", "Draw Triangle", "Bowl", "Front Boxing", "Baseball Swing", "Tennis Forehand", "Arm Curl", "Tennis Serve", "Two-Hand Push", "Knock", "Catch Object", "Pick and Throw", "Jog In Place", "Walk In Place", "Sit to Stand", "Stand to Sit", "Forward Lunge", "Squat"
-        ],
-        "user_label_index": 0,
-        "user_label_size": 8,
-        "size": 861,
-        "descriptions": [
-            "a Right-arm leftward swipe gesture with properties: primary type: directional, direction: left, complexity: simple",
-            "a Right-arm rightward swipe gesture with properties: primary type: directional, direction: right, complexity: simple",
-            "a Right-hand waving gesture with properties: primary type: periodic, direction: lateral, complexity: simple",
-            "a Two-hand front clap gesture with properties: primary type: rhythmic, direction: frontal, complexity: simple",
-            "a Right-arm throw gesture with properties: primary type: ballistic, direction: forward, complexity: moderate",
-            "a Cross-arms-on-chest gesture with properties: primary type: postural, direction: inward, complexity: simple",
-            "a Basketball shooting gesture with properties: primary type: sport-specific, direction: upward, complexity: moderate",
-            "a Right-hand X drawing gesture with properties: primary type: shape, direction: crossed, complexity: moderate",
-            "a Right-hand clockwise circle drawing gesture with properties: primary type: shape, direction: clockwise, complexity: moderate",
-            "a Right-hand counter-clockwise circle drawing gesture with properties: primary type: shape, direction: counter-clockwise, complexity: moderate",
-            "a Triangle drawing gesture with properties: primary type: shape, direction: cyclic, complexity: moderate",
-            "a Right-hand bowling gesture with properties: primary type: sport-specific, direction: forward, complexity: moderate",
-            "a Front boxing gesture with properties: primary type: striking, direction: forward, complexity: moderate",
-            "a Right-side baseball swing gesture with properties: primary type: sport-specific, direction: arc, complexity: complex",
-            "a Right-hand tennis forehand swing gesture with properties: primary type: sport-specific, direction: forward-arc, complexity: complex",
-            "a Two-arm curl gesture with properties: primary type: lifting, direction: upward, complexity: moderate",
-            "a Tennis serve gesture with properties: primary type: sport-specific, direction: overhead, complexity: complex",
-            "a Two-hand push gesture with properties: primary type: forceful, direction: forward, complexity: simple",
-            "a Right-hand door-knock gesture with properties: primary type: repetitive, direction: forward, complexity: simple",
-            "a Right-hand object-catching gesture with properties: primary type: grasping, direction: inward, complexity: moderate",
-            "a Right-hand pick-up-and-throw gesture with properties: primary type: compound, direction: mixed, complexity: complex",
-            "a Jogging-in-place gesture with properties: primary type: locomotion, direction: cyclic, complexity: moderate",
-            "a Walking-in-place gesture with properties: primary type: locomotion, direction: cyclic, complexity: simple",
-            "a Sit-to-stand transition gesture with properties: primary type: transition, direction: upward, complexity: moderate",
-            "a Stand-to-sit transition gesture with properties: primary type: transition, direction: downward, complexity: moderate",
-            "a Forward lunge gesture with properties: primary type: lower-body, direction: forward, complexity: moderate",
-            "a Two-arm squat gesture with properties: primary type: lower-body, direction: downward-upward, complexity: moderate"
-        ]
-    },
-
-    "umahand_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 1,
-        "activity_label_size": 29,
-        "activity_label": [
-            "Brush Teeth (Manual)", "Brush Teeth (Electric)", "Wash Hands", "Eat Soup", "Cut Food", "Peel Fruit", "Clap", "Comb Hair", "Wipe Surface", "Sweep", "Write with Pen", "Type Keyboard", "Text on Phone", "Fold Paper", "Dial and Hold Phone", "Pick Up from Floor", "Open Bottle Cap", "Drink Water", "Pour Water", "Wear Glasses", "Wear Jacket", "Remove Jacket", "Wear Shoe and Tie", "Wave Goodbye", "Blow Nose", "Turn Doorknob", "Button Shirt", "Zip Up/Down", "Screw"
-        ],
-        "user_label_index": 0,
-        "user_label_size": 25,
-        "size": 752,
-        "descriptions": [
-            "a Manual tooth-brushing gesture with properties: primary type: repetitive, direction: oral, complexity: moderate",
-            "an Electric tooth-brushing gesture with properties: primary type: repetitive, direction: oral, complexity: moderate",
-            "a Hand-washing gesture with properties: primary type: repetitive, direction: mixed, complexity: moderate",
-            "a Spoon-to-mouth eating gesture with properties: primary type: utensil-use, direction: upward, complexity: moderate",
-            "a Knife-and-fork food-cutting gesture with properties: primary type: bimanual, direction: mixed, complexity: complex",
-            "a Fruit-peeling gesture with properties: primary type: utensil-use, direction: circular, complexity: complex",
-            "an Applauding gesture with properties: primary type: rhythmic, direction: bilateral, complexity: simple",
-            "a Hair-combing gesture with properties: primary type: grooming, direction: directional, complexity: simple",
-            "a Surface-wiping gesture with properties: primary type: cleaning, direction: planar, complexity: moderate",
-            "a Broom-sweeping gesture with properties: primary type: cleaning, direction: lateral, complexity: moderate",
-            "a Pen-writing gesture with properties: primary type: fine-motor, direction: planar, complexity: moderate",
-            "a Keyboard-typing gesture with properties: primary type: fine-motor, direction: direct, complexity: moderate",
-            "a Mobile texting gesture with properties: primary type: fine-motor, direction: direct, complexity: moderate",
-            "a Paper-folding gesture with properties: primary type: bimanual, direction: inward, complexity: moderate",
-            "a Phone-dial-and-ear gesture with properties: primary type: compound, direction: mixed, complexity: complex",
-            "a Floor pick-up-to-chest gesture with properties: primary type: lifting, direction: upward, complexity: complex",
-            "a Bottle-cap opening gesture with properties: primary type: rotational, direction: twist, complexity: moderate",
-            "a Glass-drinking gesture with properties: primary type: object-use, direction: upward, complexity: simple",
-            "a Water-pouring gesture with properties: primary type: object-use, direction: tilt, complexity: moderate",
-            "a Put-on-glasses gesture with properties: primary type: dressing, direction: facial, complexity: simple",
-            "a Put-on-jacket gesture with properties: primary type: dressing, direction: bilateral, complexity: complex",
-            "a Remove-jacket gesture with properties: primary type: dressing, direction: bilateral, complexity: complex",
-            "a Shoe-tying gesture with properties: primary type: dressing, direction: downward, complexity: complex",
-            "a Goodbye waving gesture with properties: primary type: symbolic, direction: lateral, complexity: simple",
-            "a Nose-blowing gesture with properties: primary type: grooming, direction: facial, complexity: simple",
-            "a Doorknob open-close gesture with properties: primary type: rotational, direction: twist, complexity: moderate",
-            "a Shirt-buttoning gesture with properties: primary type: fine-motor, direction: direct, complexity: complex",
-            "a Zipper raise-lower gesture with properties: primary type: linear, direction: vertical, complexity: moderate",
-            "a Screw-tightening gesture with properties: primary type: rotational, direction: clockwise-counterclockwise, complexity: moderate"
-        ]
-    },
-
-    "INF2018_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 6,
-        "activity_label_index": 1,
-        "activity_label_size": 23,
-        "activity_label": [
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "O", "Q", "R", "S", "T", "U", "V", "W", "X", "Null"
-        ],
-        "user_label_index": 0,
-        "user_label_size": 32,
-        "size": 520,
-        "descriptions": [
-            "a Static LSF letter A handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
-            "a Static LSF letter B handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
-            "a Static LSF letter C handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
-            "a Static LSF letter D handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
-            "a Static LSF letter E handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
-            "a Static LSF letter F handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter G handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter H handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter I handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
-            "a Static LSF letter K handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter L handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter M handshape with properties: primary type: alphabetic, direction: static, complexity: complex",
-            "a Static LSF letter N handshape with properties: primary type: alphabetic, direction: static, complexity: complex",
-            "a Static LSF letter O handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
-            "a Static LSF letter Q handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter R handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter S handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
-            "a Static LSF letter T handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter U handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter V handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter W handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Static LSF letter X handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
-            "a Null or background class with properties: primary type: none, direction: none, complexity: none"
-        ]
-    },
-
-
-
-    "words_50_100": {
-        "sr": 50,
-        "seq_len": 100,
-        "dimension": 6,
-        "activity_label_index": 0,
-        "activity_label_size": 23,
-        "activity_label": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
-        "user_label_index": 1,
-        "user_label_size": 10,
-        "size": 2777
-    },
-
-
-
-    "shoaib_20_120": {
-        "sr": 20,
-        "seq_len": 120,
-        "dimension": 9,
-        "activity_label_index": 0,
-        "activity_label_size": 7,
-        "activity_label": [
-            "walking", "sitting", "standing", "jogging", "biking", "upstairs" , "downstairs"
-        ],
-        "position_label_index": 1,
-        "position_label_size": 5,
-        "position_label": [
-            "left_pocket", "right_pocket", "wrist", "upper_arm", "belt"
-        ],
-        "user_label_index": 2,
-        "user_label_size": 10,
-        "size": 10500
-    }
+ "hhar_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 2,
+  "activity_label_size": 6,
+  "activity_label": [
+   "bike",
+   "sit",
+   "downstairs",
+   "upstairs",
+   "stand",
+   "walk"
+  ],
+  "user_label_index": 0,
+  "user_label_size": 9,
+  "model_label_index": 1,
+  "model_label_size": 3,
+  "size": 9166
+ },
+ "motion_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 6,
+  "activity_label": [
+   "downstairs",
+   "upstairs",
+   "sitting",
+   "standing",
+   "walking",
+   "jogging"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 24,
+  "size": 4534
+ },
+ "uci_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 6,
+  "activity_label": [
+   "walking",
+   "upstairs",
+   "downstairs",
+   "sitting",
+   "standing",
+   "lying"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 30,
+  "size": 2088
+ },
+ "earbud_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 11,
+  "activity_label": [
+   "Tap",
+   "Double Tap",
+   "Swipe upwards",
+   "Swipe downwards",
+   "Long press",
+   "Rotate finger",
+   "Tap on lower end",
+   "Tap on upper end",
+   "Tap on top of ear",
+   "Tap on earlobe",
+   "Tap on jaw"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 1538,
+  "descriptions": [
+   "a Single tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
+   "a Double tap gesture with properties: primary type: tap, direction: direct, complexity: complex",
+   "a Upward swipe gesture with properties: primary type: directional, direction: up, complexity: simple",
+   "a Downward swipe gesture with properties: primary type: directional, direction: down, complexity: simple",
+   "a Long press gesture with properties: primary type: stationary, direction: direct, complexity: simple",
+   "a Finger rotation gesture with properties: primary type: rotational, direction: circular, complexity: complex",
+   "a Lower earbud tap gesture with properties: primary type: tap, direction: bottom, complexity: simple",
+   "a Upper earbud tap gesture with properties: primary type: tap, direction: top, complexity: simple",
+   "a Ear top tap gesture with properties: primary type: tap, direction: cartilage, complexity: simple",
+   "a Earlobe tap gesture with properties: primary type: tap, direction: lobe, complexity: simple",
+   "a Jaw tap gesture with properties: primary type: tap, direction: jaw, complexity: simple"
+  ]
+ },
+ "earbud_filtered_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 7,
+  "activity_label": [
+   "Tap",
+   "Double Tap",
+   "Swipe upwards",
+   "Swipe downwards",
+   "Long press",
+   "Rotate finger",
+   "Tap on lower end"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 1538,
+  "descriptions": [
+   "a Single tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
+   "a Double tap gesture with properties: primary type: tap, direction: direct, complexity: complex",
+   "a Upward swipe gesture with properties: primary type: directional, direction: up, complexity: simple",
+   "a Downward swipe gesture with properties: primary type: directional, direction: down, complexity: simple",
+   "a Long press gesture with properties: primary type: stationary, direction: direct, complexity: simple",
+   "a Finger rotation gesture with properties: primary type: rotational, direction: circular, complexity: complex",
+   "a Lower earbud tap gesture with properties: primary type: tap, direction: bottom, complexity: simple"
+  ]
+ },
+ "blind_user_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 15,
+  "activity_label": [
+   "up",
+   "down",
+   "left",
+   "right",
+   "rotate wrist and right",
+   "rotate wrist and left",
+   "flick wrist and up",
+   "flick wrist and down",
+   "flick wrist and left",
+   "flick wrist and right",
+   "square",
+   "circle",
+   "triangle",
+   "question mark",
+   "infinity"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 1439,
+  "descriptions": [
+   "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+   "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+   "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
+   "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
+   "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
+   "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
+   "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
+   "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
+   "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
+   "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
+   "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+   "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+   "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+   "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
+   "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
+  ]
+ },
+ "blind_user_filtered_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 12,
+  "activity_label": [
+   "up",
+   "down",
+   "left",
+   "right",
+   "rotate wrist and right",
+   "rotate wrist and left",
+   "flick wrist and up",
+   "flick wrist and down",
+   "flick wrist and left",
+   "flick wrist and right",
+   "square",
+   "circle"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 1439,
+  "descriptions": [
+   "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+   "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+   "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
+   "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
+   "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
+   "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
+   "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
+   "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
+   "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
+   "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
+   "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+   "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
+  ]
+ },
+ "blind_access_wear_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 5,
+  "activity_label": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 1439
+ },
+ "blind_shape_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 6,
+  "activity_label": [
+   "6",
+   "7",
+   "8",
+   "9",
+   "10",
+   "11"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 1439
+ },
+ "blind_compound_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 5,
+  "activity_label": [
+   "11",
+   "12",
+   "13",
+   "14",
+   "15"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 1439
+ },
+ "augmented_data_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 15,
+  "activity_label": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5",
+   "6",
+   "7",
+   "8",
+   "9",
+   "10",
+   "11",
+   "12",
+   "13",
+   "14",
+   "15"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 6904
+ },
+ "test_data_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 15,
+  "activity_label": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5",
+   "6",
+   "7",
+   "8",
+   "9",
+   "10",
+   "11",
+   "12",
+   "13",
+   "14",
+   "15"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 576
+ },
+ "blind_fine_tune_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 15,
+  "activity_label": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5",
+   "6",
+   "7",
+   "8",
+   "9",
+   "10",
+   "11",
+   "12",
+   "13",
+   "14",
+   "15"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 1439
+ },
+ "sighted_user_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 15,
+  "activity_label": [
+   "up",
+   "down",
+   "left",
+   "right",
+   "rotate wrist and right",
+   "rotate wrist and left",
+   "flick wrist and up",
+   "flick wrist and down",
+   "flick wrist and left",
+   "flick wrist and right",
+   "square",
+   "circle",
+   "triangle",
+   "question mark",
+   "infinity"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 8,
+  "size": 219,
+  "descriptions": [
+   "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+   "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+   "a Horizontal lateral left motion gesture with properties: primary type: directional, direction: left, complexity: simple",
+   "a Horizontal lateral right motion gesture with properties: primary type: directional, direction: right, complexity: simple",
+   "a Clockwise wrist rotation gesture with properties: primary type: rotational, direction: clockwise, complexity: complex",
+   "a Anticlockwise wrist rotation gesture with properties: primary type: rotational, direction: anticlockwise, complexity: complex",
+   "a Sharp upward jerking gesture with properties: primary type: complex, direction: up, complexity: complex",
+   "a Sharp downward jerking gesture with properties: primary type: complex, direction: down, complexity: complex",
+   "a Sharp leftward jerking gesture with properties: primary type: complex, direction: left, complexity: complex",
+   "a Sharp rightward jerking gesture with properties: primary type: complex, direction: right, complexity: complex",
+   "a Square tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+   "a Circle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+   "a Triangle tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex",
+   "a Question mark tracing gesture with properties: primary type: complex, direction: mixed, complexity: complex",
+   "a Figure eight tracing gesture with properties: primary type: shape, direction: cyclic, complexity: complex"
+  ]
+ },
+ "smart_watch_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 1,
+  "activity_label_size": 5,
+  "activity_label": [
+   "left",
+   "right",
+   "up",
+   "down",
+   "tap"
+  ],
+  "user_label_index": 0,
+  "user_label_size": 23,
+  "size": 1538,
+  "descriptions": [
+   "a Leftward motion gesture with properties: primary type: directional, direction: left, complexity: simple",
+   "a Rightward motion gesture with properties: primary type: directional, direction: right, complexity: simple",
+   "a Upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+   "a Downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+   "a Tap gesture with properties: primary type: tap, direction: direct, complexity: simple"
+  ]
+ },
+ "sony_watch_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 20,
+  "activity_label": [
+   "horizontal right",
+   "horizontal left",
+   "vertical up",
+   "vertical down",
+   "clockwise circle",
+   "counter-clockwise circle",
+   "counter-clockwise square",
+   "clockwise square",
+   "right diagonal",
+   "left diagonal",
+   "vertical down double",
+   "horizontal right double",
+   "V-shape down-up",
+   "V-shape up-down",
+   "triangle upward",
+   "triangle downward",
+   "S-curve leftward",
+   "S-curve rightward",
+   "wave leftward",
+   "wave rightward"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 8,
+  "size": 1538,
+  "descriptions": [
+   "a Horizontal rightward motion gesture with properties: primary type: directional, direction: right, complexity: simple",
+   "a Horizontal leftward motion gesture with properties: primary type: directional, direction: left, complexity: simple",
+   "a Vertical upward motion gesture with properties: primary type: directional, direction: up, complexity: simple",
+   "a Vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: simple",
+   "a Clockwise circular motion gesture with properties: primary type: shape, direction: clockwise, complexity: complex",
+   "a Counter-clockwise circular motion gesture with properties: primary type: shape, direction: counter-clockwise, complexity: complex",
+   "a Counter-clockwise square tracing gesture with properties: primary type: shape, direction: counter-clockwise, complexity: complex",
+   "a Clockwise square tracing gesture with properties: primary type: shape, direction: clockwise, complexity: complex",
+   "a Diagonal rightward motion gesture with properties: primary type: directional, direction: right-diagonal, complexity: simple",
+   "a Diagonal leftward motion gesture with properties: primary type: directional, direction: left-diagonal, complexity: simple",
+   "a Double vertical downward motion gesture with properties: primary type: directional, direction: down, complexity: moderate",
+   "a Double horizontal rightward motion gesture with properties: primary type: directional, direction: right, complexity: moderate",
+   "a V-shaped downward then upward motion gesture with properties: primary type: shape, direction: mixed, complexity: moderate",
+   "a V-shaped upward then downward motion gesture with properties: primary type: shape, direction: mixed, complexity: moderate",
+   "a Triangle upward pointing tracing gesture with properties: primary type: shape, direction: mixed, complexity: complex",
+   "a Triangle downward pointing tracing gesture with properties: primary type: shape, direction: mixed, complexity: complex",
+   "a S-curve leftward tracing gesture with properties: primary type: shape, direction: left, complexity: complex",
+   "a S-curve rightward tracing gesture with properties: primary type: shape, direction: right, complexity: complex",
+   "a Wave-like leftward motion gesture with properties: primary type: shape, direction: left, complexity: complex",
+   "a Wave-like rightward motion gesture with properties: primary type: shape, direction: right, complexity: complex"
+  ]
+ },
+ "HGAG_DATA_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 1,
+  "activity_label_size": 11,
+  "activity_label": [
+   "Clap",
+   "Coin Flip",
+   "Finger Snap",
+   "Make Fist",
+   "Wrist Extend Horizontal",
+   "Index Flick",
+   "Index-Thumb Tap",
+   "Shoot",
+   "Thumb Up",
+   "Wrist Extension",
+   "Wrist Flexion"
+  ],
+  "user_label_index": 0,
+  "user_label_size": 43,
+  "size": 23648,
+  "descriptions": [
+   "a Clapping gesture with properties: primary type: rhythmic, direction: bilateral, complexity: simple",
+   "a Coin flipping gesture with properties: primary type: dexterous, direction: finger-centric, complexity: moderate",
+   "a Finger snapping gesture with properties: primary type: impulsive, direction: direct, complexity: simple",
+   "a Fist making gesture with properties: primary type: grasping, direction: inward, complexity: simple",
+   "a Horizontal wrist extension gesture with properties: primary type: directional, direction: horizontal, complexity: moderate",
+   "a Index finger flick gesture with properties: primary type: flick, direction: forward, complexity: simple",
+   "a Index thumb tap gesture with properties: primary type: tap, direction: direct, complexity: simple",
+   "a Shooting gesture with properties: primary type: symbolic, direction: forward, complexity: moderate",
+   "a Thumb up gesture with properties: primary type: symbolic, direction: upward, complexity: simple",
+   "a Wrist extension gesture with properties: primary type: rotational, direction: extension, complexity: moderate",
+   "a Wrist flexion gesture with properties: primary type: rotational, direction: flexion, complexity: moderate"
+  ]
+ },
+ "UTD_MHAD_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 1,
+  "activity_label_size": 27,
+  "activity_label": [
+   "Swipe Left",
+   "Swipe Right",
+   "Wave",
+   "Front Clap",
+   "Throw",
+   "Cross Arms",
+   "Basketball Shot",
+   "Draw X",
+   "Draw Circle CW",
+   "Draw Circle CCW",
+   "Draw Triangle",
+   "Bowl",
+   "Front Boxing",
+   "Baseball Swing",
+   "Tennis Forehand",
+   "Arm Curl",
+   "Tennis Serve",
+   "Two-Hand Push",
+   "Knock",
+   "Catch Object",
+   "Pick and Throw",
+   "Jog In Place",
+   "Walk In Place",
+   "Sit to Stand",
+   "Stand to Sit",
+   "Forward Lunge",
+   "Squat"
+  ],
+  "user_label_index": 0,
+  "user_label_size": 8,
+  "size": 861,
+  "descriptions": [
+   "a Right-arm leftward swipe gesture with properties: primary type: directional, direction: left, complexity: simple",
+   "a Right-arm rightward swipe gesture with properties: primary type: directional, direction: right, complexity: simple",
+   "a Right-hand waving gesture with properties: primary type: periodic, direction: lateral, complexity: simple",
+   "a Two-hand front clap gesture with properties: primary type: rhythmic, direction: frontal, complexity: simple",
+   "a Right-arm throw gesture with properties: primary type: ballistic, direction: forward, complexity: moderate",
+   "a Cross-arms-on-chest gesture with properties: primary type: postural, direction: inward, complexity: simple",
+   "a Basketball shooting gesture with properties: primary type: sport-specific, direction: upward, complexity: moderate",
+   "a Right-hand X drawing gesture with properties: primary type: shape, direction: crossed, complexity: moderate",
+   "a Right-hand clockwise circle drawing gesture with properties: primary type: shape, direction: clockwise, complexity: moderate",
+   "a Right-hand counter-clockwise circle drawing gesture with properties: primary type: shape, direction: counter-clockwise, complexity: moderate",
+   "a Triangle drawing gesture with properties: primary type: shape, direction: cyclic, complexity: moderate",
+   "a Right-hand bowling gesture with properties: primary type: sport-specific, direction: forward, complexity: moderate",
+   "a Front boxing gesture with properties: primary type: striking, direction: forward, complexity: moderate",
+   "a Right-side baseball swing gesture with properties: primary type: sport-specific, direction: arc, complexity: complex",
+   "a Right-hand tennis forehand swing gesture with properties: primary type: sport-specific, direction: forward-arc, complexity: complex",
+   "a Two-arm curl gesture with properties: primary type: lifting, direction: upward, complexity: moderate",
+   "a Tennis serve gesture with properties: primary type: sport-specific, direction: overhead, complexity: complex",
+   "a Two-hand push gesture with properties: primary type: forceful, direction: forward, complexity: simple",
+   "a Right-hand door-knock gesture with properties: primary type: repetitive, direction: forward, complexity: simple",
+   "a Right-hand object-catching gesture with properties: primary type: grasping, direction: inward, complexity: moderate",
+   "a Right-hand pick-up-and-throw gesture with properties: primary type: compound, direction: mixed, complexity: complex",
+   "a Jogging-in-place gesture with properties: primary type: locomotion, direction: cyclic, complexity: moderate",
+   "a Walking-in-place gesture with properties: primary type: locomotion, direction: cyclic, complexity: simple",
+   "a Sit-to-stand transition gesture with properties: primary type: transition, direction: upward, complexity: moderate",
+   "a Stand-to-sit transition gesture with properties: primary type: transition, direction: downward, complexity: moderate",
+   "a Forward lunge gesture with properties: primary type: lower-body, direction: forward, complexity: moderate",
+   "a Two-arm squat gesture with properties: primary type: lower-body, direction: downward-upward, complexity: moderate"
+  ]
+ },
+ "umahand_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 1,
+  "activity_label_size": 29,
+  "activity_label": [
+   "Brush Teeth (Manual)",
+   "Brush Teeth (Electric)",
+   "Wash Hands",
+   "Eat Soup",
+   "Cut Food",
+   "Peel Fruit",
+   "Clap",
+   "Comb Hair",
+   "Wipe Surface",
+   "Sweep",
+   "Write with Pen",
+   "Type Keyboard",
+   "Text on Phone",
+   "Fold Paper",
+   "Dial and Hold Phone",
+   "Pick Up from Floor",
+   "Open Bottle Cap",
+   "Drink Water",
+   "Pour Water",
+   "Wear Glasses",
+   "Wear Jacket",
+   "Remove Jacket",
+   "Wear Shoe and Tie",
+   "Wave Goodbye",
+   "Blow Nose",
+   "Turn Doorknob",
+   "Button Shirt",
+   "Zip Up/Down",
+   "Screw"
+  ],
+  "user_label_index": 0,
+  "user_label_size": 25,
+  "size": 752,
+  "descriptions": [
+   "a Manual tooth-brushing gesture with properties: primary type: repetitive, direction: oral, complexity: moderate",
+   "an Electric tooth-brushing gesture with properties: primary type: repetitive, direction: oral, complexity: moderate",
+   "a Hand-washing gesture with properties: primary type: repetitive, direction: mixed, complexity: moderate",
+   "a Spoon-to-mouth eating gesture with properties: primary type: utensil-use, direction: upward, complexity: moderate",
+   "a Knife-and-fork food-cutting gesture with properties: primary type: bimanual, direction: mixed, complexity: complex",
+   "a Fruit-peeling gesture with properties: primary type: utensil-use, direction: circular, complexity: complex",
+   "an Applauding gesture with properties: primary type: rhythmic, direction: bilateral, complexity: simple",
+   "a Hair-combing gesture with properties: primary type: grooming, direction: directional, complexity: simple",
+   "a Surface-wiping gesture with properties: primary type: cleaning, direction: planar, complexity: moderate",
+   "a Broom-sweeping gesture with properties: primary type: cleaning, direction: lateral, complexity: moderate",
+   "a Pen-writing gesture with properties: primary type: fine-motor, direction: planar, complexity: moderate",
+   "a Keyboard-typing gesture with properties: primary type: fine-motor, direction: direct, complexity: moderate",
+   "a Mobile texting gesture with properties: primary type: fine-motor, direction: direct, complexity: moderate",
+   "a Paper-folding gesture with properties: primary type: bimanual, direction: inward, complexity: moderate",
+   "a Phone-dial-and-ear gesture with properties: primary type: compound, direction: mixed, complexity: complex",
+   "a Floor pick-up-to-chest gesture with properties: primary type: lifting, direction: upward, complexity: complex",
+   "a Bottle-cap opening gesture with properties: primary type: rotational, direction: twist, complexity: moderate",
+   "a Glass-drinking gesture with properties: primary type: object-use, direction: upward, complexity: simple",
+   "a Water-pouring gesture with properties: primary type: object-use, direction: tilt, complexity: moderate",
+   "a Put-on-glasses gesture with properties: primary type: dressing, direction: facial, complexity: simple",
+   "a Put-on-jacket gesture with properties: primary type: dressing, direction: bilateral, complexity: complex",
+   "a Remove-jacket gesture with properties: primary type: dressing, direction: bilateral, complexity: complex",
+   "a Shoe-tying gesture with properties: primary type: dressing, direction: downward, complexity: complex",
+   "a Goodbye waving gesture with properties: primary type: symbolic, direction: lateral, complexity: simple",
+   "a Nose-blowing gesture with properties: primary type: grooming, direction: facial, complexity: simple",
+   "a Doorknob open-close gesture with properties: primary type: rotational, direction: twist, complexity: moderate",
+   "a Shirt-buttoning gesture with properties: primary type: fine-motor, direction: direct, complexity: complex",
+   "a Zipper raise-lower gesture with properties: primary type: linear, direction: vertical, complexity: moderate",
+   "a Screw-tightening gesture with properties: primary type: rotational, direction: clockwise-counterclockwise, complexity: moderate"
+  ]
+ },
+ "INF2018_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 1,
+  "activity_label_size": 23,
+  "activity_label": [
+   "A",
+   "B",
+   "C",
+   "D",
+   "E",
+   "F",
+   "G",
+   "H",
+   "I",
+   "K",
+   "L",
+   "M",
+   "N",
+   "O",
+   "Q",
+   "R",
+   "S",
+   "T",
+   "U",
+   "V",
+   "W",
+   "X",
+   "Null"
+  ],
+  "user_label_index": 0,
+  "user_label_size": 32,
+  "size": 520,
+  "descriptions": [
+   "a Static LSF letter A handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+   "a Static LSF letter B handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+   "a Static LSF letter C handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+   "a Static LSF letter D handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+   "a Static LSF letter E handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+   "a Static LSF letter F handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter G handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter H handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter I handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+   "a Static LSF letter K handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter L handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter M handshape with properties: primary type: alphabetic, direction: static, complexity: complex",
+   "a Static LSF letter N handshape with properties: primary type: alphabetic, direction: static, complexity: complex",
+   "a Static LSF letter O handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+   "a Static LSF letter Q handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter R handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter S handshape with properties: primary type: alphabetic, direction: static, complexity: simple",
+   "a Static LSF letter T handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter U handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter V handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter W handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Static LSF letter X handshape with properties: primary type: alphabetic, direction: static, complexity: moderate",
+   "a Null or background class with properties: primary type: none, direction: none, complexity: none"
+  ]
+ },
+ "words_50_100": {
+  "sr": 50,
+  "seq_len": 100,
+  "dimension": 6,
+  "activity_label_index": 0,
+  "activity_label_size": 23,
+  "activity_label": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5",
+   "6",
+   "7",
+   "8",
+   "9",
+   "10",
+   "11",
+   "12",
+   "13",
+   "14",
+   "15",
+   "16",
+   "17",
+   "18",
+   "19",
+   "20",
+   "21",
+   "22",
+   "23"
+  ],
+  "user_label_index": 1,
+  "user_label_size": 10,
+  "size": 2777
+ },
+ "shoaib_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 9,
+  "activity_label_index": 0,
+  "activity_label_size": 7,
+  "activity_label": [
+   "walking",
+   "sitting",
+   "standing",
+   "jogging",
+   "biking",
+   "upstairs",
+   "downstairs"
+  ],
+  "position_label_index": 1,
+  "position_label_size": 5,
+  "position_label": [
+   "left_pocket",
+   "right_pocket",
+   "wrist",
+   "upper_arm",
+   "belt"
+  ],
+  "user_label_index": 2,
+  "user_label_size": 10,
+  "size": 10500
+ },
+ "umahand_filtered_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 1,
+  "activity_label_size": 4,
+  "activity_label": [
+   "umahand class 0",
+   "umahand class 1",
+   "umahand class 2",
+   "umahand class 3"
+  ],
+  "user_label_index": 0,
+  "user_label_size": 25,
+  "size": 752
+ },
+ "UTD_MHAD_filtered_20_120": {
+  "sr": 20,
+  "seq_len": 120,
+  "dimension": 6,
+  "activity_label_index": 1,
+  "activity_label_size": 8,
+  "activity_label": [
+   "UTD_MHAD class 0",
+   "UTD_MHAD class 1",
+   "UTD_MHAD class 2",
+   "UTD_MHAD class 3",
+   "UTD_MHAD class 4",
+   "UTD_MHAD class 5",
+   "UTD_MHAD class 6",
+   "UTD_MHAD class 7"
+  ],
+  "user_label_index": 0,
+  "user_label_size": 8,
+  "size": 861
+ }
 }
-

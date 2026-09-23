@@ -1,0 +1,13 @@
+encoder,dataset,classifier,seed,accuracy,f1,embed_dim,error
+unihar,sony_watch,simple,3431,0.130879345603272,0.15695181581531997,36.0,
+unihar,sony_watch,simple,1234,0.1416155419222904,0.15934234518242366,36.0,
+unihar,sony_watch,simple,2024,0.14877300613496933,0.15841857081444063,36.0,
+unihar,sony_watch,full,3431,,,,"The operator 'aten::_cdist_backward' is not currently implemented for the MPS device. If you want this op to be considered for addition please comment on https://github.com/pytorch/pytorch/issues/141287 and mention use-case, that resulted in missing op as well as commit hash a1cb3cc05d46d198467bebbb6e8fba50a325d4e7. As a temporary fix, you can set the environment variable `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a fallback for this op. WARNING: this will be slower than running natively on MPS."
+unihar,sony_watch,full,1234,,,,"The operator 'aten::_cdist_backward' is not currently implemented for the MPS device. If you want this op to be considered for addition please comment on https://github.com/pytorch/pytorch/issues/141287 and mention use-case, that resulted in missing op as well as commit hash a1cb3cc05d46d198467bebbb6e8fba50a325d4e7. As a temporary fix, you can set the environment variable `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a fallback for this op. WARNING: this will be slower than running natively on MPS."
+unihar,sony_watch,full,2024,,,,"The operator 'aten::_cdist_backward' is not currently implemented for the MPS device. If you want this op to be considered for addition please comment on https://github.com/pytorch/pytorch/issues/141287 and mention use-case, that resulted in missing op as well as commit hash a1cb3cc05d46d198467bebbb6e8fba50a325d4e7. As a temporary fix, you can set the environment variable `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a fallback for this op. WARNING: this will be slower than running natively on MPS."
+unihar,blind_user_filtered,simple,3431,0.21225071225071226,0.2205062086021193,36.0,
+unihar,blind_user_filtered,simple,1234,0.22507122507122507,0.22900091074639198,36.0,
+unihar,blind_user_filtered,simple,2024,0.22934472934472935,0.22463595310152384,36.0,
+unihar,blind_user_filtered,full,3431,0.20085470085470086,0.2110357397488791,36.0,
+unihar,blind_user_filtered,full,1234,0.2264957264957265,0.2392682722594761,36.0,
+unihar,blind_user_filtered,full,2024,0.23076923076923078,0.22592391958140579,36.0,

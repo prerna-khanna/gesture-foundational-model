@@ -1,0 +1,50 @@
+% Tier 0: encoder vs classifier
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{llcccc}
+\toprule
+Encoder & Classifier & \multicolumn{2}{c}{Hand (SU)} & \multicolumn{2}{c}{Hand (BU)} \\
+\cmidrule(lr){3-6}
+ & & Acc. & F1 & Acc. & F1 \\
+\midrule
+UniHAR~\cite{xu2023practically} & CE only & 0.148 $\pm$ 0.005 & 0.167 $\pm$ 0.011 & 0.216 $\pm$ 0.027 & 0.214 $\pm$ 0.019 \\
+ & Text-guided & 0.142 $\pm$ 0.003 & 0.166 $\pm$ 0.004 & 0.211 $\pm$ 0.016 & 0.212 $\pm$ 0.009 \\
+\addlinespace
+ContrastSense~\cite{dai2024contrastsense} & CE only & 0.624 $\pm$ 0.036 & 0.617 $\pm$ 0.032 & 0.671 $\pm$ 0.039 & 0.664 $\pm$ 0.037 \\
+ & Text-guided & 0.643 $\pm$ 0.031 & 0.639 $\pm$ 0.024 & 0.680 $\pm$ 0.048 & 0.672 $\pm$ 0.048 \\
+\addlinespace
+Yuan et al.~\cite{yuan2024self} & CE only & 0.562 $\pm$ 0.020 & 0.544 $\pm$ 0.034 & 0.385 $\pm$ 0.037 & 0.373 $\pm$ 0.047 \\
+ & Text-guided & 0.573 $\pm$ 0.034 & 0.554 $\pm$ 0.051 & 0.365 $\pm$ 0.081 & 0.346 $\pm$ 0.092 \\
+\addlinespace
+\midrule
+\textit{GestureLens}$^\dagger$ & CE only & 0.79 & 0.78 & 0.73 & 0.73 \\
+ & Text-guided & 0.86 & 0.85 & 0.85 & 0.85 \\
+\bottomrule
+\end{tabular}
+\caption{Disentangling the encoder from the classifier. Every encoder is \emph{frozen}; only the classifier on top changes. \textsc{CE only} is cross-entropy with both auxiliary losses removed; \textsc{Text-guided} adds the semantic and contrastive terms. Mean $\pm$ std over three seeds, with learning rate and hidden width selected per cell on validation accuracy. $^\dagger$Quoted from Table~\ref{tab:ablation} of the submission and \emph{not} re-run under this protocol; see text.}
+\label{tab:tier0}
+\end{table}
+
+
+% Tier 1: text-description controls
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Text condition & \multicolumn{2}{c}{Hand (SU)} & \multicolumn{2}{c}{Hand (BU)} \\
+\cmidrule(lr){2-5}
+ & Acc. & F1 & Acc. & F1 \\
+\midrule
+Shuffled descriptions & 0.688 $\pm$ 0.011 & 0.679 $\pm$ 0.011 & 0.775 $\pm$ 0.025 & 0.774 $\pm$ 0.028 \\
+Off-domain descriptions & 0.699 $\pm$ 0.019 & 0.691 $\pm$ 0.024 & 0.783 $\pm$ 0.044 & 0.775 $\pm$ 0.058 \\
+One-hot anchors & 0.696 $\pm$ 0.029 & 0.689 $\pm$ 0.036 & 0.787 $\pm$ 0.040 & 0.789 $\pm$ 0.051 \\
+Random anchors & 0.670 $\pm$ 0.026 & 0.663 $\pm$ 0.033 & 0.771 $\pm$ 0.062 & 0.771 $\pm$ 0.069 \\
+Real, same-class pairs excluded & 0.673 $\pm$ 0.007 & 0.664 $\pm$ 0.005 & 0.780 $\pm$ 0.058 & 0.773 $\pm$ 0.068 \\
+No semantic loss & 0.685 $\pm$ 0.004 & 0.679 $\pm$ 0.008 & 0.772 $\pm$ 0.060 & 0.770 $\pm$ 0.061 \\
+\bottomrule
+\end{tabular}
+\caption{Do the class descriptions need to \emph{mean} anything? Each row changes only the class-similarity matrix the semantic loss consumes. \textsc{Shuffled} permutes real descriptions across classes so none keeps its own; \textsc{off-domain} substitutes unrelated text in the same template; \textsc{one-hot} and \textsc{random} strip semantic content entirely while keeping a per-class anchor; \textsc{no semantic loss} removes the term. All conditions fall within one standard deviation of removing the loss outright. Mean $\pm$ std over three seeds.}
+\label{tab:tier1}
+\end{table}

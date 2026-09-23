@@ -1,0 +1,34 @@
+{
+  "encoders": [
+    "biopm"
+  ],
+  "classifiers": [
+    "simple"
+  ],
+  "datasets": [
+    "umahand_filtered",
+    "UTD_MHAD_filtered"
+  ],
+  "seeds": [
+    3431,
+    1234,
+    2024
+  ],
+  "dataset_version": "20_120",
+  "model_version": "v2",
+  "embed_dir": "new_embed",
+  "n_epochs": null,
+  "no_search": false,
+  "search_epochs": null,
+  "label_rate": 0.1,
+  "gpu": null,
+  "out_dir": "results/encoder_grid/biopm_table3_small",
+  "encoder_descriptions": {
+    "limu_v1": "GestureLens (nucleus masking)",
+    "unihar": "UniHAR (augmentation-based SSL)",
+    "contrastsense": "ContrastSense (contrastive SSL)",
+    "yuan": "Yuan et al. (large-scale foundation)",
+    "biopm": "BioPM (movement-element transformer)",
+    "limubert": "LIMU-BERT (random masking)"
+  }
+}

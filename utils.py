@@ -348,7 +348,7 @@ def regularization_loss(model, lambda1, lambda2):
 
 
 def match_labels(labels, labels_targets):
-    index = np.zeros(labels.size, dtype=np.bool)
+    index = np.zeros(labels.size, dtype=bool)
     for i in range(labels_targets.size):
         index = index | (labels == labels_targets[i])
     return index

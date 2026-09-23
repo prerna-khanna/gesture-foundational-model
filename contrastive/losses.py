@@ -7,12 +7,28 @@ from contrastive.semantic_loss import SemanticLoss
 
 
 class ContrastiveCombinedLoss(nn.Module):
-    def __init__(self, label_names, descriptions, pooling, device, temperature=0.07, hidden_dim=128):
+    def __init__(self, label_names, descriptions, pooling, device, temperature=0.07, hidden_dim=128,
+                 text_mode='real', text_seed=0, vectorized=True, use_contrastive=True,
+                 sims_cache=None):
         super().__init__()
         self.pooling = pooling
         self.device = device
         self.temperature = temperature
-        self.semantic_criterion = SemanticLoss(label_names, descriptions, pooling, device, hidden_dim=hidden_dim)
+        self.text_mode = text_mode
+        # Turning both switches off (text_mode='none', use_contrastive=False) gives
+        # the plain cross-entropy classifier -- row 4 of Table 4 in the paper, and
+        # the "simple classifier" column of the Tier 0 encoder grid.
+        self.use_contrastive = use_contrastive
+        # `none` is the floor arm: classification + contrastive only, no semantic
+        # term at all. Distinct from `onehot`, which keeps the term but strips
+        # semantic structure from it.
+        if text_mode == 'none':
+            self.semantic_criterion = None
+        else:
+            self.semantic_criterion = SemanticLoss(label_names, descriptions, pooling, device,
+                                                   hidden_dim=hidden_dim, text_mode=text_mode,
+                                                   text_seed=text_seed, vectorized=vectorized,
+                                                   sims_cache=sims_cache)
         self.classification_criterion = nn.CrossEntropyLoss()
 
     def compute_contrastive_loss(self, features, labels):
@@ -41,14 +57,20 @@ class ContrastiveCombinedLoss(nn.Module):
         
         # Classification loss
         classification_loss = self.classification_criterion(logits, labels)
-        
+
         # Semantic loss
-        semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
-        semantic_loss = semantic_output[0] if isinstance(semantic_output, tuple) else semantic_output
+        if self.semantic_criterion is None:
+            semantic_loss = torch.zeros((), device=self.device)
+        else:
+            semantic_output = self.semantic_criterion(features=features, labels=labels, epoch=epoch)
+            semantic_loss = semantic_output[0] if isinstance(semantic_output, tuple) else semantic_output
         
         # Contrastive loss
-        contrastive_loss = self.compute_contrastive_loss(projected, labels)
-        
+        if self.use_contrastive:
+            contrastive_loss = self.compute_contrastive_loss(projected, labels)
+        else:
+            contrastive_loss = torch.zeros((), device=self.device)
+
         # Dynamic weighting starting with small non-zero values
         w_semantic = max(0.1, min(0.3, (epoch / 10) * 0.3))
         w_contrastive = max(0.1, min(0.5, (epoch / 20) * 0.5))

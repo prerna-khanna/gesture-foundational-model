@@ -1,0 +1,48 @@
+# Bolt config for the Tier 0 encoder-vs-classifier grid (ICLR revision).
+#
+# One GPU task does everything: extract frozen embeddings for all three baseline
+# encoders, then run the grid (3 encoders x 2 classifiers x 2 datasets x
+# {6 search runs + 3 seeds}).
+#
+# We ship the encoder CHECKPOINTS and RAW DATA rather than precomputed
+# embeddings, because embeddings are far larger: harnet is 1024-d, which is
+# ~1.6GB for sony_watch alone, versus ~13MB for both datasets' raw arrays.
+#
+# GestureLens itself is deliberately NOT run -- its cells come from Table 4 of
+# the paper (simple: 0.79 / 0.73, full: 0.86 / 0.85). Those were produced under
+# a different protocol and branch, so the GestureLens-vs-baseline comparison is
+# not strictly like-for-like. Adding `limu_v1` to --encoders would fix that at
+# the cost of 18 more runs.
+#
+#     bash bolt/stage_tier0.sh
+#     cd /tmp/gesturelens_tier0
+#     bolt task submit --tar . --config bolt/config_tier0.yaml \
+#       --ignore-file .gitignore --max-retries 2
+
+name: gesturelens-tier0-encoder-grid
+description: >
+  Tier 0 disentanglement grid: UniHAR, ContrastSense and Yuan et al. frozen
+  encoders crossed with a plain cross-entropy classifier and the GestureLens
+  text-guided classifier, with a per-encoder hyperparameter search selected on
+  validation accuracy.
+
+setup_command: bash bolt/task_setup.sh
+
+command: bash bolt/run_tier0.sh
+
+resources:
+  task_type: 1gpu
+  num_gpus: 1
+  num_cpus: 8
+  memory_gb: 32.0
+
+environment_variables:
+  TOKENIZERS_PARALLELISM: "false"
+  PYTHONUNBUFFERED: "1"
+  # statistic.py imports plot.py, which imports pyplot at module scope.
+  MPLBACKEND: "Agg"
+  # Load BERT from the vendored copy rather than reaching huggingface.co.
+  GESTURELENS_BERT_PATH: "assets/bert-base-uncased"
+  # transformers must not attempt any staleness check against the hub.
+  HF_HUB_OFFLINE: "1"
+  TRANSFORMERS_OFFLINE: "1"
