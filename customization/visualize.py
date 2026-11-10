@@ -31,6 +31,14 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+# palette
+C_OURS = '#2c5f8a'
+C_OK = '#3e6b4f'      # accepted (green)
+C_REJ = '#b24a3c'     # rejected (brick)
+C_F1 = '#c98a3c'      # second element of a rejected pair (amber)
+C_BASE = '#b0b7c3'
+
 from matplotlib.lines import Line2D
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -107,10 +115,10 @@ def plot_user_tsne(user, z_raw, z_head, y, out_dir):
     m_raw = separation_metrics(z_raw, y)
     m_head = separation_metrics(z_head, y)
 
-    fig, ax = plt.subplots(1, 2, figsize=(13, 6))
+    fig, ax = plt.subplots(1, 2, figsize=(10, 3))
     for a, p, m, title in [
-        (ax[0], p_raw, m_raw, 'Frozen backbone (mean-pooled)'),
-        (ax[1], p_head, m_head, 'After customization head $g_\\phi$')]:
+        (ax[0], p_raw, m_raw, '(a) Frozen backbone (mean-pooled)'),
+        (ax[1], p_head, m_head, '(b) After customization head $g_\\phi$')]:
         for c in classes:
             s = y == c
             a.scatter(p[s, 0], p[s, 1], color=color[c], s=42,
@@ -119,18 +127,16 @@ def plot_user_tsne(user, z_raw, z_head, y, out_dir):
             a.text(mx, my, f'g{int(c)}', fontsize=9, fontweight='bold',
                    ha='center', va='center',
                    bbox=dict(boxstyle='round,pad=0.15', fc='white', ec='none', alpha=0.7))
-        a.set_title(f"{title}\nsep ratio {m['ratio']:.2f} | "
-                    f"silhouette {m['sil']:.2f} | 1-NN {m['knn']:.0%}",
-                    fontsize=11)
+        a.set_title(f"{title} ",fontsize=11)
         a.set_xticks([]); a.set_yticks([])
         for sp in a.spines.values():
             sp.set_edgecolor('#cccccc')
 
-    fig.suptitle(f"{user}: embedding space, same {len(classes)} gestures "
-                 f"(t-SNE fit separately per panel -- read structure, not position)",
-                 fontsize=12, y=1.02)
+    #fig.suptitle(f"{user}: embedding space, same {len(classes)} gestures "
+     #            f"(t-SNE fit separately per panel -- read structure, not position)",
+      #           fontsize=12, y=1.02)
     fig.tight_layout()
-    path = os.path.join(out_dir, f'fig_tsne_{user}.png')
+    path = os.path.join(out_dir, f'fig_tsne_{user}.pdf')
     fig.savefig(path, dpi=150, bbox_inches='tight'); plt.close(fig)
     return path, m_raw, m_head
 
@@ -260,6 +266,134 @@ def embed_user(bb, user, head):
     return z_raw, z_head, y
 
 
+
+
+def plot_validator_checks(user, bb, head, out_dir, seed=0):
+    """
+    Three-panel figure showing the validator's three checks on REAL data.
+    Each panel is a t-SNE of one user's head embeddings, annotated to show one
+    accepted and one rejected gesture for that check. The checks operate in the
+    full-dimensional space; the t-SNE is illustrative only (state this in the
+    caption).
+
+    Panel 1 (repeatability):    a tight gesture vs a scattered gesture.
+    Panel 2 (distinguishability): a well-separated pair vs an overlapping pair.
+    Panel 3 (background):       gestures apart from the everyday-motion cloud vs
+                               a gesture sitting inside it.
+    """
+    from customization.backbone import gesture_ids
+    from sklearn.manifold import TSNE
+
+    emb, mask, lab = bb.encode_dataset(user, return_masks=True)
+    y = gesture_ids(lab)
+    reg = GestureRegistry(head)
+    z = reg.embed(emb, mask)
+
+    # background embeddings for panel 3
+    z_null = None
+    for ds in ['hhar', 'motion', 'uci', 'shoaib']:
+        try:
+            e, m, _ = bb.encode_dataset(ds, return_masks=True)
+            zb = reg.embed(e[:400], m[:400])
+            z_null = zb if z_null is None else np.concatenate([z_null, zb])
+        except Exception:
+            pass
+
+    classes = np.unique(y)
+
+    # ---- measure each gesture, to pick accepted vs rejected examples ----
+    spreads, protos, radii = {}, {}, {}
+    for c in classes:
+        zc = z[y == c]
+        p, r, sp = reg._proto_radius(zc, reg.radius_q, reg.min_radius)
+        protos[c] = p; radii[c] = r; spreads[c] = reg._rep_spread(zc, p)
+
+    # repeatability: tightest vs loosest
+    rep_ok = min(spreads, key=spreads.get)
+    rep_bad = max(spreads, key=spreads.get)
+
+    # distinguishability: closest pair (by radius-normalized distance) vs farthest pair
+    pairs = []
+    cl = list(classes)
+    for i in range(len(cl)):
+        for j in range(i + 1, len(cl)):
+            a, b = cl[i], cl[j]
+            ratio = np.linalg.norm(protos[a] - protos[b]) / (radii[a] + radii[b] + 1e-8)
+            pairs.append((ratio, a, b))
+    pairs.sort()
+    dist_bad = (pairs[0][1], pairs[0][2])          # most overlapping
+    dist_ok = (pairs[-1][1], pairs[-1][2])         # most separated
+
+    # background: gesture whose prototype sits deepest in everyday motion vs shallowest
+    bg_ok = bg_bad = None
+    if z_null is not None:
+        depth = {c: reg._background_ratio(protos[c], z_null) for c in classes}
+        bg_bad = min(depth, key=depth.get)         # deepest inside background
+        bg_ok = max(depth, key=depth.get)          # farthest from background
+
+    # ---- shared t-SNE layout (fit once on gestures + a sample of background) ----
+    if z_null is not None:
+        Z = np.concatenate([z, z_null[:300]])
+        bg_start = len(z)
+    else:
+        Z = z; bg_start = len(z)
+    perp = max(5, min(30, (len(Z) - 1) // 3))
+    P = TSNE(n_components=2, perplexity=perp, init='pca', random_state=seed,
+             max_iter=1000).fit_transform(Z.astype(np.float64))
+    Pg, Pbg = P[:bg_start], P[bg_start:]
+
+    fig, ax = plt.subplots(1, 3, figsize=(10, 3))
+    grey = '#c9ced6'
+
+    def scatter_all(a):
+        a.scatter(Pg[:, 0], Pg[:, 1], color=grey, s=18, edgecolors='none', zorder=1)
+
+    def highlight(a, c, color, label):
+        s = (y == c)
+        a.scatter(Pg[s, 0], Pg[s, 1], color=color, s=48, edgecolors='white',
+                  linewidths=0.6, zorder=3, label=label)
+
+    # panel 1: repeatability
+    scatter_all(ax[0])
+    highlight(ax[0], rep_ok, C_OK, 'consistent (accepted)')
+    highlight(ax[0], rep_bad, C_REJ, 'scattered (rejected)')
+    ax[0].set_title('(a) Repeatability\nrejects gestures the user cannot repeat', fontsize=12)
+
+    # panel 2: distinguishability
+    scatter_all(ax[1])
+    highlight(ax[1], dist_ok[0], C_OK, 'distinct pair (accepted)')
+    highlight(ax[1], dist_ok[1], C_OK, None)
+    highlight(ax[1], dist_bad[0], C_REJ, 'overlapping pair (rejected)')
+    highlight(ax[1], dist_bad[1], C_F1, None)
+    ax[1].set_title('(b) Distinguishability\nrejects gestures too close to another', fontsize=12)
+
+    # panel 3: background
+    if z_null is not None:
+        ax[2].scatter(Pbg[:, 0], Pbg[:, 1], color='#e6c9a8', s=14, edgecolors='none',
+                      alpha=0.6, zorder=1, label='everyday motion')
+    scatter_all(ax[2])
+    if bg_ok is not None:
+        highlight(ax[2], bg_ok, C_OK, 'apart from everyday (accepted)')
+        highlight(ax[2], bg_bad, C_REJ, 'inside everyday (rejected)')
+    t3 = ('(c) Separation from everyday motion\nrejects gestures like ordinary movement'
+          if z_null is not None else
+          '(c) Separation from everyday motion\n(no background data found -- add HAR set)')
+    ax[2].set_title(t3, fontsize=12)
+
+    for a in ax:
+        a.set_xticks([]); a.set_yticks([])
+        if a.get_legend_handles_labels()[1]:
+            a.legend(loc='upper right', fontsize=8, frameon=True, framealpha=0.9)
+        for sp in a.spines.values():
+            sp.set_edgecolor('#cccccc')
+
+    #fig.suptitle(f'{user}: the three validator checks in the head\'s feature space 'f'(t-SNE; checks operate in the full space)', fontsize=13, y=1.02)
+    fig.tight_layout()
+    path = os.path.join(out_dir, f'fig_validator_checks_{user}.pdf')
+    fig.savefig(path, dpi=150, bbox_inches='tight'); plt.close(fig)
+    return path
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--user', default=None)
@@ -268,6 +402,8 @@ def main():
     ap.add_argument('--pretrain_dataset', default='blind_user')
     ap.add_argument('--version', default='20_120')
     ap.add_argument('--out_dir', default='figures')
+    ap.add_argument('--validator', action='store_true',
+                    help='render the three-panel validator-checks figure')
     ap.add_argument('--attention', action='store_true',
                     help='also render per-gesture attention strips')
     args = ap.parse_args()
@@ -292,6 +428,9 @@ def main():
               f"1-NN {m_raw['knn']:.0%} -> {m_head['knn']:.0%}  [{os.path.basename(p)}]")
         if args.attention:
             plot_attention(user, bb, head, out_dir)
+        if args.validator:
+            p = plot_validator_checks(user, bb, head, out_dir)
+            print(f'  {user}: validator-checks figure [{os.path.basename(p)}]')
         cohort.append({'user': user, 'raw': m_raw, 'head': m_head})
 
     if len(cohort) > 1:
